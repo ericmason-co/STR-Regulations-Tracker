@@ -1,4 +1,5 @@
 // LawfulStay — static frontend.
+// Force redeploy trigger for GitHub Actions.
 // Loads jurisdictions.json + changelog.json and renders a searchable/filterable/
 // sortable table, a "latest regulatory changes" panel, a detail modal, and flags
 // recently-changed jurisdictions. Includes interactive autocomplete and a compliance wizard.
