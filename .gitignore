@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Build artifacts / local
+out/
+backups/
+.DS_Store
+**/.DS_Store
+.claude/
+files.zip
+
+# Server-authoritative live data (the monitor updates these on the droplet —
+# git must NOT overwrite them on deploy)
+data/jurisdictions.json
+data/changelog.json
+data/location_requests.jsonl
+web/jurisdictions.json
+web/changelog.json
+web/Global_STR_Regulations_Comprehensive_Database.xlsx
+
+# Never commit secrets (env lives at /etc/lawfulstay/ anyway, not here)
+*.env
+monitor.env

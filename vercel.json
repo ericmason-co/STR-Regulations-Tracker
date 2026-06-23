@@ -1,0 +1,6 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python3 scripts/export_xlsx.py web/Global_STR_Regulations_Comprehensive_Database.xlsx && cp data/jurisdictions.json web/jurisdictions.json",
+  "outputDirectory": "web",
+  "framework": null
+}

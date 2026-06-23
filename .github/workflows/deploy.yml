@@ -1,0 +1,27 @@
+name: Deploy to Dreamhost
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'web/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: SFTP Deploy to Dreamhost
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.DREAMHOST_SERVER }}
+          username: ${{ secrets.DREAMHOST_USERNAME }}
+          password: ${{ secrets.DREAMHOST_PASSWORD }}
+          port: 22
+          local-dir: ./web/
+          server-dir: /home/${{ secrets.DREAMHOST_USERNAME }}/lawfulstay.com/
+          protocol: sftp

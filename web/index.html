@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LawfulStay &mdash; Global STR Regulation Tracker</title>
+  <meta name="description" content="LawfulStay tracks short-term rental regulations across jurisdictions worldwide — searchable, current, and sourced." />
+  <meta name="theme-color" content="#1c5fa8" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#1c6fc0" media="(prefers-color-scheme: light)" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="styles.css?v=21" />
+
+  <!-- JSON-LD Structured Data for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LawfulStay",
+    "url": "https://lawfulstay.com",
+    "description": "Comprehensive global database for short-term rental compliance, local zoning laws, and licensing regulations."
+  }
+  </script>
+</head>
+<body>
+  <!-- Header / Navbar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo-group">
+        <img class="logo" src="favicon.svg" alt="LawfulStay logo" width="38" height="38" />
+        <h1 class="logo-text">Lawful<span class="brand-accent">Stay</span></h1>
+      </a>
+      <nav class="nav-menu">
+        <a href="#database-section" class="nav-link active">Regulations Database</a>
+        <a href="#assistant-section" class="nav-link">Compliance Assistant</a>
+        <a href="#latest" class="nav-link">Market Updates</a>
+      </nav>
+      <div class="nav-actions">
+        <a href="#assistant-section" class="btn btn-primary btn-sm">Check Compliance</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-bg-gradients">
+      <div class="gradient gradient-1"></div>
+      <div class="gradient gradient-2"></div>
+    </div>
+    <div class="hero-container">
+      <span class="badge badge-hero"><i class="fa-solid fa-scale-balanced"></i> Global Regulations Tracker</span>
+      <h2 class="hero-title">Know the rules before you host</h2>
+      <p class="hero-subtitle">Short-term rental regulations across every jurisdiction, kept current. Sourced and verified by VRInsider & the VRP Group.</p>
+    </div>
+  </section>
+
+  <!-- Latest Regulatory Changes (Timeline Feed) -->
+  <section class="latest container" id="latest" hidden>
+    <div class="latest-header">
+      <h2><span class="dot"></span> Latest Regulatory Changes</h2>
+    </div>
+    <ul id="latest-list"></ul>
+  </section>
+
+  <!-- Controls & Search filters -->
+  <section id="database-section" class="controls-section container">
+    <div class="controls-card glass">
+      <div class="search-outer">
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
+          <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
+      </div>
+
+      <div class="filters-grid">
+        <div class="select-wrapper">
+          <select id="continent">
+            <option value="">All Regions</option>
+          </select>
+        </div>
+        <div class="select-wrapper">
+          <select id="status">
+            <option value="">All Statuses</option>
+          </select>
+        </div>
+        <div class="select-wrapper">
+          <select id="country">
+            <option value="">All Countries</option>
+          </select>
+        </div>
+        <button id="reset" class="btn btn-secondary" type="button"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Statistics Section -->
+  <section class="stats container" id="stats"></section>
+
+  <!-- View Toggles & Legend Section -->
+  <section class="view-legend-section container">
+    <div class="viewbar">
+      <span class="viewbar-label">View</span>
+      <div class="seg">
+        <button id="view-list" class="vbtn active" type="button"><i class="fa-solid fa-table-list"></i> List</button>
+        <button id="view-tree" class="vbtn" type="button"><i class="fa-solid fa-network-wired"></i> Browse by region</button>
+        <button id="view-map" class="vbtn" type="button"><i class="fa-solid fa-map-location-dot"></i> Map</button>
+      </div>
+      <span id="tree-hint" class="viewbar-hint" hidden>Country &rsaquo; State &rsaquo; City &mdash; click to expand</span>
+      <span id="map-hint" class="viewbar-hint" hidden>Click a country to drill into its regulations</span>
+    </div>
+
+    <div class="legend" aria-label="Legend">
+      <span class="lg"><span class="badge Active">Active</span> rules in force</span>
+      <span class="lg"><span class="badge Restricted">Restricted</span> significant limits</span>
+      <span class="lg"><span class="badge Banned">Banned</span> STRs prohibited</span>
+      <span class="lg"><span class="badge Pending">Pending</span> proposed / not yet in force</span>
+      <span class="lg"><span class="recent-tag-legend">Updated</span> changed in last 21 days (hover for date)</span>
+    </div>
+  </section>
+
+  <!-- Main Database Content Area -->
+  <main class="container">
+    <!-- Map View -->
+    <div id="map" hidden>
+      <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
+      <div class="map-note">Shaded by each country&rsquo;s <b>national</b> framework &mdash; local rules vary, so click in to see city &amp; state detail. <span class="swatch"></span> = no national law (local control).</div>
+      <div id="map-svg"></div>
+    </div>
+
+    <!-- Tree View -->
+    <div id="tree" hidden></div>
+
+    <!-- List Table View -->
+    <div class="table-responsive">
+      <table id="table">
+        <thead>
+          <tr>
+            <th data-key="city">Jurisdiction <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="continent">Region <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="status">Status <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="license_required">License <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="rental_day_cap">Day Cap <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="tax_rate">Tax <i class="fa-solid fa-sort sort-indicator"></i></th>
+            <th data-key="last_changed" class="col-updated">Updated <i class="fa-solid fa-sort sort-indicator"></i></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    
+    <p id="empty" class="empty" hidden><i class="fa-solid fa-triangle-exclamation"></i> No jurisdictions match your filters.</p>
+  </main>
+
+  <!-- Compliance Assistant Wizard Section -->
+  <section id="assistant-section" class="assistant-section">
+    <div class="container">
+      <div class="assistant-header text-center">
+        <span class="badge badge-accent"><i class="fa-solid fa-wand-magic-sparkles"></i> Interactive Tool</span>
+        <h2 class="section-title text-white">Interactive Compliance Assistant</h2>
+        <p class="section-desc text-slate-300">Evaluate strategy feasibility against our live database of global short-term rental laws.</p>
+      </div>
+
+      <div class="assistant-card glass">
+        <!-- Step 1: Select City -->
+        <div id="wizard-step-1" class="wizard-step active">
+          <h3 class="step-title">1. Select your target city</h3>
+          <div class="form-group">
+            <select id="assistant-city-select" class="form-select">
+              <option value="" disabled selected>Select a city...</option>
+            </select>
+          </div>
+          <div class="wizard-actions">
+            <button id="wizard-next-1" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 2: Hosted vs Unhosted -->
+        <div id="wizard-step-2" class="wizard-step" style="display: none;">
+          <h3 class="step-title">2. Will you live on-site during bookings?</h3>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="wizard-hosted" value="yes">
+              <div class="radio-card-content">
+                <i class="fa-solid fa-people-roof card-icon"></i>
+                <span class="card-label">Yes (Hosted Stay)</span>
+                <span class="card-hint">Host present in property during stays.</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="wizard-hosted" value="no">
+              <div class="radio-card-content">
+                <i class="fa-solid fa-key card-icon"></i>
+                <span class="card-label">No (Unhosted Stay)</span>
+                <span class="card-hint">Guests rent entire dwelling privately.</span>
+              </div>
+            </label>
+          </div>
+          <div class="wizard-actions">
+            <button id="wizard-prev-2" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button id="wizard-next-2" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+        <!-- Step 3: Primary Residence vs Secondary -->
+        <div id="wizard-step-3" class="wizard-step" style="display: none;">
+          <h3 class="step-title">3. Is this property your primary residence?</h3>
+          <div class="radio-cards">
+            <label class="radio-card">
+              <input type="radio" name="wizard-residence" value="primary">
+              <div class="radio-card-content">
+                <i class="fa-solid fa-house-user card-icon"></i>
+                <span class="card-label">Primary Residence</span>
+                <span class="card-hint">You occupy unit major part of the year.</span>
+              </div>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="wizard-residence" value="secondary">
+              <div class="radio-card-content">
+                <i class="fa-solid fa-hotel card-icon"></i>
+                <span class="card-label">Investment / Second Home</span>
+                <span class="card-hint">Secondary residence, vacation property, or dedicated rental.</span>
+              </div>
+            </label>
+          </div>
+          <div class="wizard-actions">
+            <button id="wizard-prev-3" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+            <button id="wizard-submit" class="btn btn-primary" disabled>Analyze Compliance <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+          </div>
+        </div>
+
+        <!-- Wizard Results -->
+        <div id="wizard-result" class="wizard-step" style="display: none;">
+          <div class="result-header">
+            <div id="result-status-icon" class="status-icon-box">
+              <!-- Dynamic Icon -->
+            </div>
+            <div>
+              <h3 id="result-city-name" class="result-city-title">New York City</h3>
+              <div id="result-badge-container"></div>
+            </div>
+          </div>
+
+          <div class="verdict-box" id="result-verdict-box">
+            <h4 class="verdict-title">Compliance Verdict</h4>
+            <p id="result-verdict-text" class="verdict-text"></p>
+          </div>
+
+          <div class="result-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-label"><i class="fa-solid fa-circle-exclamation text-slate-400"></i> Violations:</span>
+              <span id="result-violations" class="breakdown-value">None</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label"><i class="fa-solid fa-id-card text-slate-400"></i> Permit Required:</span>
+              <span id="result-permit-status" class="breakdown-value">Yes</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label"><i class="fa-solid fa-moon text-slate-400"></i> Annual Cap:</span>
+              <span id="result-cap-status" class="breakdown-value">N/A</span>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button id="wizard-restart" class="btn btn-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Start Over</button>
+            <a id="result-portal-link" href="#" target="_blank" class="btn btn-primary">Visit Town Portal <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detail Modal -->
+  <div id="modal" class="modal" hidden>
+    <div class="modal-card">
+      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
+      <div id="modal-body">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="footer">
+    <div class="footer-bottom">
+      <span id="meta-line"></span>
+      <p class="legal-disclaimer">Disclaimer: LawfulStay provides data for informational purposes only. This information does not constitute legal counsel or zoning advisory services. Consult local attorneys or regulatory agencies prior to listing properties.</p>
+      <p class="copyright">&copy; 2026 LawfulStay. All rights reserved. Created in partnership with Antigravity.</p>
+    </div>
+  </footer>
+
+  <script src="app.js?v=21"></script>
+</body>
+</html>
