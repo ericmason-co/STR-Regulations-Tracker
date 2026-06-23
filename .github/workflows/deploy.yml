@@ -16,12 +16,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: SFTP Deploy to Dreamhost
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6
         with:
-          server: ${{ secrets.DREAMHOST_SERVER }}
           username: ${{ secrets.DREAMHOST_USERNAME }}
-          password: ${{ secrets.DREAMHOST_PASSWORD }}
+          server: ${{ secrets.DREAMHOST_SERVER }}
           port: 22
-          local-dir: ./web/
-          server-dir: /home/${{ secrets.DREAMHOST_USERNAME }}/lawfulstay.com/
-          protocol: sftp
+          password: ${{ secrets.DREAMHOST_PASSWORD }}
+          local_path: './web/*'
+          remote_path: '/home/${{ secrets.DREAMHOST_USERNAME }}/lawfulstay.com/'
+          sftp_only: true
