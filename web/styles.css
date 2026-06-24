@@ -516,7 +516,7 @@ body.dark-theme .glow-orb {
   border-color: var(--restricted);
   box-shadow: 0 4px 15px rgba(204, 122, 111, 0.15);
 }
-.kpi-card#kpi-sourced.active {
+.kpi-card#kpi-allowed.active {
   background-color: rgba(15, 118, 110, 0.06);
   border-color: var(--active);
   box-shadow: 0 4px 15px rgba(15, 118, 110, 0.15);

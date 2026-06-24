@@ -1215,7 +1215,7 @@ function wire() {
     render();
   });
 
-  $("kpi-sourced").addEventListener("click", () => {
+  $("kpi-allowed").addEventListener("click", () => {
     const s = $("status");
     s.value = s.value === "Active" ? "" : "Active";
     render();
@@ -1385,7 +1385,7 @@ function updateKpiCardActiveStates() {
   
   $("kpi-bans").classList.toggle("active", status === "Banned");
   $("kpi-caps").classList.toggle("active", status === "Restricted");
-  $("kpi-sourced").classList.toggle("active", status === "Active");
+  $("kpi-allowed").classList.toggle("active", status === "Active");
   $("kpi-tracked").classList.toggle("active", !status);
 }
 
