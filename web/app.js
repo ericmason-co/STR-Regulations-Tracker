@@ -861,7 +861,8 @@ function wire() {
 }
 
 (async function init() {
-  const data = await fetchJson(["jurisdictions.json", "../data/jurisdictions.json"]);
+  const t = Date.now();
+  const data = await fetchJson([`jurisdictions.json?t=${t}`, `../data/jurisdictions.json?t=${t}`]);
   if (!data) {
     $("rows").innerHTML = `<tr><td colspan="7">Failed to load data.</td></tr>`;
     return;
@@ -881,7 +882,7 @@ function wire() {
   setupWizard();
   render();
 
-  const changelog = await fetchJson(["changelog.json", "../data/changelog.json"]);
+  const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
   renderLatest(changelog);
 })();
 // Deployment trigger comment v7
