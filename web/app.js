@@ -77,7 +77,8 @@ function displayName(j) {
   }
   // Avoid repeating the city in the subtitle (e.g. "Lagos / Lagos"); fall back to country.
   const st = (j.state || "").trim();
-  return { name: c, sub: st && st !== c ? st : j.country };
+  const subName = st && st !== c ? `${st}, ${j.country}` : j.country;
+  return { name: c, sub: subName };
 }
 
 function uniqueSorted(key) {
@@ -491,7 +492,7 @@ function openModal(j) {
   const rt = recentTag(j);
   const recent = rt ? " " + rt : "";
   const disp = displayName(j);
-  const locParts = [...new Set([disp.sub, j.country, j.continent].filter(Boolean))];
+  const locParts = [...new Set([j.state !== disp.name ? j.state : null, j.country, j.continent].filter(Boolean))];
   $("modal-body").innerHTML = `
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
@@ -533,7 +534,7 @@ function showAutocomplete(query) {
     const disp = displayName(j);
     item.innerHTML = `
       <span class="autocomplete-item-name">${esc(disp.name)}</span>
-      <span class="autocomplete-item-meta">${esc(disp.sub)}, ${esc(j.country)}</span>
+      <span class="autocomplete-item-meta">${esc(disp.sub)}</span>
     `;
     item.addEventListener("click", () => {
       $("search").value = disp.name;
