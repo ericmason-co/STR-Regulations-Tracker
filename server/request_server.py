@@ -19,6 +19,8 @@ import os
 import re
 import smtplib
 import time
+import urllib.parse
+import urllib.request
 from datetime import datetime, timezone
 from email.message import EmailMessage
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -69,6 +71,59 @@ def send_email(loc, email, notes, ip):
         s.send_message(msg)
 
 
+def send_sub_email(j_label, email, ip):
+    host = ENV.get("SMTP_HOST")
+    if not host:
+        return
+    msg = EmailMessage()
+    msg["Subject"] = f"LawfulStay: new alert subscription — {j_label[:80]}"
+    msg["From"] = ENV.get("MAIL_FROM", ENV.get("SMTP_USER", ""))
+    msg["To"] = ENV.get("MAIL_TO", "ericmason.co@gmail.com")
+    msg.set_content(
+        "New regulation change alert subscription via lawfulstay.com:\n\n"
+        f"Jurisdiction: {j_label}\n"
+        f"Subscriber email: {email}\n"
+        f"IP: {ip}\n"
+        f"Time: {datetime.now(timezone.utc).isoformat()}\n"
+    )
+    with smtplib.SMTP(host, int(ENV.get("SMTP_PORT", "587")), timeout=20) as s:
+        s.starttls()
+        s.login(ENV["SMTP_USER"], ENV["SMTP_PASS"])
+        s.send_message(msg)
+
+
+def push_to_acumbamail(email: str, j_label: str) -> bool:
+    token = ENV.get("ACUMBAMAIL_TOKEN")
+    list_id = ENV.get("ACUMBAMAIL_LIST_ID")
+    if not token or not list_id:
+        return False
+    url = "https://acumbamail.com/api/1/addSubscriber/"
+    payload = {
+        "auth_token": token,
+        "response_type": "json",
+        "list_id": int(list_id),
+        "double_optin": 1,
+        "welcome_email": 0,
+        "merge_fields[email]": email,
+        "merge_fields[JURISDICTION]": j_label
+    }
+    encoded_data = urllib.parse.urlencode(payload).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=encoded_data,
+        headers={"Content-Type": "application/x-www-form-urlencoded"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res_body = response.read().decode("utf-8")
+            res_json = json.loads(res_body)
+            print("Acumbamail push response:", res_json, flush=True)
+            return True
+    except Exception as e:
+        print("Acumbamail push failed:", e, flush=True)
+        return False
+
+
 class Handler(BaseHTTPRequestHandler):
     def _json(self, code, obj):
         body = json.dumps(obj).encode()
@@ -79,7 +134,8 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_POST(self):
-        if self.path.rstrip("/") != "/api/request-location":
+        path = self.path.rstrip("/")
+        if path not in ("/api/request-location", "/api/subscribe-alerts"):
             return self._json(404, {"ok": False, "error": "not found"})
 
         ip = self.headers.get("X-Forwarded-For", "-").split(",")[0].strip()
@@ -98,27 +154,62 @@ class Handler(BaseHTTPRequestHandler):
         if str(data.get("website", "")).strip():  # honeypot tripped
             return self._json(200, {"ok": True, "message": "Thanks!"})
 
-        loc = str(data.get("location", "")).strip()[:MAX_LOC]
-        email = str(data.get("email", "")).strip()[:MAX_LOC]
-        notes = str(data.get("notes", "")).strip()[:1000]
-        if len(loc) < 2:
-            return self._json(400, {"ok": False, "error": "Please enter a location."})
-        if email and not EMAIL_RE.match(email):
-            return self._json(400, {"ok": False, "error": "Please enter a valid email."})
+        if path == "/api/request-location":
+            loc = str(data.get("location", "")).strip()[:MAX_LOC]
+            email = str(data.get("email", "")).strip()[:MAX_LOC]
+            notes = str(data.get("notes", "")).strip()[:1000]
+            if len(loc) < 2:
+                return self._json(400, {"ok": False, "error": "Please enter a location."})
+            if email and not EMAIL_RE.match(email):
+                return self._json(400, {"ok": False, "error": "Please enter a valid email."})
 
-        rec = {"ts": datetime.now(timezone.utc).isoformat(), "location": loc,
-               "email": email, "notes": notes, "ip": ip}
-        LOG.parent.mkdir(parents=True, exist_ok=True)
-        with LOG.open("a") as f:
-            f.write(json.dumps(rec) + "\n")
-        try:
-            send_email(loc, email, notes, ip)
-        except Exception as e:  # don't fail the user if email hiccups
-            print("email failed:", e, flush=True)
+            rec = {"ts": datetime.now(timezone.utc).isoformat(), "location": loc,
+                   "email": email, "notes": notes, "ip": ip}
+            LOG.parent.mkdir(parents=True, exist_ok=True)
+            with LOG.open("a") as f:
+                f.write(json.dumps(rec) + "\n")
+            try:
+                send_email(loc, email, notes, ip)
+            except Exception as e:  # don't fail the user if email hiccups
+                print("email failed:", e, flush=True)
 
-        _last_hit[ip] = now
-        return self._json(200, {"ok": True,
-                                "message": "Thanks — we'll research it and add it to the tracker."})
+            _last_hit[ip] = now
+            return self._json(200, {"ok": True,
+                                    "message": "Thanks — we'll research it and add it to the tracker."})
+
+        elif path == "/api/subscribe-alerts":
+            j_id = str(data.get("jurisdiction_id", "")).strip()[:MAX_LOC]
+            j_label = str(data.get("jurisdiction_label", "")).strip()[:MAX_LOC]
+            email = str(data.get("email", "")).strip()[:MAX_LOC]
+            
+            if not j_id or not j_label:
+                return self._json(400, {"ok": False, "error": "Invalid jurisdiction."})
+            if not email or not EMAIL_RE.match(email):
+                return self._json(400, {"ok": False, "error": "Please enter a valid email address."})
+
+            sub_log = Path("/opt/str-tracker/data/regulation_subscriptions.jsonl")
+            rec = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "jurisdiction_id": j_id,
+                "jurisdiction_label": j_label,
+                "email": email,
+                "ip": ip
+            }
+            sub_log.parent.mkdir(parents=True, exist_ok=True)
+            with sub_log.open("a") as f:
+                f.write(json.dumps(rec) + "\n")
+            try:
+                send_sub_email(j_label, email, ip)
+            except Exception as e:
+                print("subscription email failed:", e, flush=True)
+
+            try:
+                push_to_acumbamail(email, j_label)
+            except Exception as e:
+                print("Acumbamail push failed in handler:", e, flush=True)
+
+            _last_hit[ip] = now
+            return self._json(200, {"ok": True, "message": f"Successfully subscribed to alerts for {j_label}!"})
 
     def log_message(self, *a):  # quiet
         pass

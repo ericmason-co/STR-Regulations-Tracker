@@ -507,6 +507,59 @@ function updateWizardProgress(step) {
   }
 }
 
+async function handleAlertSubscribe(event, id, label) {
+  event.preventDefault();
+  const form = event.target;
+  const emailInput = form.email;
+  const submitBtn = form.querySelector("button[type='submit']");
+  const successMsg = form.querySelector(".subscribe-success-msg");
+  const errorMsg = form.querySelector(".subscribe-error-msg");
+  
+  successMsg.style.display = "none";
+  errorMsg.style.display = "none";
+  
+  const payload = {
+    jurisdiction_id: id,
+    jurisdiction_label: label,
+    email: emailInput.value,
+    website: form.website.value
+  };
+  
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  
+  try {
+    const res = await fetch("/api/subscribe-alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    const result = await res.json();
+    
+    if (res.ok && result.ok) {
+      successMsg.textContent = result.message || "Subscribed successfully!";
+      successMsg.style.display = "block";
+      form.reset();
+      // Keep disabled to prevent duplicate clicks
+    } else {
+      errorMsg.textContent = result.error || "An error occurred. Please try again.";
+      errorMsg.style.display = "block";
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  } catch (err) {
+    errorMsg.textContent = "Unable to connect to server. Please try again later.";
+    errorMsg.style.display = "block";
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+}
+window.handleAlertSubscribe = handleAlertSubscribe;
+
 function openModal(j) {
   const sections = [
     {
@@ -558,10 +611,34 @@ function openModal(j) {
   const disp = displayName(j);
   const locParts = [...new Set([j.state !== disp.name ? j.state : null, j.country, j.continent].filter(Boolean))];
   
+  const labelEsc = esc(`${j.city}, ${j.country}`);
+  const idEsc = esc(j.id);
+  const subscribeCardHtml = `
+    <div class="subscribe-alerts-card">
+      <h4><i class="fa-solid fa-bell"></i> Stay Updated</h4>
+      <p>Subscribe to receive email alerts when regulations change in ${esc(disp.name)}.</p>
+      <form id="subscribe-alerts-form" onsubmit="handleAlertSubscribe(event, '${idEsc}', '${labelEsc}')">
+        <div style="display: none;" aria-hidden="true">
+          <label for="subscribe-website">Website</label>
+          <input type="text" id="subscribe-website" name="website" autocomplete="off" />
+        </div>
+        <div class="subscribe-input-group">
+          <input type="email" name="email" required placeholder="Enter your email address" class="form-input" aria-label="Email address" />
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </div>
+        <div class="subscribe-success-msg" style="display: none; color: var(--active);"></div>
+        <div class="subscribe-error-msg" style="display: none; color: var(--banned);"></div>
+      </form>
+    </div>
+  `;
+
   $("modal-body").innerHTML = `
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
-    <div class="detail-sections-container">${htmlContent}</div>`;
+    <div class="detail-sections-container">
+      ${htmlContent}
+      ${subscribeCardHtml}
+    </div>`;
   $("modal").hidden = false;
 }
 
