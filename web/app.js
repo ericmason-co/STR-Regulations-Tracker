@@ -665,7 +665,11 @@ function openModal(j) {
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
     <div style="margin: -0.5rem 0 0.5rem 0; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; border-bottom: 1px dashed var(--border); padding-bottom: 0.5rem;">
-      <a href="#" onclick="openFeedbackDialog('${idEsc}', '${labelEsc}'); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-pen-to-square"></i> Report correction or outdated rules</a>
+      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="#" onclick="openFeedbackDialog('${idEsc}', '${labelEsc}'); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-pen-to-square"></i> Report correction</a>
+        <span style="color: var(--border);">|</span>
+        <a href="#" onclick="window.print(); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-print"></i> Print rules</a>
+      </div>
       <div class="drawer-share-row" style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; color: var(--muted);">
         <span><i class="fa-solid fa-share-nodes"></i> Share:</span>
         <a href="https://www.facebook.com/sharer/sharer.php?u=https://lawfulstay.com/" target="_blank" rel="noopener" aria-label="Share on Facebook" style="color: #1877f2; font-size: 0.9rem; display: inline-flex; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fa-brands fa-facebook"></i></a>

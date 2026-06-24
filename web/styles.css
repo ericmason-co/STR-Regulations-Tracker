@@ -2428,5 +2428,227 @@ details.t-state {
   box-shadow: 0 4px 8px var(--brand-glow);
 }
 
+/* ==========================================================================
+   Print Styling
+   ========================================================================== */
+@media print {
+  /* Hide all elements on the page except the details drawer */
+  body > *:not(#modal) {
+    display: none !important;
+  }
+  
+  /* Reset modal container styles to print cleanly */
+  #modal, #modal * {
+    visibility: visible !important;
+    display: block !important;
+    position: static !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide backdrop trigger, close buttons, feedback dialogs, subscription card, share row, correction links */
+  .modal-backdrop-trigger,
+  .modal-close,
+  #modal-close,
+  .subscribe-alerts-card,
+  .drawer-share-row,
+  a[onclick*="openFeedbackDialog"],
+  a[onclick*="window.print"] {
+    display: none !important;
+  }
+
+  /* Ensure the text is dark and easy to read */
+  #modal-body {
+    width: 100% !important;
+    max-width: 100% !important;
+    color: #000000 !important;
+  }
+
+  #modal-body h2 {
+    font-size: 2.2rem !important;
+    color: #0f1e1a !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 800 !important;
+  }
+
+  #modal-body .loc {
+    font-size: 1.1rem !important;
+    color: #4b5563 !important;
+    margin-bottom: 1.5rem !important;
+    border-bottom: 2px solid #e5e7eb !important;
+    padding-bottom: 0.5rem !important;
+  }
+
+  /* Style details section cards beautifully for print */
+  .detail-section-card {
+    page-break-inside: avoid !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 6px !important;
+    padding: 1.2rem !important;
+    margin-bottom: 1.5rem !important;
+    background: #ffffff !important;
+  }
+
+  .detail-section-card h3 {
+    border-bottom: 1.5px solid #e5e7eb !important;
+    padding-bottom: 0.4rem !important;
+    margin-bottom: 1rem !important;
+    color: #0f1e1a !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+  }
+
+  .field-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.8rem !important;
+  }
+
+  .field-grid dt {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    margin-bottom: 0.2rem !important;
+  }
+
+  .field-grid dd {
+    background: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    padding: 0.5rem 0.75rem !important;
+    border-radius: 4px !important;
+    font-size: 0.95rem !important;
+    color: #111827 !important;
+    margin-left: 0 !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Make sure links print their destinations or look clean */
+  a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
+}
+
+/* ==========================================================================
+   Advertising Placements
+   ========================================================================== */
+.ad-sidebar-container {
+  padding: 0 1rem 1rem 1rem;
+  margin-top: auto;
+  border-top: 1px dashed var(--border);
+  padding-top: 1rem;
+}
+.ad-banner-container {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ad-label {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ad-slot {
+  position: relative;
+  border-radius: var(--border-radius-md);
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-normal);
+}
+.ad-slot:hover {
+  border-color: var(--brand-glow);
+  box-shadow: 0 4px 12px var(--brand-light);
+}
+
+.sidebar-ad {
+  min-height: 200px;
+  width: 100%;
+}
+.horizontal-ad {
+  min-height: 90px;
+  width: 100%;
+}
+
+/* Fallback Placeholders */
+.ad-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--border-radius-md);
+  color: var(--muted);
+  z-index: 1;
+  background-color: var(--panel-2);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+.ad-placeholder i {
+  font-size: 1.5rem;
+  color: var(--brand);
+}
+.ad-placeholder span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.ad-placeholder .btn {
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+}
+
+/* When actual ad loads, hide the placeholder */
+.ad-slot ins.adsbygoogle[data-ad-status="filled"] + script + .ad-placeholder,
+.ad-slot ins.adsbygoogle[data-ad-status="filled"] + .ad-placeholder {
+  display: none !important;
+}
+
+/* Responsive Overrides */
+@media (max-width: 992px) {
+  .ad-sidebar-container {
+    display: none !important;
+  }
+}
+@media (max-height: 700px) {
+  .ad-sidebar-container {
+    display: none !important;
+  }
+}
+@media print {
+  .ad-sidebar-container,
+  .ad-banner-container {
+    display: none !important;
+  }
+}
+
+
+
 
 
