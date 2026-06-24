@@ -304,6 +304,7 @@ body {
   display: flex;
   flex-direction: column;
   background-color: var(--bg);
+  min-width: 0;
 }
 
 /* Top bar Header */
@@ -725,7 +726,8 @@ body {
 /* 1. List Table View */
 .table-responsive {
   border-radius: var(--border-radius-md);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: 0 4px 15px var(--shadow);
 }
 
