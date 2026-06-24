@@ -2648,6 +2648,142 @@ details.t-state {
   }
 }
 
+/* ==========================================================================
+   Mock Ads Styling
+   ========================================================================== */
+.mock-ad-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: var(--muted);
+  background-color: var(--panel);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* Vertical Mock Ad */
+.mock-ad-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.5rem 1rem 1rem 1rem;
+}
+.mock-ad-vertical .mock-ad-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--brand);
+  margin-bottom: 0.75rem;
+}
+.mock-ad-vertical .mock-ad-brand i {
+  font-size: 1.1rem;
+}
+.mock-ad-vertical h4 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+.mock-ad-vertical p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin-bottom: 1rem;
+}
+.mock-ad-vertical .ad-cta {
+  width: 100%;
+}
+
+/* Horizontal Mock Ad */
+.mock-ad-horizontal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  text-align: left;
+}
+.mock-ad-horizontal .mock-ad-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-grow: 1;
+  flex-basis: 300px;
+}
+.mock-ad-horizontal .mock-ad-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--brand);
+  border-right: 1px solid var(--border);
+  padding-right: 1.5rem;
+  flex-shrink: 0;
+}
+.mock-ad-horizontal .mock-ad-brand i {
+  font-size: 1.5rem;
+}
+.mock-ad-horizontal .mock-ad-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.mock-ad-horizontal h4 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+.mock-ad-horizontal p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .mock-ad-horizontal {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
+  .mock-ad-horizontal .mock-ad-left {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex-basis: auto;
+  }
+  .mock-ad-horizontal .mock-ad-brand {
+    flex-direction: row;
+    border-right: none;
+    padding-right: 0;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .mock-ad-horizontal .ad-cta {
+    width: 100%;
+  }
+}
+
+
 
 
 
