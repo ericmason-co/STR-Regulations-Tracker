@@ -2355,4 +2355,27 @@ details.t-state {
   padding-top: 1rem;
 }
 
+.sidebar-links {
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 0.65rem;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.65rem;
+}
+.sidebar-links a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: var(--transition-fast);
+  font-weight: 500;
+}
+.sidebar-links a:hover {
+  color: var(--brand);
+}
+
 
