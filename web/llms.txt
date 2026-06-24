@@ -1,0 +1,39 @@
+# LawfulStay Short-Term Rental Regulations Database
+
+LawfulStay.com is an authoritative public compliance research resource tracking regulations, municipal zoning, licensing, and taxation laws for short-term rental (STR) properties globally.
+
+## Core Site Layout
+- **Regulations DB (`/`):** A comprehensive grid, map, and list layout to browse and search short-term rental laws.
+- **Compliance Wizard:** An interactive multi-step questionnaire to diagnose if a hosting scenario is compliant in a specific city.
+- **Market Updates:** A chronological timeline of policy shifts, draft ordinances, and local law changes.
+- **About & FAQ:** The mission statement, data promise, and common investor/host questions.
+
+## Core Database Schema
+
+The database is structured as a JSON file (`jurisdictions.json`) containing city records with the following properties:
+- `id` (String): Unique city slug (e.g., `new-york-city`)
+- `region` (String): Geographical region classification (e.g. `US`, `International`)
+- `country` (String): Nation name
+- `state` (String): State or department name
+- `city` (String): City/municipality name
+- `status` (String): Severity status (`Flexible`, `Moderate`, `Restricted`, `Banned`)
+- `license_required` (String/Boolean): Permits or registry requirements
+- `tax_registration_required` (String/Boolean): Tax account registration details
+- `fees` (String): Cost structure for licenses and updates
+- `primary_residence_required` (String/Boolean): Dwelling occupancy restrictions
+- `rental_day_cap` (String): Annual night limits on unhosted entire-unit bookings
+- `occupancy_limit` (String): Maximum guest limits per unit
+- `tax_rate` (String): Transient occupancy or lodging sales tax rates
+- `zoning_restrictions` (String): Allowed municipal zoning districts
+- `min_stay` (String): Minimum booking night limits
+- `density_rules` (String): Spacing and quota rules for listings
+- `insurance_required` (String): Liability insurance mandates
+- `platform_obligations` (String): Obligations for booking platforms (e.g., automated checks)
+- `compliance_notes` (String): Prose explanation of local rules
+- `effective_date` (String): Date local rules became active
+- `key_notes` (String): Bulleted summary of core rules
+- `penalties` (String): Enforcement actions or fines for violations
+- `additional_context` (String): Supplementary details
+- `source` (String): Source of data
+- `last_checked` (String Date): Date of last data audit
+- `last_changed` (String Date): Date of last rules update
