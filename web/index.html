@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=53" />
+  <link rel="stylesheet" href="styles.css?v=54" />
 
   <!-- JSON-LD Structured Data for Search Engines -->
   <script type="application/ld+json">
@@ -81,6 +81,9 @@
         <div class="topbar-right">
           <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle light and dark theme">
             <i class="fa-solid fa-sun"></i>
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openSubscribeDialog()">
+            <i class="fa-solid fa-bell"></i> Subscribe to Alerts
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
             <i class="fa-solid fa-circle-plus"></i> Request Location
@@ -425,7 +428,44 @@
       </div>
     </div>
 
-    <!-- 5. Request Location centered modal overlay -->
+    <!-- 5. Subscribe to Alerts centered modal overlay -->
+    <div id="subscribe-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeSubscribeDialog()"></div>
+      <div class="dialog-card">
+        <button class="dialog-close" onclick="closeSubscribeDialog()" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
+        <h3><i class="fa-solid fa-bell"></i> Subscribe to Regulation Alerts</h3>
+        <p>Get notified when regulations shift in your selected jurisdiction.</p>
+        <form id="subscribe-dialog-form" onsubmit="handleDialogSubscribe(event)">
+          <div style="display: none;" aria-hidden="true">
+            <label for="dialog-subscribe-website">Website</label>
+            <input type="text" id="dialog-subscribe-website" name="website" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="subscribe-email-input">Email Address <span class="required">*</span></label>
+            <input type="email" id="subscribe-email-input" name="email" required placeholder="Enter your email address" class="form-input" />
+          </div>
+          <div class="form-group" style="position: relative;">
+            <label for="subscribe-search-input">Select Jurisdiction <span class="required">*</span></label>
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="subscribe-search-input" placeholder="Type to search your city (e.g. Kyoto, Stowe, Nuuk...)" autocomplete="off" class="form-input" style="background: transparent; border: none; padding: 0;" />
+              <button id="subscribe-search-clear" class="clear-btn" style="display: none;" type="button" aria-label="Clear selection"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="subscribe-selected-id" name="jurisdiction_id" />
+            <input type="hidden" id="subscribe-selected-label" name="jurisdiction_label" />
+            <div id="subscribe-suggestions" class="autocomplete-suggestions"></div>
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeSubscribeDialog()">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="subscribe-dialog-submit" disabled>Subscribe</button>
+          </div>
+          <div class="dialog-success-msg" style="display: none; color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
+          <div class="dialog-error-msg" style="display: none; color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. Request Location centered modal overlay -->
     <div id="request-dialog" class="dialog-overlay" hidden>
       <div class="modal-backdrop-trigger" onclick="closeRequestDialog()"></div>
       <div class="dialog-card">
@@ -587,6 +627,6 @@
     });
   </script>
 
-  <script src="app.js?v=53"></script>
+  <script src="app.js?v=54"></script>
 </body>
 </html>

@@ -964,6 +964,191 @@ function resetWizard() {
   updateWizardProgress(1);
 }
 
+function setupSubscribeDialog() {
+  const dialogInput = $("subscribe-search-input");
+  const dialogSuggestions = $("subscribe-suggestions");
+  const dialogClear = $("subscribe-search-clear");
+  const dialogSelectedId = $("subscribe-selected-id");
+  const dialogSelectedLabel = $("subscribe-selected-label");
+  const submitBtn = $("subscribe-dialog-submit");
+
+  if (!dialogInput) return;
+
+  function filterSuggestions() {
+    const query = dialogInput.value.toLowerCase().trim();
+    dialogSuggestions.innerHTML = "";
+    
+    // Invalidate selection on input change
+    dialogSelectedId.value = "";
+    dialogSelectedLabel.value = "";
+    submitBtn.disabled = true;
+    dialogClear.style.display = "none";
+    
+    if (!query) {
+      dialogSuggestions.style.display = "none";
+      return;
+    }
+    
+    const matches = ALL.filter(j => 
+      j.city.toLowerCase().includes(query) || 
+      (j.state && j.state.toLowerCase().includes(query)) ||
+      j.country.toLowerCase().includes(query)
+    );
+    
+    if (matches.length === 0) {
+      const emptyItem = document.createElement("div");
+      emptyItem.className = "autocomplete-item";
+      emptyItem.style.cursor = "default";
+      emptyItem.innerHTML = `<span class="autocomplete-item-name">No locations found</span>` +
+        `<span class="autocomplete-item-meta"><a href="#" style="color: var(--brand); font-weight: 600;" onclick="closeSubscribeDialog(); openRequestDialog(); return false;">Request to add location</a></span>`;
+      dialogSuggestions.appendChild(emptyItem);
+    } else {
+      matches.slice(0, 8).forEach(j => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        
+        const disp = displayName(j);
+        const name = esc(disp.name);
+        const meta = esc(disp.sub);
+        
+        item.innerHTML = `<span class="autocomplete-item-name">${name}</span>` +
+                         `<span class="autocomplete-item-meta">${meta}</span>`;
+                         
+        item.addEventListener("click", () => {
+          selectJurisdiction(j);
+        });
+        dialogSuggestions.appendChild(item);
+      });
+    }
+    dialogSuggestions.style.display = "block";
+  }
+
+  function selectJurisdiction(j) {
+    const disp = displayName(j);
+    dialogSelectedId.value = j.id;
+    dialogSelectedLabel.value = `${disp.name}, ${j.country}`;
+    dialogInput.value = `${disp.name}, ${j.state ? j.state + ', ' : ''}${j.country}`;
+    dialogSuggestions.style.display = "none";
+    dialogClear.style.display = "inline-flex";
+    submitBtn.disabled = false;
+  }
+
+  function clearSelection() {
+    dialogSelectedId.value = "";
+    dialogSelectedLabel.value = "";
+    dialogInput.value = "";
+    dialogClear.style.display = "none";
+    dialogSuggestions.style.display = "none";
+    submitBtn.disabled = true;
+  }
+
+  dialogInput.addEventListener("input", filterSuggestions);
+  
+  dialogInput.addEventListener("focus", () => {
+    if (dialogInput.value && !dialogSelectedId.value) {
+      filterSuggestions();
+    }
+  });
+
+  dialogClear.addEventListener("click", clearSelection);
+
+  // Close suggestions if clicked outside
+  document.addEventListener("click", (e) => {
+    if (!dialogInput.contains(e.target) && !dialogSuggestions.contains(e.target)) {
+      dialogSuggestions.style.display = "none";
+    }
+  });
+}
+
+function openSubscribeDialog() {
+  const dialog = document.getElementById("subscribe-dialog");
+  if (dialog) {
+    document.getElementById("subscribe-dialog-form").reset();
+    document.getElementById("subscribe-selected-id").value = "";
+    document.getElementById("subscribe-selected-label").value = "";
+    document.getElementById("subscribe-search-clear").style.display = "none";
+    document.getElementById("subscribe-suggestions").style.display = "none";
+    document.querySelector("#subscribe-dialog .dialog-success-msg").style.display = "none";
+    document.querySelector("#subscribe-dialog .dialog-error-msg").style.display = "none";
+    const submitBtn = document.getElementById("subscribe-dialog-submit");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Subscribe";
+    dialog.hidden = false;
+  }
+}
+
+function closeSubscribeDialog() {
+  const dialog = document.getElementById("subscribe-dialog");
+  if (dialog) dialog.hidden = true;
+}
+
+async function handleDialogSubscribe(event) {
+  event.preventDefault();
+  const form = event.target;
+  const emailInput = form.email;
+  const jIdInput = form.jurisdiction_id;
+  const jLabelInput = form.jurisdiction_label;
+  const submitBtn = document.getElementById("subscribe-dialog-submit");
+  const successMsg = form.querySelector(".dialog-success-msg");
+  const errorMsg = form.querySelector(".dialog-error-msg");
+
+  successMsg.style.display = "none";
+  errorMsg.style.display = "none";
+
+  if (!jIdInput.value || !jLabelInput.value) {
+    errorMsg.textContent = "Please select a valid location from the suggestions list.";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  const payload = {
+    jurisdiction_id: jIdInput.value,
+    jurisdiction_label: jLabelInput.value,
+    email: emailInput.value,
+    website: form.website.value
+  };
+
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+  try {
+    const res = await fetch("/api/subscribe-alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if (res.ok && result.ok) {
+      successMsg.textContent = result.message || "Successfully subscribed to alerts!";
+      successMsg.style.display = "block";
+      form.reset();
+      document.getElementById("subscribe-search-clear").style.display = "none";
+      setTimeout(() => {
+        closeSubscribeDialog();
+      }, 2500);
+    } else {
+      errorMsg.textContent = result.error || "An error occurred. Please try again.";
+      errorMsg.style.display = "block";
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  } catch (err) {
+    errorMsg.textContent = "Unable to connect to server. Please try again later.";
+    errorMsg.style.display = "block";
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+}
+
+window.openSubscribeDialog = openSubscribeDialog;
+window.closeSubscribeDialog = closeSubscribeDialog;
+window.handleDialogSubscribe = handleDialogSubscribe;
+
 function wire() {
   $("continent").addEventListener("input", () => {
     updateCountrySelect();
@@ -1135,6 +1320,7 @@ function wire() {
   
   wire();
   setupWizard();
+  setupSubscribeDialog();
   render();
 
   const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
