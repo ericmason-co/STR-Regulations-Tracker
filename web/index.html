@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LawfulStay &mdash; Global STR Regulation Tracker</title>
   <meta name="description" content="LawfulStay tracks short-term rental regulations across jurisdictions worldwide — searchable, current, and sourced." />
-  <meta name="theme-color" content="#1c5fa8" media="(prefers-color-scheme: dark)" />
-  <meta name="theme-color" content="#1c6fc0" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#030712" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
   <!-- Google Fonts & FontAwesome -->
@@ -15,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=21" />
+  <link rel="stylesheet" href="styles.css?v=22" />
 
   <!-- JSON-LD Structured Data for Search Engines -->
   <script type="application/ld+json">
@@ -29,273 +28,406 @@
   </script>
 </head>
 <body>
-  <!-- Header / Navbar -->
-  <header class="navbar">
-    <div class="nav-container">
-      <a href="#" class="logo-group">
-        <img class="logo" src="favicon.svg" alt="LawfulStay logo" width="38" height="38" />
-        <h1 class="logo-text">Lawful<span class="brand-accent">Stay</span></h1>
-      </a>
-      <nav class="nav-menu">
-        <a href="#database-section" class="nav-link active">Regulations Database</a>
-        <a href="#assistant-section" class="nav-link">Compliance Assistant</a>
-        <a href="#latest" class="nav-link">Market Updates</a>
-      </nav>
-      <div class="nav-actions">
-        <a href="#assistant-section" class="btn btn-primary btn-sm">Check Compliance</a>
-      </div>
-    </div>
-  </header>
-
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-bg-gradients">
-      <div class="gradient gradient-1"></div>
-      <div class="gradient gradient-2"></div>
-    </div>
-    <div class="hero-container">
-      <span class="badge badge-hero"><i class="fa-solid fa-scale-balanced"></i> Global Regulations Tracker</span>
-      <h2 class="hero-title">Know the rules before you host</h2>
-      <p class="hero-subtitle">Short-term rental regulations across every jurisdiction, kept current. Sourced and verified by VRInsider & the VRP Group.</p>
-    </div>
-  </section>
-
-  <!-- Latest Regulatory Changes (Timeline Feed) -->
-  <section class="latest container" id="latest" hidden>
-    <div class="latest-header">
-      <h2><span class="dot"></span> Latest Regulatory Changes</h2>
-    </div>
-    <ul id="latest-list"></ul>
-  </section>
-
-  <!-- Controls & Search filters -->
-  <section id="database-section" class="controls-section container">
-    <div class="controls-card glass">
-      <div class="search-outer">
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
-          <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
-      </div>
-
-      <div class="filters-grid">
-        <div class="select-wrapper">
-          <select id="continent">
-            <option value="">All Regions</option>
-          </select>
-        </div>
-        <div class="select-wrapper">
-          <select id="status">
-            <option value="">All Statuses</option>
-          </select>
-        </div>
-        <div class="select-wrapper">
-          <select id="country">
-            <option value="">All Countries</option>
-          </select>
-        </div>
-        <button id="reset" class="btn btn-secondary" type="button"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- Statistics Section -->
-  <section class="stats container" id="stats"></section>
-
-  <!-- View Toggles & Legend Section -->
-  <section class="view-legend-section container">
-    <div class="viewbar">
-      <span class="viewbar-label">View</span>
-      <div class="seg">
-        <button id="view-list" class="vbtn active" type="button"><i class="fa-solid fa-table-list"></i> List</button>
-        <button id="view-tree" class="vbtn" type="button"><i class="fa-solid fa-network-wired"></i> Browse by region</button>
-        <button id="view-map" class="vbtn" type="button"><i class="fa-solid fa-map-location-dot"></i> Map</button>
-      </div>
-      <span id="tree-hint" class="viewbar-hint" hidden>Country &rsaquo; State &rsaquo; City &mdash; click to expand</span>
-      <span id="map-hint" class="viewbar-hint" hidden>Click a country to drill into its regulations</span>
-    </div>
-
-    <div class="legend" aria-label="Legend">
-      <span class="lg"><span class="badge Active">Active</span> rules in force</span>
-      <span class="lg"><span class="badge Restricted">Restricted</span> significant limits</span>
-      <span class="lg"><span class="badge Banned">Banned</span> STRs prohibited</span>
-      <span class="lg"><span class="badge Pending">Pending</span> proposed / not yet in force</span>
-      <span class="lg"><span class="recent-tag-legend">Updated</span> changed in last 21 days (hover for date)</span>
-    </div>
-  </section>
-
-  <!-- Main Database Content Area -->
-  <main class="container">
-    <!-- Map View -->
-    <div id="map" hidden>
-      <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
-      <div class="map-note">Shaded by each country&rsquo;s <b>national</b> framework &mdash; local rules vary, so click in to see city &amp; state detail. <span class="swatch"></span> = no national law (local control).</div>
-      <div id="map-svg"></div>
-    </div>
-
-    <!-- Tree View -->
-    <div id="tree" hidden></div>
-
-    <!-- List Table View -->
-    <div class="table-responsive">
-      <table id="table">
-        <thead>
-          <tr>
-            <th data-key="city">Jurisdiction <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="continent">Region <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="status">Status <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="license_required">License <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="rental_day_cap">Day Cap <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="tax_rate">Tax <i class="fa-solid fa-sort sort-indicator"></i></th>
-            <th data-key="last_changed" class="col-updated">Updated <i class="fa-solid fa-sort sort-indicator"></i></th>
-          </tr>
-        </thead>
-        <tbody id="rows"></tbody>
-      </table>
-    </div>
+  <!-- App Shell Layout -->
+  <div class="app-shell">
     
-    <p id="empty" class="empty" hidden><i class="fa-solid fa-triangle-exclamation"></i> No jurisdictions match your filters.</p>
-  </main>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" class="logo-group">
+          <div class="logo-icon-box">
+            <i class="fa-solid fa-scale-balanced logo-icon"></i>
+          </div>
+          <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
+        </a>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <button class="nav-item active" data-tab="database" aria-label="Regulations Database">
+          <i class="fa-solid fa-database"></i>
+          <span>Regulations DB</span>
+        </button>
+        <button class="nav-item" data-tab="assistant" aria-label="Compliance Assistant">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Compliance Wizard</span>
+        </button>
+        <button class="nav-item" data-tab="market-updates" aria-label="Market Updates">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Market Updates</span>
+        </button>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <div class="partner-badge">
+          <i class="fa-solid fa-shield-check"></i>
+          <span>Powered by VRInsider</span>
+        </div>
+      </div>
+    </aside>
 
-  <!-- Compliance Assistant Wizard Section -->
-  <section id="assistant-section" class="assistant-section">
-    <div class="container">
-      <div class="assistant-header text-center">
-        <span class="badge badge-accent"><i class="fa-solid fa-wand-magic-sparkles"></i> Interactive Tool</span>
-        <h2 class="section-title text-white">Interactive Compliance Assistant</h2>
-        <p class="section-desc text-slate-300">Evaluate strategy feasibility against our live database of global short-term rental laws.</p>
+    <!-- Main Content Wrapper -->
+    <main class="main-content">
+      
+      <!-- Top Bar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-pretitle">Short-Term Rental Regulations</span>
+          <h2 id="topbar-title" class="topbar-title">Regulations Database</h2>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-primary btn-sm" onclick="switchTab('assistant')">
+            <i class="fa-solid fa-square-check"></i> Check Compliance
+          </button>
+        </div>
+      </header>
+
+      <!-- Panel 1: Regulations Database (Default Tab) -->
+      <div id="panel-database" class="panel active">
+        
+        <!-- KPI Dashboard Metric Cards -->
+        <section class="stats-grid">
+          <div class="kpi-card">
+            <div class="kpi-card-glow"></div>
+            <div class="kpi-icon-wrapper"><i class="fa-solid fa-earth-americas"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">328+</span>
+              <span class="kpi-label">Tracked Cities</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-glow red"></div>
+            <div class="kpi-icon-wrapper banned"><i class="fa-solid fa-ban"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">Strict</span>
+              <span class="kpi-label">Active City Bans</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-glow orange"></div>
+            <div class="kpi-icon-wrapper restricted"><i class="fa-solid fa-file-signature"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">Active</span>
+              <span class="kpi-label">Permit Cap Zones</span>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-card-glow emerald"></div>
+            <div class="kpi-icon-wrapper active-kpi"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">100%</span>
+              <span class="kpi-label">Sourced Data</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Search Filters Card -->
+        <section id="database-section" class="controls-section">
+          <div class="controls-card glass">
+            <div class="search-outer">
+              <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
+                <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+              <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
+            </div>
+
+            <div class="filters-grid">
+              <div class="select-wrapper">
+                <select id="continent" aria-label="Filter by Region">
+                  <option value="">All Regions</option>
+                </select>
+              </div>
+              <div class="select-wrapper">
+                <select id="status" aria-label="Filter by Status">
+                  <option value="">All Statuses</option>
+                </select>
+              </div>
+              <div class="select-wrapper">
+                <select id="country" aria-label="Filter by Country">
+                  <option value="">All Countries</option>
+                </select>
+              </div>
+              <button id="reset" class="btn btn-secondary" type="button"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Active View Results Statistics -->
+        <section class="stats-bar-wrapper">
+          <div id="stats" class="stats-chips"></div>
+        </section>
+
+        <!-- View Navigation & Legend -->
+        <section class="view-legend-section">
+          <div class="viewbar">
+            <span class="viewbar-label">View Mode</span>
+            <div class="seg">
+              <button id="view-list" class="vbtn active" type="button" aria-label="List View"><i class="fa-solid fa-table-list"></i> List</button>
+              <button id="view-tree" class="vbtn" type="button" aria-label="Tree View"><i class="fa-solid fa-network-wired"></i> Region Tree</button>
+              <button id="view-map" class="vbtn" type="button" aria-label="Map View"><i class="fa-solid fa-map-location-dot"></i> World Map</button>
+            </div>
+            <span id="tree-hint" class="viewbar-hint" hidden><i class="fa-solid fa-circle-info"></i> Click to expand country &rsaquo; state nodes</span>
+            <span id="map-hint" class="viewbar-hint" hidden><i class="fa-solid fa-circle-info"></i> Click shaded countries to drill into regulations</span>
+          </div>
+
+          <div class="legend" aria-label="Regulatory status legend">
+            <span class="lg"><span class="badge Active">Active</span> Rules in force</span>
+            <span class="lg"><span class="badge Restricted">Restricted</span> Major limitations</span>
+            <span class="lg"><span class="badge Banned">Banned</span> STR Prohibited</span>
+            <span class="lg"><span class="badge Pending">Pending</span> Draft / Proposed</span>
+            <span class="lg"><span class="recent-tag-legend">Updated</span> Changed recently</span>
+          </div>
+        </section>
+
+        <!-- Regulations Database Content Views -->
+        <section class="views-wrapper">
+          <!-- 1. Map View -->
+          <div id="map" hidden>
+            <div class="map-container-card glass">
+              <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
+              <div id="map-svg" class="map-svg-container"></div>
+              <div class="map-note">
+                <i class="fa-solid fa-circle-info"></i> Shading represents the <b>national</b>/<b>federal</b> framework. <span class="swatch"></span> = no federal law (delegated to local/city ordinances).
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Tree View -->
+          <div id="tree" class="tree-container glass" hidden></div>
+
+          <!-- 3. List Table View -->
+          <div class="table-responsive glass" id="table-container">
+            <table id="table">
+              <thead>
+                <tr>
+                  <th data-key="city">Jurisdiction <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="continent">Region <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="status">Status <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="license_required">License <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="rental_day_cap">Day Cap <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="tax_rate">Tax <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="last_changed" class="col-updated">Updated <i class="fa-solid fa-sort sort-indicator"></i></th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          
+          <div id="empty" class="empty glass" hidden>
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>No jurisdictions match your current filters. Clear search or reset option filters.</p>
+          </div>
+        </section>
+
       </div>
 
-      <div class="assistant-card glass">
-        <!-- Step 1: Select City -->
-        <div id="wizard-step-1" class="wizard-step active">
-          <h3 class="step-title">1. Select your target city</h3>
-          <div class="form-group">
-            <select id="assistant-city-select" class="form-select">
-              <option value="" disabled selected>Select a city...</option>
-            </select>
+      <!-- Panel 2: Compliance Assistant Tab -->
+      <div id="panel-assistant" class="panel">
+        <section id="assistant-section" class="assistant-section">
+          <div class="assistant-card glass">
+            <div class="assistant-card-header">
+              <div class="assistant-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Strategy Check</div>
+              <h3>Compliance Assistant Wizard</h3>
+              <p>Verify compliance feasibility against local zoning codes and rental licensing requirements.</p>
+            </div>
+            
+            <!-- Step 1: Select City -->
+            <div id="wizard-step-1" class="wizard-step active">
+              <h4 class="step-title">1. Select target market city</h4>
+              <p class="step-desc">Search and select the city where your property is located.</p>
+              <div class="form-group">
+                <select id="assistant-city-select" class="form-select" aria-label="Select target city">
+                  <option value="" disabled selected>Select a city...</option>
+                </select>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-next-1" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 2: Hosted vs Unhosted -->
+            <div id="wizard-step-2" class="wizard-step" style="display: none;">
+              <h4 class="step-title">2. Will you live on-site during reservations?</h4>
+              <p class="step-desc">Different zoning ordinances apply to primary shared host structures.</p>
+              <div class="radio-cards">
+                <label class="radio-card">
+                  <input type="radio" name="wizard-hosted" value="yes">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-people-roof card-icon"></i>
+                    <span class="card-label">Hosted Stay</span>
+                    <span class="card-hint">Host occupies a bedroom during guest stay.</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="wizard-hosted" value="no">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-key card-icon"></i>
+                    <span class="card-label">Unhosted Stay (Entire Home)</span>
+                    <span class="card-hint">Guests occupy entire dwelling privately.</span>
+                  </div>
+                </label>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-prev-2" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button id="wizard-next-2" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 3: Primary Residence vs Secondary -->
+            <div id="wizard-step-3" class="wizard-step" style="display: none;">
+              <h4 class="step-title">3. Is this property your primary residence?</h4>
+              <p class="step-desc">Many cities enforce owner-occupancy requirements on short-term leasing.</p>
+              <div class="radio-cards">
+                <label class="radio-card">
+                  <input type="radio" name="wizard-residence" value="primary">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-house-user card-icon"></i>
+                    <span class="card-label">Primary Residence</span>
+                    <span class="card-hint">Your legal main home where you live most of the year.</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="wizard-residence" value="secondary">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-hotel card-icon"></i>
+                    <span class="card-label">Investment / Second Home</span>
+                    <span class="card-hint">Dedicated rental unit, secondary home, or vacation property.</span>
+                  </div>
+                </label>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-prev-3" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button id="wizard-submit" class="btn btn-primary" disabled>Analyze Compliance <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+              </div>
+            </div>
+
+            <!-- Wizard Results -->
+            <div id="wizard-result" class="wizard-step" style="display: none;">
+              <div class="result-header">
+                <div id="result-status-icon" class="status-icon-box">
+                  <!-- Dynamic Icon -->
+                </div>
+                <div>
+                  <h3 id="result-city-name" class="result-city-title">New York City</h3>
+                  <div id="result-badge-container"></div>
+                </div>
+              </div>
+
+              <div class="verdict-box" id="result-verdict-box">
+                <h4 class="verdict-title"><i class="fa-solid fa-gavel"></i> Regulatory Summary</h4>
+                <p id="result-verdict-text" class="verdict-text"></p>
+              </div>
+
+              <div class="result-breakdown">
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-circle-exclamation text-slate-400"></i> Local Bans:</span>
+                  <span id="result-violations" class="breakdown-value">None</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-id-card text-slate-400"></i> Permit / License:</span>
+                  <span id="result-permit-status" class="breakdown-value">Yes</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-calendar-days text-slate-400"></i> Nightly Cap:</span>
+                  <span id="result-cap-status" class="breakdown-value">N/A</span>
+                </div>
+              </div>
+
+              <div class="wizard-actions">
+                <button id="wizard-restart" class="btn btn-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Start Over</button>
+                <a id="result-portal-link" href="#" target="_blank" class="btn btn-primary">Visit Official Portal <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              </div>
+            </div>
           </div>
-          <div class="wizard-actions">
-            <button id="wizard-next-1" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+        </section>
+      </div>
+
+      <!-- Panel 3: Market Updates Tab -->
+      <div id="panel-market-updates" class="panel">
+        <section class="latest container" id="latest" hidden>
+          <div class="changelog-card glass">
+            <div class="latest-header">
+              <h2><i class="fa-solid fa-bullhorn changelog-icon"></i> Timeline of Recent Policy Changes</h2>
+              <p>Keep track of licensing guidelines, enforcement deadlines, and legal shifts globally.</p>
+            </div>
+            <ul id="latest-list" class="changelog-timeline"></ul>
           </div>
+        </section>
+      </div>
+
+      <!-- Footer Info -->
+      <footer class="footer">
+        <div class="footer-content">
+          <span id="meta-line"></span>
+          <p class="legal-disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer: LawfulStay provides data for general informational purposes only. Sourced listings are maintained daily, but local zoning codes can shift rapidly. Consult local municipal offices or legal counsel prior to committing to real estate leasing or operations.</p>
+          <p class="copyright">&copy; 2026 LawfulStay. Sourced in partnership with VRInsider.</p>
         </div>
+      </footer>
 
-        <!-- Step 2: Hosted vs Unhosted -->
-        <div id="wizard-step-2" class="wizard-step" style="display: none;">
-          <h3 class="step-title">2. Will you live on-site during bookings?</h3>
-          <div class="radio-cards">
-            <label class="radio-card">
-              <input type="radio" name="wizard-hosted" value="yes">
-              <div class="radio-card-content">
-                <i class="fa-solid fa-people-roof card-icon"></i>
-                <span class="card-label">Yes (Hosted Stay)</span>
-                <span class="card-hint">Host present in property during stays.</span>
-              </div>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="wizard-hosted" value="no">
-              <div class="radio-card-content">
-                <i class="fa-solid fa-key card-icon"></i>
-                <span class="card-label">No (Unhosted Stay)</span>
-                <span class="card-hint">Guests rent entire dwelling privately.</span>
-              </div>
-            </label>
-          </div>
-          <div class="wizard-actions">
-            <button id="wizard-prev-2" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
-            <button id="wizard-next-2" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
-          </div>
-        </div>
+    </main>
 
-        <!-- Step 3: Primary Residence vs Secondary -->
-        <div id="wizard-step-3" class="wizard-step" style="display: none;">
-          <h3 class="step-title">3. Is this property your primary residence?</h3>
-          <div class="radio-cards">
-            <label class="radio-card">
-              <input type="radio" name="wizard-residence" value="primary">
-              <div class="radio-card-content">
-                <i class="fa-solid fa-house-user card-icon"></i>
-                <span class="card-label">Primary Residence</span>
-                <span class="card-hint">You occupy unit major part of the year.</span>
-              </div>
-            </label>
-            <label class="radio-card">
-              <input type="radio" name="wizard-residence" value="secondary">
-              <div class="radio-card-content">
-                <i class="fa-solid fa-hotel card-icon"></i>
-                <span class="card-label">Investment / Second Home</span>
-                <span class="card-hint">Secondary residence, vacation property, or dedicated rental.</span>
-              </div>
-            </label>
-          </div>
-          <div class="wizard-actions">
-            <button id="wizard-prev-3" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
-            <button id="wizard-submit" class="btn btn-primary" disabled>Analyze Compliance <i class="fa-solid fa-wand-magic-sparkles"></i></button>
-          </div>
-        </div>
-
-        <!-- Wizard Results -->
-        <div id="wizard-result" class="wizard-step" style="display: none;">
-          <div class="result-header">
-            <div id="result-status-icon" class="status-icon-box">
-              <!-- Dynamic Icon -->
-            </div>
-            <div>
-              <h3 id="result-city-name" class="result-city-title">New York City</h3>
-              <div id="result-badge-container"></div>
-            </div>
-          </div>
-
-          <div class="verdict-box" id="result-verdict-box">
-            <h4 class="verdict-title">Compliance Verdict</h4>
-            <p id="result-verdict-text" class="verdict-text"></p>
-          </div>
-
-          <div class="result-breakdown">
-            <div class="breakdown-item">
-              <span class="breakdown-label"><i class="fa-solid fa-circle-exclamation text-slate-400"></i> Violations:</span>
-              <span id="result-violations" class="breakdown-value">None</span>
-            </div>
-            <div class="breakdown-item">
-              <span class="breakdown-label"><i class="fa-solid fa-id-card text-slate-400"></i> Permit Required:</span>
-              <span id="result-permit-status" class="breakdown-value">Yes</span>
-            </div>
-            <div class="breakdown-item">
-              <span class="breakdown-label"><i class="fa-solid fa-moon text-slate-400"></i> Annual Cap:</span>
-              <span id="result-cap-status" class="breakdown-value">N/A</span>
-            </div>
-          </div>
-
-          <div class="wizard-actions">
-            <button id="wizard-restart" class="btn btn-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Start Over</button>
-            <a id="result-portal-link" href="#" target="_blank" class="btn btn-primary">Visit Town Portal <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-          </div>
+    <!-- Detail Slide Drawer (Replaces modal dialog) -->
+    <div id="modal" class="modal-drawer" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeDrawer()"></div>
+      <div class="modal-card">
+        <button id="modal-close" class="modal-close" aria-label="Close Drawer"><i class="fa-solid fa-xmark"></i></button>
+        <div id="modal-body" class="modal-drawer-body">
+          <!-- Injected by JS -->
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Detail Modal -->
-  <div id="modal" class="modal" hidden>
-    <div class="modal-card">
-      <button id="modal-close" class="modal-close" aria-label="Close">&times;</button>
-      <div id="modal-body">
-        <!-- Injected by JS -->
-      </div>
-    </div>
   </div>
 
-  <!-- Page Footer -->
-  <footer class="footer">
-    <div class="footer-bottom">
-      <span id="meta-line"></span>
-      <p class="legal-disclaimer">Disclaimer: LawfulStay provides data for informational purposes only. This information does not constitute legal counsel or zoning advisory services. Consult local attorneys or regulatory agencies prior to listing properties.</p>
-      <p class="copyright">&copy; 2026 LawfulStay. All rights reserved. Created in partnership with Antigravity.</p>
-    </div>
-  </footer>
+  <!-- Tab Switching Handler script (Runs before app.js init) -->
+  <script>
+    function switchTab(tabName) {
+      // Find the sidebar nav button matching tabName
+      const items = document.querySelectorAll(".nav-item");
+      const targetItem = Array.from(items).find(item => item.dataset.tab === tabName);
+      if (!targetItem) return;
+      
+      // Update active nav button
+      items.forEach(nav => nav.classList.remove("active"));
+      targetItem.classList.add("active");
+      
+      // Update active panel view
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
+      const targetPanel = document.getElementById(`panel-${tabName}`);
+      if (targetPanel) targetPanel.classList.add("active");
+      
+      // Update topbar title text
+      const titleEl = document.getElementById("topbar-title");
+      if (titleEl) {
+        if (tabName === "database") titleEl.textContent = "Regulations Database";
+        else if (tabName === "assistant") titleEl.textContent = "Compliance Wizard";
+        else if (tabName === "market-updates") titleEl.textContent = "Market Updates";
+      }
+      
+      // Close details drawer if tab shifts
+      closeDrawer();
+      
+      // Scroll main content to top on tab change
+      const mainContent = document.querySelector(".main-content");
+      if (mainContent) mainContent.scrollTop = 0;
+    }
+    
+    function closeDrawer() {
+      const modal = document.getElementById("modal");
+      if (modal) modal.hidden = true;
+    }
+    
+    // Bind click events on sidebar items
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => {
+          switchTab(item.dataset.tab);
+        });
+      });
+    });
+  </script>
 
-  <script src="app.js?v=21"></script>
+  <script src="app.js?v=22"></script>
 </body>
 </html>
