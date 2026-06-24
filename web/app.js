@@ -635,6 +635,9 @@ function openModal(j) {
   $("modal-body").innerHTML = `
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
+    <div style="margin: -0.5rem 0 1rem 0; font-size: 0.8rem;">
+      <a href="#" onclick="openFeedbackDialog('${idEsc}', '${labelEsc}'); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-pen-to-square"></i> Report correction or outdated rules</a>
+    </div>
     <div class="detail-sections-container">
       ${subscribeCardHtml}
       ${htmlContent}

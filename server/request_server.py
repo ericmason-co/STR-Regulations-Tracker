@@ -92,6 +92,28 @@ def send_sub_email(j_label, email, ip):
         s.send_message(msg)
 
 
+def send_feedback_email(j_label, email, notes, ip):
+    host = ENV.get("SMTP_HOST")
+    if not host:
+        return
+    msg = EmailMessage()
+    msg["Subject"] = f"LawfulStay: correction/feedback — {j_label or 'Global'}"
+    msg["From"] = ENV.get("MAIL_FROM", ENV.get("SMTP_USER", ""))
+    msg["To"] = ENV.get("MAIL_TO", "ericmason.co@gmail.com")
+    msg.set_content(
+        "New regulation correction/feedback submitted via lawfulstay.com:\n\n"
+        f"Jurisdiction: {j_label or 'General / Global Feedback'}\n"
+        f"Submitter email: {email or '(none)'}\n"
+        f"Correction details:\n{notes}\n\n"
+        f"IP: {ip}\n"
+        f"Time: {datetime.now(timezone.utc).isoformat()}\n"
+    )
+    with smtplib.SMTP(host, int(ENV.get("SMTP_PORT", "587")), timeout=20) as s:
+        s.starttls()
+        s.login(ENV["SMTP_USER"], ENV["SMTP_PASS"])
+        s.send_message(msg)
+
+
 def push_to_acumbamail(email: str, j_label: str) -> bool:
     token = ENV.get("ACUMBAMAIL_TOKEN")
     list_id = ENV.get("ACUMBAMAIL_LIST_ID")
@@ -135,7 +157,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.rstrip("/")
-        if path not in ("/api/request-location", "/api/subscribe-alerts"):
+        if path not in ("/api/request-location", "/api/subscribe-alerts", "/api/submit-feedback"):
             return self._json(404, {"ok": False, "error": "not found"})
 
         ip = self.headers.get("X-Forwarded-For", "-").split(",")[0].strip()
@@ -210,6 +232,37 @@ class Handler(BaseHTTPRequestHandler):
 
             _last_hit[ip] = now
             return self._json(200, {"ok": True, "message": f"Successfully subscribed to alerts for {j_label}!"})
+
+        elif path == "/api/submit-feedback":
+            j_id = str(data.get("jurisdiction_id", "")).strip()[:MAX_LOC]
+            j_label = str(data.get("jurisdiction_label", "")).strip()[:MAX_LOC]
+            email = str(data.get("email", "")).strip()[:MAX_LOC]
+            notes = str(data.get("notes", "")).strip()[:1000]
+
+            if not notes or len(notes) < 3:
+                return self._json(400, {"ok": False, "error": "Please enter your feedback or correction details."})
+            if email and not EMAIL_RE.match(email):
+                return self._json(400, {"ok": False, "error": "Please enter a valid email address."})
+
+            feedback_log = Path("/opt/str-tracker/data/regulation_feedback.jsonl")
+            rec = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "jurisdiction_id": j_id,
+                "jurisdiction_label": j_label,
+                "email": email,
+                "notes": notes,
+                "ip": ip
+            }
+            feedback_log.parent.mkdir(parents=True, exist_ok=True)
+            with feedback_log.open("a") as f:
+                f.write(json.dumps(rec) + "\n")
+            try:
+                send_feedback_email(j_label, email, notes, ip)
+            except Exception as e:
+                print("feedback email failed:", e, flush=True)
+
+            _last_hit[ip] = now
+            return self._json(200, {"ok": True, "message": "Thank you! Our research group will verify this correction."})
 
     def log_message(self, *a):  # quiet
         pass
