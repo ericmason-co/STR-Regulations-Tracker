@@ -217,6 +217,13 @@ body.dark-theme .glow-orb {
   transition: var(--transition-fast);
   text-decoration: none;
 }
+.btn:disabled, .btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  pointer-events: none;
+}
 
 .btn-primary {
   background-color: var(--brand);

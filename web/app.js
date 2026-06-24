@@ -634,6 +634,11 @@ function setupWizard() {
     const query = cityInput.value.toLowerCase().trim();
     cityAutocomplete.innerHTML = "";
     
+    // Invalidate selection on input change until a recommendation is clicked
+    citySelect.value = "";
+    next1.disabled = true;
+    cityClear.style.display = "none";
+    
     if (!query) {
       cityAutocomplete.style.display = "none";
       return;
