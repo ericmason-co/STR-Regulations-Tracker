@@ -1325,6 +1325,11 @@ function wire() {
     `${ALL.length} jurisdictions · last refresh ${data.meta?.last_full_refresh || "—"} · ` +
     `updates checked daily`;
   
+  const trackedKpiNum = document.querySelector("#kpi-tracked .kpi-num");
+  if (trackedKpiNum) {
+    trackedKpiNum.textContent = ALL.length;
+  }
+  
   wire();
   setupWizard();
   setupSubscribeDialog();
