@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=55" />
+  <link rel="stylesheet" href="styles.css?v=56" />
 
   <!-- JSON-LD Structured Data for Search Engines -->
   <script type="application/ld+json">
@@ -44,6 +44,7 @@
           </div>
           <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
         </a>
+        <p class="sidebar-tagline">The authoritative database for global short-term rental ordinances, municipal zoning, and permit compliance.</p>
       </div>
       
       <nav class="sidebar-menu">
@@ -58,6 +59,10 @@
         <button class="nav-item" data-tab="market-updates" aria-label="Market Updates">
           <i class="fa-solid fa-clock-rotate-left"></i>
           <span>Market Updates</span>
+        </button>
+        <button class="nav-item" data-tab="about" aria-label="About & FAQ">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>About & FAQ</span>
         </button>
       </nav>
       
@@ -403,6 +408,51 @@
         </section>
       </div>
 
+      <!-- Panel 4: About & FAQ Tab -->
+      <div id="panel-about" class="panel">
+        <div class="about-container container">
+          <div class="about-card glass">
+            <h2><i class="fa-solid fa-scale-balanced logo-icon"></i> About LawfulStay</h2>
+            <p>LawfulStay was founded by a coalition of real estate investors, short-term rental hosts, and data analysts who experienced firsthand the difficulty of navigating fragmented municipal codes. We built this platform to bring clarity, transparency, and structure to the complex web of local laws.</p>
+            <p>Our research team tracks council meetings, draft ordinances, and zoning adjustments daily. We verify every registry source, platform mandate, and penalty schedule so that stakeholders can identify risk, evaluate markets, and run compliance checks with confidence.</p>
+            <p><strong>Our Data Promise:</strong> 100% Sourced, verified, and community-enriched. When local laws shift, we update our records to ensure you always have the most current compliance outlook.</p>
+          </div>
+
+          <div class="about-card glass">
+            <h2><i class="fa-solid fa-circle-question logo-icon"></i> Frequently Asked Questions</h2>
+            <div class="faq-list">
+              <details class="faq-item" open>
+                <summary class="faq-question">How often is the regulations database updated?</summary>
+                <div class="faq-answer">
+                  <p>We perform automated checks and manual reviews daily. Major regulatory updates, permit changes, and ordinance bans are updated within 48 hours of municipal publication.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">Can I get notified when regulations change in my city?</summary>
+                <div class="faq-answer">
+                  <p>Yes! Click the <strong>"Subscribe to Alerts"</strong> button in the header, search for your location, and enter your email address to receive immediate updates when rules change.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">How do I suggest a city that isn't currently tracked?</summary>
+                <div class="faq-answer">
+                  <p>Click <strong>"Request Location"</strong> in the header to suggest a city, town, or county. Our research group will investigate the local laws and catalog it within 72 hours.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">Is this considered formal legal counsel?</summary>
+                <div class="faq-answer">
+                  <p>No. LawfulStay provides data for general informational purposes only. Local zoning codes can shift rapidly. We recommend checking with local planning boards or legal counsel before signing leases or purchasing investment property.</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Footer Info -->
       <footer class="footer">
         <div class="footer-content">
@@ -599,6 +649,7 @@
         if (tabName === "database") titleEl.textContent = "Regulations Database";
         else if (tabName === "assistant") titleEl.textContent = "Compliance Wizard";
         else if (tabName === "market-updates") titleEl.textContent = "Market Updates";
+        else if (tabName === "about") titleEl.textContent = "About & FAQ";
       }
       
       // Close details drawer if tab shifts
@@ -624,6 +675,6 @@
     });
   </script>
 
-  <script src="app.js?v=55"></script>
+  <script src="app.js?v=56"></script>
 </body>
 </html>

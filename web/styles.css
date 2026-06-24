@@ -2240,3 +2240,119 @@ details.t-state {
   line-height: 1.35;
 }
 
+/* ==========================================================================
+   About Us & FAQ Page
+   ========================================================================== */
+.sidebar-tagline {
+  font-size: 0.7rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-top: 0.85rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 0.85rem;
+  font-weight: 500;
+}
+
+.about-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem 0;
+  max-width: 800px !important;
+  margin: 0 auto;
+}
+
+.about-card {
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-md);
+  padding: 2.25rem 2rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.about-card h2 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.about-card p {
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--panel);
+  overflow: hidden;
+  transition: var(--transition-fast);
+}
+
+.faq-item[open] {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand-glow);
+}
+
+.faq-question {
+  padding: 1rem 1.25rem;
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition-fast);
+}
+
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
+.faq-question::after {
+  content: '\f078';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.8rem;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+}
+
+.faq-item[open] .faq-question::after {
+  transform: rotate(180deg);
+  color: var(--brand);
+}
+
+.faq-question:hover {
+  background-color: var(--panel-2);
+  color: var(--brand);
+}
+
+.faq-answer {
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  border-top: 1px dashed var(--border);
+  padding-top: 1rem;
+}
+
+
