@@ -5,55 +5,9 @@
 
 /* Design Tokens & CSS Variables */
 :root {
-  color-scheme: dark;
-  
-  /* Obsidian Glass Theme (Dark Mode - Default) */
-  --bg: #030712;            /* Deep Space Black */
-  --panel: rgba(11, 15, 25, 0.75); /* Obsidian Translucent Card */
-  --panel-2: rgba(20, 30, 50, 0.6); /* Translucent Accent Panel */
-  --border: rgba(255, 255, 255, 0.08); /* Soft Glass Border */
-  --text: #f3f4f6;          /* Bright Silver/Gray */
-  --muted: #9ca3af;         /* Cool Muted Gray */
-  --muted-dark: #374151;    /* Slate Gray Border Accent */
-  
-  --brand: #14b8a6;         /* Bright Neon Teal */
-  --brand-strong: #2dd4bf;  /* Glowing Vibrant Teal */
-  --brand-glow: rgba(20, 184, 166, 0.25);
-  --brand-light: rgba(20, 184, 166, 0.08);
-  
-  /* Soft Soothing Status Colors */
-  --active: #10b981;        /* Glowing Emerald */
-  --restricted: #f59e0b;    /* Bright Amber */
-  --banned: #ef4444;        /* Vibrant Red */
-  --pending: #eab308;       /* Yellow */
-  --none: #6b7280;          /* Gray */
-  
-  --map-local: #1f2937;     /* Slate-Dark local */
-  --untracked: #111827;     /* Darker slate for untracked */
-  --untracked-hover: #1f2937; /* Lighter slate for untracked hover */
-  --shadow: rgba(0, 0, 0, 0.4);
-  
-  /* Typography */
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  
-  /* Corner Radii & Transitions */
-  --border-radius-sm: 8px;
-  --border-radius-md: 14px;
-  --border-radius-lg: 24px;
-  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  
-  /* Glassmorphism Variables */
-  --glass-bg: rgba(11, 15, 25, 0.65);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(20px);
-}
-
-body.light-theme {
   color-scheme: light;
   
-  /* Soothing Sage & Forest Teal Theme (Light Mode) */
+  /* Soothing Sage & Forest Teal Theme (Light Mode - Default) */
   --bg: #f2f6f5;            /* Soft Sage White */
   --panel: #ffffff;         /* Pure White */
   --panel-2: #e8f0ee;       /* Soft Sage-Gray */
@@ -79,9 +33,55 @@ body.light-theme {
   --untracked-hover: #c2cfcc; /* Slightly darker sage for untracked hover */
   --shadow: rgba(15, 35, 30, 0.04);
   
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Corner Radii & Transitions */
+  --border-radius-sm: 8px;
+  --border-radius-md: 14px;
+  --border-radius-lg: 24px;
+  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  
   /* Glassmorphism Variables */
   --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(15, 35, 30, 0.04);
+  --glass-blur: blur(20px);
+}
+
+body.dark-theme {
+  color-scheme: dark;
+  
+  /* Obsidian Glass Theme (Dark Mode - Optional Toggle) */
+  --bg: #030712;            /* Deep Space Black */
+  --panel: rgba(11, 15, 25, 0.75); /* Obsidian Translucent Card */
+  --panel-2: rgba(20, 30, 50, 0.6); /* Translucent Accent Panel */
+  --border: rgba(255, 255, 255, 0.08); /* Soft Glass Border */
+  --text: #f3f4f6;          /* Bright Silver/Gray */
+  --muted: #9ca3af;         /* Cool Muted Gray */
+  --muted-dark: #374151;    /* Slate Gray Border Accent */
+  
+  --brand: #14b8a6;         /* Bright Neon Teal */
+  --brand-strong: #2dd4bf;  /* Glowing Vibrant Teal */
+  --brand-glow: rgba(20, 184, 166, 0.25);
+  --brand-light: rgba(20, 184, 166, 0.08);
+  
+  /* Soft Soothing Status Colors */
+  --active: #10b981;        /* Glowing Emerald */
+  --restricted: #f59e0b;    /* Bright Amber */
+  --banned: #ef4444;        /* Vibrant Red */
+  --pending: #eab308;       /* Yellow */
+  --none: #6b7280;          /* Gray */
+  
+  --map-local: #1f2937;     /* Slate-Dark local */
+  --untracked: #111827;     /* Darker slate for untracked */
+  --untracked-hover: #1f2937; /* Lighter slate for untracked hover */
+  --shadow: rgba(0, 0, 0, 0.4);
+  
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(11, 15, 25, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 /* Reset and Global Styles */
@@ -112,13 +112,13 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(100px);
-  opacity: 0.12;
+  opacity: 0.03;
   pointer-events: none;
   z-index: 0;
   transition: opacity 0.5s ease;
 }
-body.light-theme .glow-orb {
-  opacity: 0.03;
+body.dark-theme .glow-orb {
+  opacity: 0.12;
 }
 .orb-1 {
   top: 5%;
