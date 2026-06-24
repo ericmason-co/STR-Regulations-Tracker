@@ -361,6 +361,10 @@ async function ensureMapSvg() {
   svg.addEventListener("click", onMapClick);
   svg.addEventListener("mousemove", onMapHover);
   svg.addEventListener("mouseleave", () => {
+    if (window.mapScrollTimeout) {
+      clearTimeout(window.mapScrollTimeout);
+      window.mapScrollTimeout = null;
+    }
     if (!isPanning) {
       $("map-info").textContent = "Hover a country — click to drill in";
     }
@@ -380,14 +384,33 @@ async function ensureMapSvg() {
   });
 
   svg.addEventListener("wheel", (e) => {
-    e.preventDefault();
-    const rect = svg.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-    const cx = (mouseX / rect.width) * 1000;
-    const cy = (mouseY / rect.height) * 500;
-    const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
-    zoomAt(factor, cx, cy);
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const rect = svg.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const cx = (mouseX / rect.width) * 1000;
+      const cy = (mouseY / rect.height) * 500;
+      const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+      zoomAt(factor, cx, cy);
+    } else {
+      const info = $("map-info");
+      if (info) {
+        const isMac = /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent || navigator.platform || "");
+        const keyName = isMac ? "⌘ (Cmd)" : "Ctrl";
+        const oldText = info.innerHTML;
+        
+        if (!info.innerHTML.includes("scroll to zoom")) {
+          info.innerHTML = `<span style="color: var(--brand); font-weight: bold;"><i class="fa-solid fa-circle-info"></i> Use ${keyName} + scroll to zoom the map</span>`;
+          if (window.mapScrollTimeout) clearTimeout(window.mapScrollTimeout);
+          window.mapScrollTimeout = setTimeout(() => {
+            if (info.innerHTML.includes("scroll to zoom")) {
+              info.innerHTML = oldText;
+            }
+          }, 1800);
+        }
+      }
+    }
   }, { passive: false });
 
   $("map-svg").innerHTML = "";
@@ -408,6 +431,10 @@ function nationalStatusFor(ourCountry) {
 }
 
 function onMapHover(e) {
+  if (window.mapScrollTimeout) {
+    clearTimeout(window.mapScrollTimeout);
+    window.mapScrollTimeout = null;
+  }
   const g = e.target.dataset && e.target.dataset.geo;
   const info = $("map-info");
   if (!g) { info.textContent = "Hover a country — click to drill in"; return; }
