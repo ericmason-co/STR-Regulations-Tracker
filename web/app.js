@@ -80,6 +80,26 @@ function fillSelect(el, values) {
   }
 }
 
+function updateCountrySelect() {
+  const continent = $("continent").value;
+  const countrySelect = $("country");
+  const selectedCountry = countrySelect.value;
+  
+  countrySelect.innerHTML = '<option value="">All Countries</option>';
+  const jurisdictions = continent 
+    ? ALL.filter(j => j.continent === continent)
+    : ALL;
+  const countries = [...new Set(jurisdictions.map(j => j.country).filter(Boolean))].sort();
+  
+  fillSelect(countrySelect, countries);
+  if (countries.includes(selectedCountry)) {
+    countrySelect.value = selectedCountry;
+  } else {
+    countrySelect.value = "";
+  }
+}
+
+
 function matches(j) {
   const q = $("search").value.trim().toLowerCase();
   const continent = $("continent").value;
@@ -314,8 +334,13 @@ function onMapClick(e) {
   const g = e.target.dataset && e.target.dataset.geo;
   if (!g) return;
   const our = geoToOur(g);
-  if (!ALL.some((j) => j.country === our)) return;
+  const matched = ALL.find((j) => j.country === our);
+  if (!matched) return;
+  
+  $("continent").value = matched.continent;
+  updateCountrySelect();
   $("country").value = our;
+  
   setView("tree");
   const det = [...document.querySelectorAll("#tree details.t-country")]
     .find((d) => d.querySelector("summary span").textContent === our);
@@ -626,14 +651,21 @@ function resetWizard() {
 }
 
 function wire() {
-  ["search", "continent", "status", "country"].forEach((id) =>
+  $("continent").addEventListener("input", () => {
+    updateCountrySelect();
+    render();
+  });
+  
+  ["search", "status", "country"].forEach((id) =>
     $(id).addEventListener("input", render));
   
   $("reset").addEventListener("click", () => {
     ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
     $("clear-search").style.display = "none";
+    updateCountrySelect();
     render();
   });
+
   
   // Custom search clear button
   const searchInput = $("search");
@@ -701,7 +733,7 @@ function wire() {
     CONTINENT_ORDER.filter((c) => ALL.some((j) => j.continent === c)));
   fillSelect($("status"), ["Banned", "Restricted", "Active", "Pending", "None"]
     .filter((s) => ALL.some((j) => j.status === s)));
-  fillSelect($("country"), uniqueSorted("country"));
+  updateCountrySelect();
   $("meta-line").textContent =
     `${ALL.length} jurisdictions · last refresh ${data.meta?.last_full_refresh || "—"} · ` +
     `updates checked daily`;
@@ -713,5 +745,5 @@ function wire() {
   const changelog = await fetchJson(["changelog.json", "../data/changelog.json"]);
   renderLatest(changelog);
 })();
-// Deployment trigger comment v4
+// Deployment trigger comment v5
 
