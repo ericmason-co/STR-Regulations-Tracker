@@ -1,4 +1,4 @@
-name: Deploy to Dreamhost
+name: Deploy to Dreamhost & DigitalOcean
 
 on:
   push:
@@ -19,8 +19,17 @@ jobs:
       - name: Install SSHPass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
-      - name: Deploy via Rsync
+      - name: Deploy to Dreamhost
         env:
           SSHPASS: ${{ secrets.DREAMHOST_PASSWORD }}
         run: |
           sshpass -e rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./web/ ${{ secrets.DREAMHOST_USERNAME }}@${{ secrets.DREAMHOST_SERVER }}:/home/${{ secrets.DREAMHOST_USERNAME }}/lawfulstay.com/
+
+      - name: Deploy to DigitalOcean Droplet
+        env:
+          SSH_KEY: ${{ secrets.DIGITALOCEAN_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          rsync -avz -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" ./web/ ${{ secrets.DIGITALOCEAN_USERNAME }}@${{ secrets.DIGITALOCEAN_HOST }}:/opt/str-tracker/web/

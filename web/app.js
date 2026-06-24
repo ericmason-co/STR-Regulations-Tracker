@@ -713,5 +713,5 @@ function wire() {
   const changelog = await fetchJson(["changelog.json", "../data/changelog.json"]);
   renderLatest(changelog);
 })();
-// Deployment trigger comment v3
+// Deployment trigger comment v4
 
