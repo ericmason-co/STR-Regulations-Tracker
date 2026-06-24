@@ -2378,4 +2378,34 @@ details.t-state {
   color: var(--brand);
 }
 
+.sidebar-social {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+.sidebar-social a {
+  color: var(--muted);
+  font-size: 1.1rem;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  text-decoration: none;
+}
+.sidebar-social a:hover {
+  color: var(--brand);
+  background-color: var(--brand-light);
+  border-color: var(--brand-glow);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 8px var(--brand-glow);
+}
+
+
 
