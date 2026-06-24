@@ -129,15 +129,19 @@ function render() {
   renderStats(filtered);
   const isTree = view === "tree";
   const isMap = view === "map";
-  $("table").hidden = isTree || isMap;
-  $("tree").hidden = !isTree;
+  $("table-container").hidden = isTree || isMap || filtered.length === 0;
+  $("tree").hidden = !isTree || filtered.length === 0;
   $("map").hidden = !isMap;
-  $("tree-hint").hidden = !isTree;
+  $("tree-hint").hidden = !isTree || filtered.length === 0;
   $("map-hint").hidden = !isMap;
-  $("empty").hidden = filtered.length > 0 || isMap;
-  if (isTree) renderTree(filtered);
-  else if (isMap) renderMap();
-  else renderList(filtered);
+  $("empty").hidden = ALL.length === 0 || filtered.length > 0 || isMap;
+  if (isTree) {
+    if (filtered.length > 0) renderTree(filtered);
+  } else if (isMap) {
+    renderMap();
+  } else {
+    if (filtered.length > 0) renderList(filtered);
+  }
 }
 
 function renderList(filtered) {
