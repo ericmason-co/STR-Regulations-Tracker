@@ -2035,3 +2035,133 @@ details.t-state {
   }
 }
 
+/* ==========================================================================
+   Professional Refinements: Detail Section Cards & Wizard Progress Tracker
+   ========================================================================== */
+.detail-sections-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.detail-section-card {
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--border-radius-md);
+  padding: 1.25rem;
+}
+
+.detail-section-title {
+  font-family: var(--font-heading);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brand);
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px dashed var(--border);
+  padding-bottom: 0.45rem;
+}
+
+.detail-section-card dl.field-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.detail-section-card dl.field-grid dt {
+  font-size: 0.72rem;
+  margin-bottom: 0.15rem;
+}
+
+.detail-section-card dl.field-grid dd {
+  font-size: 0.88rem;
+  background-color: var(--panel);
+  border-color: var(--border);
+  padding: 0.5rem 0.75rem;
+}
+
+/* Wizard Progress Tracker Timeline */
+.wizard-progress-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1.25rem 0 2rem 0;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.progress-connector {
+  flex-grow: 1;
+  height: 2px;
+  background-color: var(--border);
+  margin: 0 0.5rem;
+  margin-top: -1.25rem; /* align line with circle center */
+  transition: var(--transition-normal);
+  z-index: 0;
+}
+
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  z-index: 1;
+}
+
+.progress-step .step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: var(--transition-normal);
+}
+
+.progress-step .step-label {
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+  transition: var(--transition-normal);
+}
+
+/* Active State */
+.progress-step.active .step-num {
+  background-color: var(--brand-light);
+  border-color: var(--brand);
+  color: var(--brand);
+  box-shadow: 0 0 10px var(--brand-glow);
+}
+.progress-step.active .step-label {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* Completed State */
+.progress-step.completed .step-num {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: #ffffff;
+}
+.progress-step.completed .step-label {
+  color: var(--text);
+}
+
+.progress-step.completed + .progress-connector {
+  background-color: var(--brand);
+}
+

@@ -486,18 +486,82 @@ function renderLatest(changelog) {
   $("latest").hidden = false;
 }
 
+function updateWizardProgress(step) {
+  const stepsList = [1, 2, 3, "result"];
+  stepsList.forEach((s) => {
+    const el = $(`prog-step-${s}`);
+    if (el) el.classList.remove("active", "completed");
+  });
+  
+  const idx = stepsList.indexOf(step);
+  for (let i = 0; i <= idx; i++) {
+    const s = stepsList[i];
+    const el = $(`prog-step-${s}`);
+    if (el) {
+      if (i === idx) {
+        el.classList.add("active");
+      } else {
+        el.classList.add("completed");
+      }
+    }
+  }
+}
+
 function openModal(j) {
-  const rows = Object.keys(FIELD_LABELS)
-    .map((k) => `<dt>${FIELD_LABELS[k]}</dt><dd>${linkify(j[k])}</dd>`)
-    .join("");
+  const sections = [
+    {
+      title: "Overview & Registry",
+      icon: "fa-circle-info",
+      keys: ["status", "effective_date", "license_required", "fees", "source"]
+    },
+    {
+      title: "Operational Rules",
+      icon: "fa-sliders",
+      keys: ["primary_residence_required", "rental_day_cap", "occupancy_limit", "min_stay", "insurance_required"]
+    },
+    {
+      title: "Zoning & Density",
+      icon: "fa-map-location-dot",
+      keys: ["zoning_restrictions", "density_rules"]
+    },
+    {
+      title: "Taxes & Platform Rules",
+      icon: "fa-receipt",
+      keys: ["tax_registration_required", "tax_rate", "platform_obligations"]
+    },
+    {
+      title: "Compliance Notes & Penalties",
+      icon: "fa-triangle-exclamation",
+      keys: ["compliance_notes", "key_notes", "penalties", "additional_context"]
+    }
+  ];
+
+  const htmlContent = sections.map(sec => {
+    const itemsHtml = sec.keys
+      .map(k => {
+        const val = j[k];
+        const label = FIELD_LABELS[k];
+        return `<dt>${label}</dt><dd>${linkify(val)}</dd>`;
+      })
+      .join("");
+    
+    return `
+      <div class="detail-section-card">
+        <h3 class="detail-section-title"><i class="fa-solid ${sec.icon}"></i> ${sec.title}</h3>
+        <dl class="field-grid">${itemsHtml}</dl>
+      </div>
+    `;
+  }).join("");
+
   const rt = recentTag(j);
   const recent = rt ? " " + rt : "";
   const disp = displayName(j);
   const locParts = [...new Set([j.state !== disp.name ? j.state : null, j.country, j.continent].filter(Boolean))];
+  
   $("modal-body").innerHTML = `
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
-    <dl class="field-grid">${rows}</dl>`;
+    <div class="detail-sections-container">${htmlContent}</div>`;
   $("modal").hidden = false;
 }
 
@@ -591,21 +655,25 @@ function setupWizard() {
   next1.addEventListener("click", () => {
     $("wizard-step-1").style.display = "none";
     $("wizard-step-2").style.display = "block";
+    updateWizardProgress(2);
   });
 
   $("wizard-prev-2").addEventListener("click", () => {
     $("wizard-step-2").style.display = "none";
     $("wizard-step-1").style.display = "block";
+    updateWizardProgress(1);
   });
 
   next2.addEventListener("click", () => {
     $("wizard-step-2").style.display = "none";
     $("wizard-step-3").style.display = "block";
+    updateWizardProgress(3);
   });
 
   $("wizard-prev-3").addEventListener("click", () => {
     $("wizard-step-3").style.display = "none";
     $("wizard-step-2").style.display = "block";
+    updateWizardProgress(2);
   });
 
   submit.addEventListener("click", runAnalysis);
@@ -622,6 +690,7 @@ function runAnalysis() {
 
   $("wizard-step-3").style.display = "none";
   $("wizard-result").style.display = "block";
+  updateWizardProgress("result");
 
   $("result-city-name").textContent = j.city;
   $("result-badge-container").innerHTML = `<span class="badge ${esc(j.status)}">${esc(j.status)}</span>`;
@@ -741,6 +810,7 @@ function resetWizard() {
   $("wizard-step-2").style.display = "none";
   $("wizard-step-3").style.display = "none";
   $("wizard-step-1").style.display = "block";
+  updateWizardProgress(1);
 }
 
 function wire() {
