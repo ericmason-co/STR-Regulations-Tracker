@@ -7,29 +7,29 @@
 :root {
   color-scheme: dark light;
   
-  /* Dark Obsidian Space Theme (Default) */
-  --bg: #030712;              /* Deep Space Black */
-  --panel: #0b0f19;           /* Obsidian Slate */
-  --panel-2: #111827;         /* Deep Panel Gray */
-  --border: rgba(255, 255, 255, 0.08); /* Soft White Border */
-  --text: #f9fafb;            /* High Contrast Gray */
-  --muted: #9ca3af;           /* Slate Muted Text */
-  --muted-dark: #374151;      /* Dark Slate Border Accent */
+  /* Soothing Sage & Forest Teal Theme (Dark Mode) */
+  --bg: #0a0f12;              /* Deep Slate Teal Black */
+  --panel: #0f161a;           /* Soft Sage Slate */
+  --panel-2: #152229;         /* Deep Teal Gray */
+  --border: rgba(255, 255, 255, 0.05); /* Softer White Border */
+  --text: #e2ece9;            /* Soothing Sage White */
+  --muted: #8da39e;           /* Sage Slate Muted */
+  --muted-dark: #27353b;      /* Dark Sage Border */
   
-  --brand: #f59e0b;           /* Amber 500 (Primary accent) */
-  --brand-strong: #d97706;    /* Amber 600 */
-  --brand-glow: rgba(245, 158, 11, 0.2);
-  --brand-light: rgba(245, 158, 11, 0.08);
+  --brand: #14b8a6;           /* Mint Teal (Primary Accent) */
+  --brand-strong: #0d9488;    /* Soothing Teal-Emerald */
+  --brand-glow: rgba(20, 184, 166, 0.15);
+  --brand-light: rgba(20, 184, 166, 0.06);
   
-  /* Status Colors */
-  --active: #10b981;          /* Emerald 500 */
-  --restricted: #f97316;      /* Orange 500 */
-  --banned: #ef4444;          /* Red 500 */
-  --pending: #eab308;         /* Yellow 500 */
-  --none: #6b7280;            /* Gray 500 */
+  /* Soft Soothing Status Colors */
+  --active: #0f766e;          /* Calm Teal-Green */
+  --restricted: #cc7a6f;      /* Soft Muted Terra-cotta */
+  --banned: #c66262;          /* Soft Muted Rose-Crimson */
+  --pending: #caa052;         /* Soft Muted Gold */
+  --none: #6b827d;            /* Soft Muted Sage-Gray */
   
-  --map-local: #4b5563;       /* Local control gray */
-  --shadow: rgba(0, 0, 0, 0.55);
+  --map-local: #4d6560;       /* Soft Sage-Slate local control */
+  --shadow: rgba(0, 0, 0, 0.4);
   
   /* Typography */
   --font-heading: 'Outfit', sans-serif;
@@ -43,38 +43,38 @@
   --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   
   /* Glassmorphism Variables */
-  --glass-bg: rgba(11, 15, 25, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-bg: rgba(15, 22, 26, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.04);
   --glass-blur: blur(20px);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    /* Light Corporate Slate Theme */
-    --bg: #f1f5f9;            /* Light Grayish Slate */
-    --panel: #ffffff;         /* Clean White */
-    --panel-2: #f8fafc;       /* Off White Slate */
-    --border: rgba(15, 23, 42, 0.08); /* Soft Dark Border */
-    --text: #0f172a;          /* Deep Slate Blue */
-    --muted: #475569;         /* Slate Muted */
-    --muted-dark: #cbd5e1;    /* Light Slate Border Accent */
+    /* Soothing Sage & Forest Teal Theme (Light Mode) */
+    --bg: #f2f6f5;            /* Soft Sage White */
+    --panel: #ffffff;         /* Pure White */
+    --panel-2: #e8f0ee;       /* Soft Sage-Gray */
+    --border: rgba(15, 35, 30, 0.06); /* Soft Sage Border */
+    --text: #0f1e1a;          /* Deep Slate-Green */
+    --muted: #4a605a;         /* Slate-Green Muted */
+    --muted-dark: #cbd8d5;    /* Light Sage Border Accent */
     
-    --brand: #2563eb;         /* Blue 600 (Primary accent) */
-    --brand-strong: #1d4ed8;  /* Blue 700 */
-    --brand-glow: rgba(37, 99, 235, 0.15);
-    --brand-light: rgba(37, 99, 235, 0.06);
+    --brand: #0d9488;         /* Soothing Forest-Teal */
+    --brand-strong: #0f766e;  /* Deep Forest-Teal */
+    --brand-glow: rgba(13, 148, 136, 0.15);
+    --brand-light: rgba(13, 148, 136, 0.06);
     
-    --active: #059669;        /* Emerald 600 */
-    --restricted: #ea580c;    /* Orange 600 */
-    --banned: #dc2626;        /* Red 600 */
-    --pending: #ca8a04;       /* Yellow 600 */
-    --none: #475569;
+    --active: #0d9488;        /* Forest-Teal */
+    --restricted: #d97706;    /* Orange */
+    --banned: #dc2626;        /* Red */
+    --pending: #ca8a04;       /* Yellow */
+    --none: #4a605a;
     
-    --map-local: #94a3b8;     /* Local control gray */
-    --shadow: rgba(15, 23, 42, 0.06);
+    --map-local: #4d6560;     /* Muted Sage-Slate */
+    --shadow: rgba(15, 35, 30, 0.04);
     
     --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(15, 23, 42, 0.05);
+    --glass-border: rgba(15, 35, 30, 0.04);
   }
 }
 
@@ -1134,8 +1134,7 @@ details.t-state {
   cursor: pointer;
 }
 
-/* Map Color Classes matching status levels */
-.map-svg-container path.mc-untracked { fill: #1c2538; }
+.map-svg-container path.mc-untracked { fill: #131b20; }
 .map-svg-container path.mc-local { fill: var(--map-local); }
 .map-svg-container path.mc-Active { fill: var(--active); }
 .map-svg-container path.mc-Restricted { fill: var(--restricted); }
@@ -1148,7 +1147,7 @@ details.t-state {
   opacity: 0.8;
 }
 .map-svg-container path.mc-untracked:hover {
-  fill: #26334d;
+  fill: #19242b;
 }
 
 .map-note {
