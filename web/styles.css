@@ -2580,7 +2580,7 @@ details.t-state {
 }
 
 .sidebar-ad {
-  min-height: 200px;
+  min-height: 280px;
   width: 100%;
 }
 .horizontal-ad {
@@ -2673,7 +2673,7 @@ details.t-state {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.5rem 1rem 1rem 1rem;
+  padding: 2.25rem 1rem 1.25rem 1rem;
 }
 .mock-ad-vertical .mock-ad-brand {
   display: flex;
@@ -2683,7 +2683,7 @@ details.t-state {
   font-weight: 800;
   font-size: 1rem;
   color: var(--brand);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 .mock-ad-vertical .mock-ad-brand i {
   font-size: 1.1rem;
@@ -2693,14 +2693,14 @@ details.t-state {
   font-size: 1.05rem;
   font-weight: 800;
   line-height: 1.3;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   color: var(--text);
 }
 .mock-ad-vertical p {
   font-size: 0.75rem;
   line-height: 1.4;
   color: var(--muted);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 .mock-ad-vertical .ad-cta {
   width: 100%;
