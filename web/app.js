@@ -317,7 +317,7 @@ function constrainOffsets() {
   }
   const minX = 1000 * (1 - scale) - 200;
   const maxX = 200;
-  const minY = 500 * (1 - scale) - 100;
+  const minY = 420 * (1 - scale) - 100;
   const maxY = 100;
   
   offsetX = Math.min(Math.max(offsetX, minX), maxX);
@@ -342,12 +342,13 @@ async function ensureMapSvg() {
   if (!geo) { $("map-svg").innerHTML = "<p class='empty'>Map data unavailable.</p>"; return; }
   const NS = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(NS, "svg");
-  svg.setAttribute("viewBox", "0 0 1000 500");
+  svg.setAttribute("viewBox", "0 0 1000 420");
   
   const viewport = document.createElementNS(NS, "g");
   viewport.id = "map-viewport";
   
   for (const f of geo.features) {
+    if (f.properties.name === "Antarctica") continue;
     const d = geomToPath(f.geometry);
     if (!d) continue;
     const p = document.createElementNS(NS, "path");
@@ -390,7 +391,7 @@ async function ensureMapSvg() {
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       const cx = (mouseX / rect.width) * 1000;
-      const cy = (mouseY / rect.height) * 500;
+      const cy = (mouseY / rect.height) * 420;
       const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
       zoomAt(factor, cx, cy);
     } else {
@@ -1316,12 +1317,12 @@ function wire() {
   
   if (zoomInBtn) {
     zoomInBtn.addEventListener("click", () => {
-      zoomAt(1.5, 500, 250);
+      zoomAt(1.5, 500, 210);
     });
   }
   if (zoomOutBtn) {
     zoomOutBtn.addEventListener("click", () => {
-      zoomAt(1 / 1.5, 500, 250);
+      zoomAt(1 / 1.5, 500, 210);
     });
   }
   if (zoomResetBtn) {
