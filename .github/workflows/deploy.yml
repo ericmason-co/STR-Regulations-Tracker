@@ -19,6 +19,25 @@ jobs:
       - name: Install SSHPass
         run: sudo apt-get update && sudo apt-get install -y sshpass
 
+      - name: Debug Secrets
+        env:
+          DH_USER: ${{ secrets.DREAMHOST_USERNAME }}
+          DH_SERVER: ${{ secrets.DREAMHOST_SERVER }}
+          DH_PASS: ${{ secrets.DREAMHOST_PASSWORD }}
+        run: |
+          python3 -c "
+          import os
+          user = os.environ.get('DH_USER', '')
+          server = os.environ.get('DH_SERVER', '')
+          password = os.environ.get('DH_PASS', '')
+          print(f'User length: {len(user)}, starts with: {user[0] if user else \"\"}')
+          print(f'Server length: {len(server)}, starts with: {server[0] if server else \"\"}')
+          print(f'Password length: {len(password)}')
+          print(f'Is user em_strreg? {user == \"em_strreg\"}')
+          print(f'Is server pdx1-shared-a1-43.dreamhost.com? {server == \"pdx1-shared-a1-43.dreamhost.com\"}')
+          print(f'Is password correct? {password == \"F?z?iC$3uJ\"}')
+          "
+
       - name: Deploy via Rsync
         env:
           SSHPASS: ${{ secrets.DREAMHOST_PASSWORD }}
