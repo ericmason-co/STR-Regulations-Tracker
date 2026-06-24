@@ -281,6 +281,7 @@ function setView(v) {
 const GEO_ALIAS = {
   "United States": "USA", "Czechia": "Czech Republic",
   "Bahamas": "The Bahamas", "United Kingdom": "England",
+  "Serbia": "Republic of Serbia",
 };
 const GEO_TO_OUR = Object.fromEntries(Object.entries(GEO_ALIAS).map(([k, v]) => [v, k]));
 const STATUS_SEVERITY = { Banned: 4, Restricted: 3, Pending: 2, Active: 1, None: 0 };
