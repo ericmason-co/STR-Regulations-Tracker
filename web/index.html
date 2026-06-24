@@ -14,7 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=26" />
+  <link rel="stylesheet" href="styles.css?v=27" />
 
   <!-- JSON-LD Structured Data for Search Engines -->
   <script type="application/ld+json">
@@ -74,7 +74,10 @@
           <span class="topbar-pretitle">Short-Term Rental Regulations</span>
           <h2 id="topbar-title" class="topbar-title">Regulations Database</h2>
         </div>
-        <div class="topbar-right">
+        <div class="topbar-right" style="display: flex; gap: 0.75rem;">
+          <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
+            <i class="fa-solid fa-circle-plus"></i> Request Location
+          </button>
           <button class="btn btn-primary btn-sm" onclick="switchTab('assistant')">
             <i class="fa-solid fa-square-check"></i> Check Compliance
           </button>
@@ -224,6 +227,9 @@
           <div id="empty" class="empty glass" hidden>
             <i class="fa-solid fa-triangle-exclamation"></i>
             <p>No jurisdictions match your current filters. Clear search or reset option filters.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 1rem;" onclick="openRequestDialog()">
+              <i class="fa-solid fa-circle-plus"></i> Request a Location
+            </button>
           </div>
         </section>
 
@@ -385,10 +391,122 @@
       </div>
     </div>
 
+    <!-- 5. Request Location centered modal overlay -->
+    <div id="request-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeRequestDialog()"></div>
+      <div class="dialog-card">
+        <button onclick="closeRequestDialog()" class="modal-close" aria-label="Close Dialog"><i class="fa-solid fa-xmark"></i></button>
+        <div class="dialog-header">
+          <h3 class="dialog-title">Request a Location</h3>
+          <p class="dialog-desc">Let us know which city or region you're interested in. Our research team reviews requests daily to prioritize database expansion.</p>
+        </div>
+        <form id="request-location-form" onsubmit="handleRequestSubmit(event)">
+          <div class="form-group" style="display: none;" aria-hidden="true">
+            <label for="request-website">Website</label>
+            <input type="text" id="request-website" name="website" autocomplete="off" />
+          </div>
+          
+          <div class="form-group">
+            <label for="request-location-input">Location <span style="color: var(--banned);">*</span></label>
+            <input type="text" id="request-location-input" name="location" required placeholder="e.g. Kyoto, Japan or Denver, CO" class="form-input" />
+          </div>
+          
+          <div class="form-group">
+            <label for="request-email-input">Email Address <span class="optional">(optional)</span></label>
+            <input type="email" id="request-email-input" name="email" placeholder="e.g. you@example.com" class="form-input" />
+            <span style="font-size: 0.75rem; color: var(--muted); line-height: 1.3;">If provided, we will notify you as soon as this location is added.</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="request-notes-input">Notes / Specific Questions <span class="optional">(optional)</span></label>
+            <textarea id="request-notes-input" name="notes" placeholder="e.g. Interested in zoning rules or tax details..." class="form-textarea" rows="3" style="resize: vertical;"></textarea>
+          </div>
+          
+          <div id="request-error-msg" style="color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+          <div id="request-success-msg" style="color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeRequestDialog()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="request-submit-btn">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Tab Switching Handler script (Runs before app.js init) -->
+  <!-- Tab Switching and Request Handlers script (Runs before app.js init) -->
   <script>
+    function openRequestDialog() {
+      const dialog = document.getElementById("request-dialog");
+      if (dialog) {
+        // Reset form
+        document.getElementById("request-location-form").reset();
+        document.getElementById("request-error-msg").style.display = "none";
+        document.getElementById("request-success-msg").style.display = "none";
+        const submitBtn = document.getElementById("request-submit-btn");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Request";
+        dialog.hidden = false;
+      }
+    }
+    
+    function closeRequestDialog() {
+      const dialog = document.getElementById("request-dialog");
+      if (dialog) dialog.hidden = true;
+    }
+    
+    async function handleRequestSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const errorMsg = document.getElementById("request-error-msg");
+      const successMsg = document.getElementById("request-success-msg");
+      const submitBtn = document.getElementById("request-submit-btn");
+      
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+      
+      const payload = {
+        location: form.location.value,
+        email: form.email.value,
+        notes: form.notes.value,
+        website: form.website.value
+      };
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+      
+      try {
+        const res = await fetch("/api/request-location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await res.json();
+        
+        if (res.ok && result.ok) {
+          successMsg.textContent = result.message || "Thank you! Your request has been recorded.";
+          successMsg.style.display = "block";
+          form.reset();
+          setTimeout(() => {
+            closeRequestDialog();
+          }, 2000);
+        } else {
+          errorMsg.textContent = result.error || "An error occurred. Please try again.";
+          errorMsg.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Request";
+        }
+      } catch (err) {
+        errorMsg.textContent = "Unable to connect to the server. Please try again later.";
+        errorMsg.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Request";
+      }
+    }
     function switchTab(tabName) {
       // Find the sidebar nav button matching tabName
       const items = document.querySelectorAll(".nav-item");
@@ -435,6 +553,6 @@
     });
   </script>
 
-  <script src="app.js?v=26"></script>
+  <script src="app.js?v=27"></script>
 </body>
 </html>
