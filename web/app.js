@@ -807,6 +807,22 @@ function wire() {
       render();
     }));
   
+  const themeToggle = $("theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const isLight = document.body.classList.toggle("light-theme");
+      if (isLight) {
+        document.body.classList.remove("dark-theme");
+        localStorage.setItem("theme", "light");
+        themeToggle.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+      } else {
+        document.body.classList.add("dark-theme");
+        localStorage.setItem("theme", "dark");
+        themeToggle.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+      }
+    });
+  }
+
   $("view-list").addEventListener("click", () => setView("list"));
   $("view-tree").addEventListener("click", () => setView("tree"));
   $("view-map").addEventListener("click", () => setView("map"));
@@ -867,6 +883,18 @@ function wire() {
 }
 
 (async function init() {
+  const savedTheme = localStorage.getItem("theme");
+  const themeToggle = $("theme-toggle");
+  if (savedTheme === "light") {
+    document.body.classList.add("light-theme");
+    document.body.classList.remove("dark-theme");
+    if (themeToggle) themeToggle.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+  } else {
+    document.body.classList.add("dark-theme");
+    document.body.classList.remove("light-theme");
+    if (themeToggle) themeToggle.innerHTML = `<i class="fa-solid fa-sun"></i>`;
+  }
+
   const t = Date.now();
   const data = await fetchJson([`jurisdictions.json?t=${t}`, `../data/jurisdictions.json?t=${t}`]);
   if (!data) {

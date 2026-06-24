@@ -5,9 +5,55 @@
 
 /* Design Tokens & CSS Variables */
 :root {
+  color-scheme: dark;
+  
+  /* Obsidian Glass Theme (Dark Mode - Default) */
+  --bg: #030712;            /* Deep Space Black */
+  --panel: rgba(11, 15, 25, 0.75); /* Obsidian Translucent Card */
+  --panel-2: rgba(20, 30, 50, 0.6); /* Translucent Accent Panel */
+  --border: rgba(255, 255, 255, 0.08); /* Soft Glass Border */
+  --text: #f3f4f6;          /* Bright Silver/Gray */
+  --muted: #9ca3af;         /* Cool Muted Gray */
+  --muted-dark: #374151;    /* Slate Gray Border Accent */
+  
+  --brand: #14b8a6;         /* Bright Neon Teal */
+  --brand-strong: #2dd4bf;  /* Glowing Vibrant Teal */
+  --brand-glow: rgba(20, 184, 166, 0.25);
+  --brand-light: rgba(20, 184, 166, 0.08);
+  
+  /* Soft Soothing Status Colors */
+  --active: #10b981;        /* Glowing Emerald */
+  --restricted: #f59e0b;    /* Bright Amber */
+  --banned: #ef4444;        /* Vibrant Red */
+  --pending: #eab308;       /* Yellow */
+  --none: #6b7280;          /* Gray */
+  
+  --map-local: #1f2937;     /* Slate-Dark local */
+  --untracked: #111827;     /* Darker slate for untracked */
+  --untracked-hover: #1f2937; /* Lighter slate for untracked hover */
+  --shadow: rgba(0, 0, 0, 0.4);
+  
+  /* Typography */
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  
+  /* Corner Radii & Transitions */
+  --border-radius-sm: 8px;
+  --border-radius-md: 14px;
+  --border-radius-lg: 24px;
+  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Glassmorphism Variables */
+  --glass-bg: rgba(11, 15, 25, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: blur(20px);
+}
+
+body.light-theme {
   color-scheme: light;
   
-  /* Soothing Sage & Forest Teal Theme (Light Mode - Default) */
+  /* Soothing Sage & Forest Teal Theme (Light Mode) */
   --bg: #f2f6f5;            /* Soft Sage White */
   --panel: #ffffff;         /* Pure White */
   --panel-2: #e8f0ee;       /* Soft Sage-Gray */
@@ -29,23 +75,13 @@
   --none: #4a605a;
   
   --map-local: #4d6560;     /* Muted Sage-Slate */
+  --untracked: #d1dbd9;     /* Soft sage for untracked */
+  --untracked-hover: #c2cfcc; /* Slightly darker sage for untracked hover */
   --shadow: rgba(15, 35, 30, 0.04);
-  
-  /* Typography */
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  
-  /* Corner Radii & Transitions */
-  --border-radius-sm: 8px;
-  --border-radius-md: 14px;
-  --border-radius-lg: 24px;
-  --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   
   /* Glassmorphism Variables */
   --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(15, 35, 30, 0.04);
-  --glass-blur: blur(20px);
 }
 
 /* Reset and Global Styles */
@@ -68,6 +104,81 @@ body {
   line-height: 1.5;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+
+/* Interactive Glowing Background Orbs */
+.glow-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 0.5s ease;
+}
+body.light-theme .glow-orb {
+  opacity: 0.03;
+}
+.orb-1 {
+  top: 5%;
+  left: 10%;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--brand) 0%, transparent 80%);
+  animation: drift-1 25s infinite alternate ease-in-out;
+}
+.orb-2 {
+  bottom: 10%;
+  right: 5%;
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, #10b981 0%, transparent 80%);
+  animation: drift-2 30s infinite alternate ease-in-out;
+}
+.orb-3 {
+  top: 45%;
+  left: 55%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #6366f1 0%, transparent 80%);
+  animation: drift-3 20s infinite alternate ease-in-out;
+}
+@keyframes drift-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(50px, 30px) scale(1.1); }
+}
+@keyframes drift-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-60px, 40px) scale(0.95); }
+}
+@keyframes drift-3 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, -40px) scale(1.05); }
+}
+
+/* Theme Toggle Button Styling */
+.theme-toggle-btn {
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  font-size: 0.95rem;
+  box-shadow: 0 4px 10px var(--shadow);
+}
+.theme-toggle-btn:hover {
+  background-color: var(--panel);
+  border-color: var(--brand);
+  color: var(--brand);
+  transform: rotate(30deg) scale(1.05);
+  box-shadow: 0 0 15px var(--brand-glow);
 }
 
 [hidden] {
@@ -192,6 +303,8 @@ body {
   width: 250px;
   flex-shrink: 0;
   background-color: var(--panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -307,7 +420,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg);
+  background-color: transparent;
   min-width: 0;
 }
 
@@ -319,6 +432,8 @@ body {
   align-items: center;
   justify-content: space-between;
   background-color: var(--panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   z-index: 5;
 }
 
@@ -1147,7 +1262,7 @@ details.t-state {
   cursor: pointer;
 }
 
-.map-svg-container path.mc-untracked { fill: #d1dbd9; }
+.map-svg-container path.mc-untracked { fill: var(--untracked); }
 .map-svg-container path.mc-local { fill: var(--map-local); }
 .map-svg-container path.mc-Active { fill: var(--active); }
 .map-svg-container path.mc-Restricted { fill: var(--restricted); }
@@ -1160,7 +1275,7 @@ details.t-state {
   opacity: 0.8;
 }
 .map-svg-container path.mc-untracked:hover {
-  fill: #c2cfcc;
+  fill: var(--untracked-hover);
 }
 
 .map-note {
@@ -1585,6 +1700,8 @@ details.t-state {
   max-width: 100%;
   height: 100%;
   background-color: var(--panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border-left: 1px solid var(--border);
   box-shadow: -10px 0 40px rgba(0, 0, 0, 0.4);
   padding: 2.25rem 2rem;
@@ -1841,6 +1958,8 @@ details.t-state {
   width: 460px;
   max-width: 90%;
   background-color: var(--panel);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border);
   border-radius: var(--border-radius-md);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
