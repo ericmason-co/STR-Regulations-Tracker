@@ -500,10 +500,31 @@ body.dark-theme .glow-orb {
   overflow: hidden;
   box-shadow: 0 4px 12px var(--shadow);
   transition: var(--transition-fast);
+  cursor: pointer;
 }
 .kpi-card:hover {
   transform: translateY(-2px);
   border-color: var(--muted-dark);
+}
+.kpi-card#kpi-bans.active {
+  background-color: rgba(198, 98, 98, 0.06);
+  border-color: var(--banned);
+  box-shadow: 0 4px 15px rgba(198, 98, 98, 0.15);
+}
+.kpi-card#kpi-caps.active {
+  background-color: rgba(204, 122, 111, 0.06);
+  border-color: var(--restricted);
+  box-shadow: 0 4px 15px rgba(204, 122, 111, 0.15);
+}
+.kpi-card#kpi-sourced.active {
+  background-color: rgba(15, 118, 110, 0.06);
+  border-color: var(--active);
+  box-shadow: 0 4px 15px rgba(15, 118, 110, 0.15);
+}
+.kpi-card#kpi-tracked.active {
+  background-color: var(--brand-light);
+  border-color: var(--brand);
+  box-shadow: 0 4px 15px var(--brand-glow);
 }
 
 .kpi-card-glow {

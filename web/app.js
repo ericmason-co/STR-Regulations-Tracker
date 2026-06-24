@@ -143,6 +143,7 @@ function render() {
   } else {
     if (filtered.length > 0) renderList(filtered);
   }
+  updateKpiCardActiveStates();
 }
 
 function renderList(filtered) {
@@ -1167,6 +1168,31 @@ function wire() {
   ["search", "status", "country"].forEach((id) =>
     $(id).addEventListener("input", render));
   
+  $("kpi-tracked").addEventListener("click", () => {
+    ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
+    $("clear-search").style.display = "none";
+    updateCountrySelect();
+    render();
+  });
+
+  $("kpi-bans").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Banned" ? "" : "Banned";
+    render();
+  });
+
+  $("kpi-caps").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Restricted" ? "" : "Restricted";
+    render();
+  });
+
+  $("kpi-sourced").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Active" ? "" : "Active";
+    render();
+  });
+  
   $("reset").addEventListener("click", () => {
     ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
     $("clear-search").style.display = "none";
@@ -1319,5 +1345,14 @@ function wire() {
     }
   });
 })();
-// Deployment trigger comment v7
+function updateKpiCardActiveStates() {
+  const statusSelect = $("status");
+  if (!statusSelect) return;
+  const status = statusSelect.value;
+  
+  $("kpi-bans").classList.toggle("active", status === "Banned");
+  $("kpi-caps").classList.toggle("active", status === "Restricted");
+  $("kpi-sourced").classList.toggle("active", status === "Active");
+  $("kpi-tracked").classList.toggle("active", !status);
+}
 
