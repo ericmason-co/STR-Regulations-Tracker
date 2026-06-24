@@ -70,6 +70,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
@@ -915,7 +919,7 @@ tr.recent td {
   color: var(--muted);
   gap: 1rem;
 }
-.empty i {
+.empty > i {
   font-size: 2.2rem;
   color: var(--brand);
 }
