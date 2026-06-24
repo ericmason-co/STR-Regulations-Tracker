@@ -2179,7 +2179,6 @@ details.t-state {
   border: 1px solid var(--border);
   border-radius: var(--border-radius-md);
   padding: 1.25rem;
-  margin-top: 1.25rem;
 }
 
 .subscribe-alerts-card h4 {

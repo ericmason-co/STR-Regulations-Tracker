@@ -636,8 +636,8 @@ function openModal(j) {
     <h2>${esc(disp.name)}${recent}</h2>
     <p class="loc">${esc(locParts.join(" · "))}</p>
     <div class="detail-sections-container">
-      ${htmlContent}
       ${subscribeCardHtml}
+      ${htmlContent}
     </div>`;
   $("modal").hidden = false;
 }
