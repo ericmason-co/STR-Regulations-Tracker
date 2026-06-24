@@ -185,7 +185,14 @@
           <!-- 1. Map View -->
           <div id="map" hidden>
             <div class="map-container-card glass">
-              <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
+              <div class="map-header-row">
+                <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
+                <div class="map-zoom-controls">
+                  <button id="map-zoom-in" class="zoom-btn" type="button" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                  <button id="map-zoom-out" class="zoom-btn" type="button" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                  <button id="map-zoom-reset" class="zoom-btn" type="button" title="Reset Zoom"><i class="fa-solid fa-arrows-rotate"></i></button>
+                </div>
+              </div>
               <div id="map-svg" class="map-svg-container"></div>
               <div class="map-note">
                 <i class="fa-solid fa-circle-info"></i> Shading represents the <b>national</b>/<b>federal</b> framework. <span class="swatch"></span> = no federal law (delegated to local/city ordinances).

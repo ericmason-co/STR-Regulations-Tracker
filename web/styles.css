@@ -1057,6 +1057,47 @@ details.t-state {
   gap: 1.25rem;
 }
 
+.map-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.map-zoom-controls {
+  display: inline-flex;
+  background-color: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 0.2rem;
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+}
+
+.zoom-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 0.95rem;
+  padding: 0.4rem 0.65rem;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  line-height: 1;
+}
+
+.zoom-btn:hover {
+  color: var(--text);
+  background-color: var(--border);
+}
+
+.zoom-btn i {
+  display: inline-block;
+  line-height: 1;
+}
+
 .map-info {
   background-color: var(--panel-2);
   border: 1px solid var(--border);
@@ -1743,6 +1784,12 @@ details.t-state {
   .view-legend-section {
     flex-direction: column;
     align-items: flex-start;
+  }
+  
+  .map-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
   }
   
   .legend {

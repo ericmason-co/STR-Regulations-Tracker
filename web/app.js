@@ -37,6 +37,18 @@ let BY_ID = {};
 let sortKey = "city";
 let sortDir = 1;
 
+// Map zoom and pan state
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let isPanning = false;
+let startX = 0;
+let startY = 0;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let dragMoved = false;
+const dragThreshold = 5;
+
 const $ = (id) => document.getElementById(id);
 
 async function fetchJson(urls) {
@@ -282,6 +294,41 @@ function geomToPath(g) {
 const geoToOur = (g) => GEO_TO_OUR[g] || g;
 const ourToGeo = (c) => GEO_ALIAS[c] || c;
 
+function updateMapTransform() {
+  const viewport = $("map-viewport");
+  if (viewport) {
+    viewport.setAttribute("transform", `translate(${offsetX}, ${offsetY}) scale(${scale})`);
+  }
+}
+
+function constrainOffsets() {
+  if (scale <= 1) {
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    return;
+  }
+  const minX = 1000 * (1 - scale) - 200;
+  const maxX = 200;
+  const minY = 500 * (1 - scale) - 100;
+  const maxY = 100;
+  
+  offsetX = Math.min(Math.max(offsetX, minX), maxX);
+  offsetY = Math.min(Math.max(offsetY, minY), maxY);
+}
+
+function zoomAt(factor, cx, cy) {
+  const oldScale = scale;
+  scale = Math.min(Math.max(scale * factor, 1), 8);
+  if (scale === oldScale) return;
+  
+  offsetX = cx - (scale / oldScale) * (cx - offsetX);
+  offsetY = cy - (scale / oldScale) * (cy - offsetY);
+  
+  constrainOffsets();
+  updateMapTransform();
+}
+
 async function ensureMapSvg() {
   if (MAP_BUILT) return;
   const geo = await fetchJson(["world.json"]);
@@ -289,21 +336,57 @@ async function ensureMapSvg() {
   const NS = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(NS, "svg");
   svg.setAttribute("viewBox", "0 0 1000 500");
+  
+  const viewport = document.createElementNS(NS, "g");
+  viewport.id = "map-viewport";
+  
   for (const f of geo.features) {
     const d = geomToPath(f.geometry);
     if (!d) continue;
     const p = document.createElementNS(NS, "path");
     p.setAttribute("d", d);
     p.dataset.geo = f.properties.name;
-    svg.appendChild(p);
+    viewport.appendChild(p);
     (MAP_PATHS[f.properties.name] = MAP_PATHS[f.properties.name] || []).push(p);
   }
+  svg.appendChild(viewport);
+  
   svg.addEventListener("click", onMapClick);
   svg.addEventListener("mousemove", onMapHover);
-  svg.addEventListener("mouseleave", () => ($("map-info").textContent = "Hover a country — click to drill in"));
+  svg.addEventListener("mouseleave", () => {
+    if (!isPanning) {
+      $("map-info").textContent = "Hover a country — click to drill in";
+    }
+  });
+  
+  // Drag-to-pan handlers
+  svg.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return;
+    isPanning = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    lastMouseX = offsetX;
+    lastMouseY = offsetY;
+    dragMoved = false;
+    svg.style.cursor = "grabbing";
+    e.preventDefault();
+  });
+
+  svg.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = svg.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const cx = (mouseX / rect.width) * 1000;
+    const cy = (mouseY / rect.height) * 500;
+    const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+    zoomAt(factor, cx, cy);
+  }, { passive: false });
+
   $("map-svg").innerHTML = "";
   $("map-svg").appendChild(svg);
   MAP_BUILT = true;
+  updateMapTransform();
 }
 
 // A country's color is its NATIONAL-level rule, not its strictest city — so a
@@ -331,6 +414,10 @@ function onMapHover(e) {
 }
 
 function onMapClick(e) {
+  if (dragMoved) {
+    dragMoved = false;
+    return;
+  }
   const g = e.target.dataset && e.target.dataset.geo;
   if (!g) return;
   const our = geoToOur(g);
@@ -663,6 +750,13 @@ function wire() {
     ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
     $("clear-search").style.display = "none";
     updateCountrySelect();
+    
+    // Reset map zoom
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    updateMapTransform();
+    
     render();
   });
 
@@ -719,6 +813,51 @@ function wire() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") $("modal").hidden = true;
   });
+
+  // Global window listeners for drag panning bounds handling
+  window.addEventListener("mousemove", (e) => {
+    if (!isPanning) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
+      dragMoved = true;
+    }
+    offsetX = lastMouseX + dx;
+    offsetY = lastMouseY + dy;
+    constrainOffsets();
+    updateMapTransform();
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!isPanning) return;
+    isPanning = false;
+    const svg = $("map-svg").querySelector("svg");
+    if (svg) svg.style.cursor = "";
+  });
+
+  // Bind map zoom controls UI elements
+  const zoomInBtn = $("map-zoom-in");
+  const zoomOutBtn = $("map-zoom-out");
+  const zoomResetBtn = $("map-zoom-reset");
+  
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener("click", () => {
+      zoomAt(1.5, 500, 250);
+    });
+  }
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener("click", () => {
+      zoomAt(1 / 1.5, 500, 250);
+    });
+  }
+  if (zoomResetBtn) {
+    zoomResetBtn.addEventListener("click", () => {
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      updateMapTransform();
+    });
+  }
 }
 
 (async function init() {
