@@ -623,19 +623,86 @@ function setupWizard() {
   
   if (!citySelect) return;
 
-  // Populate city dropdown (exlcuding level indicators where possible, sorted)
+  const cityInput = $("assistant-city-input");
+  const cityClear = $("assistant-city-clear");
+  const cityAutocomplete = $("assistant-autocomplete");
+
   const validCities = ALL.filter(j => !/^(state level|state|nationwide|national|eu-wide)$/i.test(j.city))
                         .sort((a, b) => a.city.localeCompare(b.city));
+
+  function filterCitySuggestions() {
+    const query = cityInput.value.toLowerCase().trim();
+    cityAutocomplete.innerHTML = "";
+    
+    if (!query) {
+      cityAutocomplete.style.display = "none";
+      return;
+    }
+    
+    const matches = validCities.filter(j => 
+      j.city.toLowerCase().includes(query) || 
+      (j.state && j.state.toLowerCase().includes(query)) ||
+      j.country.toLowerCase().includes(query)
+    );
+    
+    if (matches.length === 0) {
+      const emptyItem = document.createElement("div");
+      emptyItem.className = "autocomplete-item";
+      emptyItem.style.cursor = "default";
+      emptyItem.innerHTML = `<span class="autocomplete-item-name">No cities found</span>` +
+        `<span class="autocomplete-item-meta"><a href="#" style="color: var(--brand); font-weight: 600;" onclick="openRequestDialog(); return false;">Request to add location</a></span>`;
+      cityAutocomplete.appendChild(emptyItem);
+    } else {
+      matches.slice(0, 8).forEach(j => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        
+        const name = esc(j.city);
+        const meta = esc(`${j.state ? j.state + ', ' : ''}${j.country}`);
+        
+        item.innerHTML = `<span class="autocomplete-item-name">${name}</span>` +
+                         `<span class="autocomplete-item-meta">${meta}</span>`;
+                         
+        item.addEventListener("click", () => {
+          selectCity(j);
+        });
+        cityAutocomplete.appendChild(item);
+      });
+    }
+    cityAutocomplete.style.display = "block";
+  }
+
+  function selectCity(j) {
+    citySelect.value = j.id;
+    cityInput.value = `${j.city}, ${j.state ? j.state + ', ' : ''}${j.country}`;
+    cityAutocomplete.style.display = "none";
+    cityClear.style.display = "inline-flex";
+    next1.disabled = false;
+  }
+
+  function clearCitySelection() {
+    citySelect.value = "";
+    cityInput.value = "";
+    cityClear.style.display = "none";
+    cityAutocomplete.style.display = "none";
+    next1.disabled = true;
+  }
+
+  cityInput.addEventListener("input", filterCitySuggestions);
   
-  validCities.forEach(j => {
-    const opt = document.createElement("option");
-    opt.value = j.id;
-    opt.textContent = `${j.city}, ${j.state ? j.state + ', ' : ''}${j.country}`;
-    citySelect.appendChild(opt);
+  cityInput.addEventListener("focus", () => {
+    if (cityInput.value && !citySelect.value) {
+      filterCitySuggestions();
+    }
   });
 
-  citySelect.addEventListener("change", () => {
-    next1.disabled = false;
+  cityClear.addEventListener("click", clearCitySelection);
+
+  // Close autocomplete on click outside
+  document.addEventListener("click", (e) => {
+    if (!cityInput.contains(e.target) && !cityAutocomplete.contains(e.target)) {
+      cityAutocomplete.style.display = "none";
+    }
   });
 
   const hostedRadios = document.getElementsByName("wizard-hosted");
@@ -795,6 +862,8 @@ function runAnalysis() {
 
 function resetWizard() {
   $("assistant-city-select").value = "";
+  if ($("assistant-city-input")) $("assistant-city-input").value = "";
+  if ($("assistant-city-clear")) $("assistant-city-clear").style.display = "none";
   
   const hostedRadios = document.getElementsByName("wizard-hosted");
   hostedRadios.forEach(radio => radio.checked = false);

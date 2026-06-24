@@ -279,10 +279,14 @@
             <div id="wizard-step-1" class="wizard-step active">
               <h4 class="step-title">1. Select target market city</h4>
               <p class="step-desc">Search and select the city where your property is located.</p>
-              <div class="form-group">
-                <select id="assistant-city-select" class="form-select" aria-label="Select target city">
-                  <option value="" disabled selected>Select a city...</option>
-                </select>
+              <div class="form-group" style="position: relative;">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input type="text" id="assistant-city-input" placeholder="Type to search your city (e.g. Kyoto, Stowe, Nuuk...)" autocomplete="off" class="form-input" style="background: transparent; border: none; padding: 0;" />
+                  <button id="assistant-city-clear" class="clear-btn" style="display: none;" type="button" aria-label="Clear selection"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="hidden" id="assistant-city-select" value="" />
+                <div id="assistant-autocomplete" class="autocomplete-suggestions"></div>
               </div>
               <div class="wizard-actions">
                 <button id="wizard-next-1" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
