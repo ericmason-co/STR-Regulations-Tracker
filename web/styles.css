@@ -769,6 +769,27 @@ td {
   transition: var(--transition-fast);
 }
 
+td:first-child {
+  border-left: 4px solid transparent;
+  position: relative;
+  padding-right: 2.5rem;
+}
+
+td:first-child::after {
+  content: "\f054";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  opacity: 0;
+  color: var(--brand);
+  font-size: 0.8rem;
+  transition: var(--transition-fast);
+  pointer-events: none;
+}
+
 tr:last-child td {
   border-bottom: none;
 }
@@ -776,6 +797,15 @@ tr:last-child td {
 tr:hover td {
   background-color: var(--panel-2);
   cursor: pointer;
+}
+
+tr:hover td:first-child {
+  border-left-color: var(--brand);
+}
+
+tr:hover td:first-child::after {
+  opacity: 0.8;
+  transform: translateY(-50%) translateX(0);
 }
 
 tr.recent td {
@@ -957,17 +987,37 @@ details.t-state {
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1.25rem;
+  padding-right: 2.5rem;
   margin: 0.4rem 1.25rem;
   background-color: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   transition: var(--transition-fast);
+  position: relative;
+}
+.t-leaf::after {
+  content: "\f054";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  opacity: 0;
+  color: var(--brand);
+  font-size: 0.8rem;
+  transition: var(--transition-fast);
+  pointer-events: none;
 }
 .t-leaf:hover {
   background-color: var(--panel-2);
   border-color: var(--muted);
   transform: translateX(4px);
+}
+.t-leaf:hover::after {
+  opacity: 0.8;
+  transform: translateY(-50%) translateX(0);
 }
 .t-leaf.national {
   border-left: 3px solid var(--brand);
