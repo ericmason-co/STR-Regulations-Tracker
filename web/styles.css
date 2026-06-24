@@ -5,31 +5,31 @@
 
 /* Design Tokens & CSS Variables */
 :root {
-  color-scheme: dark light;
+  color-scheme: light;
   
-  /* Soothing Sage & Forest Teal Theme (Dark Mode) */
-  --bg: #0a0f12;              /* Deep Slate Teal Black */
-  --panel: #0f161a;           /* Soft Sage Slate */
-  --panel-2: #152229;         /* Deep Teal Gray */
-  --border: rgba(255, 255, 255, 0.05); /* Softer White Border */
-  --text: #e2ece9;            /* Soothing Sage White */
-  --muted: #8da39e;           /* Sage Slate Muted */
-  --muted-dark: #27353b;      /* Dark Sage Border */
+  /* Soothing Sage & Forest Teal Theme (Light Mode - Default) */
+  --bg: #f2f6f5;            /* Soft Sage White */
+  --panel: #ffffff;         /* Pure White */
+  --panel-2: #e8f0ee;       /* Soft Sage-Gray */
+  --border: rgba(15, 35, 30, 0.06); /* Soft Sage Border */
+  --text: #0f1e1a;          /* Deep Slate-Green */
+  --muted: #4a605a;         /* Slate-Green Muted */
+  --muted-dark: #cbd8d5;    /* Light Sage Border Accent */
   
-  --brand: #14b8a6;           /* Mint Teal (Primary Accent) */
-  --brand-strong: #0d9488;    /* Soothing Teal-Emerald */
-  --brand-glow: rgba(20, 184, 166, 0.15);
-  --brand-light: rgba(20, 184, 166, 0.06);
+  --brand: #0d9488;         /* Soothing Forest-Teal */
+  --brand-strong: #0f766e;  /* Deep Forest-Teal */
+  --brand-glow: rgba(13, 148, 136, 0.15);
+  --brand-light: rgba(13, 148, 136, 0.06);
   
   /* Soft Soothing Status Colors */
-  --active: #0f766e;          /* Calm Teal-Green */
-  --restricted: #cc7a6f;      /* Soft Muted Terra-cotta */
-  --banned: #c66262;          /* Soft Muted Rose-Crimson */
-  --pending: #caa052;         /* Soft Muted Gold */
-  --none: #6b827d;            /* Soft Muted Sage-Gray */
+  --active: #0d9488;        /* Forest-Teal */
+  --restricted: #d97706;    /* Orange */
+  --banned: #dc2626;        /* Red */
+  --pending: #ca8a04;       /* Yellow */
+  --none: #4a605a;
   
-  --map-local: #4d6560;       /* Soft Sage-Slate local control */
-  --shadow: rgba(0, 0, 0, 0.4);
+  --map-local: #4d6560;     /* Muted Sage-Slate */
+  --shadow: rgba(15, 35, 30, 0.04);
   
   /* Typography */
   --font-heading: 'Outfit', sans-serif;
@@ -43,39 +43,9 @@
   --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   
   /* Glassmorphism Variables */
-  --glass-bg: rgba(15, 22, 26, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.04);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(15, 35, 30, 0.04);
   --glass-blur: blur(20px);
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    /* Soothing Sage & Forest Teal Theme (Light Mode) */
-    --bg: #f2f6f5;            /* Soft Sage White */
-    --panel: #ffffff;         /* Pure White */
-    --panel-2: #e8f0ee;       /* Soft Sage-Gray */
-    --border: rgba(15, 35, 30, 0.06); /* Soft Sage Border */
-    --text: #0f1e1a;          /* Deep Slate-Green */
-    --muted: #4a605a;         /* Slate-Green Muted */
-    --muted-dark: #cbd8d5;    /* Light Sage Border Accent */
-    
-    --brand: #0d9488;         /* Soothing Forest-Teal */
-    --brand-strong: #0f766e;  /* Deep Forest-Teal */
-    --brand-glow: rgba(13, 148, 136, 0.15);
-    --brand-light: rgba(13, 148, 136, 0.06);
-    
-    --active: #0d9488;        /* Forest-Teal */
-    --restricted: #d97706;    /* Orange */
-    --banned: #dc2626;        /* Red */
-    --pending: #ca8a04;       /* Yellow */
-    --none: #4a605a;
-    
-    --map-local: #4d6560;     /* Muted Sage-Slate */
-    --shadow: rgba(15, 35, 30, 0.04);
-    
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(15, 35, 30, 0.04);
-  }
 }
 
 /* Reset and Global Styles */
@@ -135,13 +105,8 @@ body {
 
 .btn-primary {
   background-color: var(--brand);
-  color: #030712;
+  color: #ffffff;
   font-weight: 600;
-}
-@media (prefers-color-scheme: light) {
-  .btn-primary {
-    color: #ffffff;
-  }
 }
 .btn-primary:hover {
   background-color: var(--brand-strong);
@@ -308,14 +273,7 @@ body {
 .nav-item.active {
   color: var(--brand);
   background-color: var(--brand-light);
-  border: 1px solid rgba(245, 158, 11, 0.15);
-}
-@media (prefers-color-scheme: light) {
-  .nav-item.active {
-    background-color: var(--brand-light);
-    border-color: rgba(37, 99, 235, 0.15);
-    color: var(--brand);
-  }
+  border: 1px solid var(--brand-glow);
 }
 
 .sidebar-footer {
@@ -711,14 +669,7 @@ body {
 .vbtn.active {
   background-color: var(--brand-light);
   color: var(--brand);
-  border: 1px solid rgba(245, 158, 11, 0.15);
-}
-@media (prefers-color-scheme: light) {
-  .vbtn.active {
-    background-color: var(--brand-light);
-    border-color: rgba(37, 99, 235, 0.15);
-    color: var(--brand);
-  }
+  border: 1px solid var(--brand-glow);
 }
 
 .viewbar-hint {
@@ -1134,7 +1085,7 @@ details.t-state {
   cursor: pointer;
 }
 
-.map-svg-container path.mc-untracked { fill: #131b20; }
+.map-svg-container path.mc-untracked { fill: #d1dbd9; }
 .map-svg-container path.mc-local { fill: var(--map-local); }
 .map-svg-container path.mc-Active { fill: var(--active); }
 .map-svg-container path.mc-Restricted { fill: var(--restricted); }
@@ -1147,7 +1098,7 @@ details.t-state {
   opacity: 0.8;
 }
 .map-svg-container path.mc-untracked:hover {
-  fill: #19242b;
+  fill: #c2cfcc;
 }
 
 .map-note {
@@ -1306,11 +1257,6 @@ details.t-state {
   background-color: var(--brand-light);
   border-color: var(--brand);
   box-shadow: 0 4px 15px var(--brand-glow);
-}
-@media (prefers-color-scheme: light) {
-  .radio-card input[type="radio"]:checked + .radio-card-content {
-    border-color: var(--brand);
-  }
 }
 
 .card-icon {
