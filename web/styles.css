@@ -2716,6 +2716,12 @@ details.t-state {
   gap: 1rem;
   text-align: left;
 }
+.mock-ad-horizontal .mock-ad-badge {
+  right: 1.5rem;
+}
+.mock-ad-horizontal .ad-cta {
+  align-self: flex-end;
+}
 .mock-ad-horizontal .mock-ad-left {
   display: flex;
   align-items: center;
@@ -2760,10 +2766,17 @@ details.t-state {
 }
 
 @media (max-width: 768px) {
+  .horizontal-ad {
+    min-height: auto;
+  }
   .mock-ad-horizontal {
+    position: relative;
     flex-direction: column;
     align-items: stretch;
     padding: 1.5rem 1rem 1rem 1rem;
+  }
+  .mock-ad-horizontal .mock-ad-badge {
+    right: 1rem;
   }
   .mock-ad-horizontal .mock-ad-left {
     flex-direction: column;
@@ -2780,6 +2793,7 @@ details.t-state {
   }
   .mock-ad-horizontal .ad-cta {
     width: 100%;
+    align-self: stretch;
   }
 }
 
