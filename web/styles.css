@@ -2708,7 +2708,9 @@ details.t-state {
 
 /* Horizontal Mock Ad */
 .mock-ad-horizontal {
+  position: relative;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
