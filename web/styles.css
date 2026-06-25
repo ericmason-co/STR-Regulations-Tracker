@@ -2665,6 +2665,25 @@ details.t-state {
   padding: 0.15rem 0.35rem;
   border-radius: 4px;
 }
+.mock-ad-logo-img-vertical {
+  max-width: 120px;
+  height: auto;
+  margin-bottom: 0.25rem;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
+  transition: filter var(--transition-normal);
+}
+body.dark-theme .mock-ad-logo-img-vertical {
+  filter: brightness(0) invert(1) drop-shadow(0 1px 2px rgba(255,255,255,0.1));
+}
+.mock-ad-logo-img-horizontal {
+  max-height: 36px;
+  width: auto;
+  background-color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
 
 /* Vertical Mock Ad */
 .mock-ad-vertical {
