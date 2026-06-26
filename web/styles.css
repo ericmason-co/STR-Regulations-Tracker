@@ -2685,6 +2685,34 @@ body.dark-theme .mock-ad-logo-img-vertical {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Custom CSS/SVG animated logo for HowToGoSocial bottom ad */
+.logo-icon-ad {
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, #0ea5e9 0%, #d946ef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: spinIconAd 15s linear infinite;
+  display: inline-block;
+  line-height: 1;
+}
+
+@keyframes spinIconAd {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.logo-text-ad {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: -0.3px;
+  background: linear-gradient(to right, var(--text), var(--muted));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  white-space: nowrap;
+}
+
+
 /* Vertical Mock Ad */
 .mock-ad-vertical {
   display: flex;
