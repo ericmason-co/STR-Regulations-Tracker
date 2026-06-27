@@ -7,31 +7,31 @@
 :root {
   color-scheme: light;
   
-  /* Soothing Sage & Forest Teal Theme (Light Mode - Default) */
-  --bg: #f2f6f5;            /* Soft Sage White */
+  /* Classic Navy & Steel Blue Theme (Light Mode - Default) */
+  --bg: #f8fafc;            /* Crisp Ice-White */
   --panel: #ffffff;         /* Pure White */
-  --panel-2: #e8f0ee;       /* Soft Sage-Gray */
-  --border: rgba(15, 35, 30, 0.06); /* Soft Sage Border */
-  --text: #0f1e1a;          /* Deep Slate-Green */
-  --muted: #4a605a;         /* Slate-Green Muted */
-  --muted-dark: #cbd8d5;    /* Light Sage Border Accent */
+  --panel-2: #f1f5f9;       /* Light Slate-Gray */
+  --border: rgba(15, 23, 42, 0.08); /* Slate Border */
+  --text: #0f172a;          /* Deep Navy/Slate */
+  --muted: #475569;         /* Slate-Gray Muted */
+  --muted-dark: #cbd5e1;    /* Slate-Gray Border Accent */
   
-  --brand: #0d9488;         /* Soothing Forest-Teal */
-  --brand-strong: #0f766e;  /* Deep Forest-Teal */
-  --brand-glow: rgba(13, 148, 136, 0.15);
-  --brand-light: rgba(13, 148, 136, 0.06);
+  --brand: #2563eb;         /* Steel Blue */
+  --brand-strong: #1e3a8a;  /* Deep Navy */
+  --brand-glow: rgba(37, 99, 235, 0.15);
+  --brand-light: rgba(37, 99, 235, 0.06);
   
-  /* Soft Soothing Status Colors */
-  --active: #0d9488;        /* Forest-Teal */
-  --restricted: #d97706;    /* Orange */
-  --banned: #dc2626;        /* Red */
-  --pending: #ca8a04;       /* Yellow */
-  --none: #4a605a;
+  /* Soft Status Colors */
+  --active: #10b981;        /* Emerald Green for Compliant */
+  --restricted: #f59e0b;    /* Amber for Restricted */
+  --banned: #ef4444;        /* Red for Banned */
+  --pending: #eab308;       /* Yellow */
+  --none: #475569;
   
-  --map-local: #4d6560;     /* Muted Sage-Slate */
-  --untracked: #d1dbd9;     /* Soft sage for untracked */
-  --untracked-hover: #c2cfcc; /* Slightly darker sage for untracked hover */
-  --shadow: rgba(15, 35, 30, 0.04);
+  --map-local: #475569;     /* Slate-Gray */
+  --untracked: #e2e8f0;     /* Light Slate for untracked */
+  --untracked-hover: #cbd5e1; /* Hover untracked */
+  --shadow: rgba(15, 23, 42, 0.04);
   
   /* Typography */
   --font-heading: 'Outfit', sans-serif;
@@ -46,7 +46,7 @@
   
   /* Glassmorphism Variables */
   --glass-bg: rgba(255, 255, 255, 0.75);
-  --glass-border: rgba(15, 35, 30, 0.04);
+  --glass-border: rgba(15, 23, 42, 0.04);
   --glass-blur: blur(20px);
 }
 
@@ -2844,6 +2844,72 @@ body.dark-theme .mock-ad-logo-img-vertical {
     width: 100%;
     align-self: stretch;
   }
+}
+
+/* ==========================================================================
+   Classic Navy Sidebar Overrides (Light Mode)
+   ========================================================================== */
+body:not(.dark-theme) .sidebar {
+  background-color: #0f172a; /* Deep Navy Sidebar */
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+body:not(.dark-theme) .sidebar-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+body:not(.dark-theme) .logo-group {
+  color: #f8fafc;
+}
+body:not(.dark-theme) .logo-icon-box {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #3b82f6; /* Steel Blue Icon */
+  border: 1px solid #2563eb;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
+}
+body:not(.dark-theme) .nav-item {
+  color: #94a3b8; /* Slate light */
+}
+body:not(.dark-theme) .nav-item i {
+  color: #94a3b8;
+}
+body:not(.dark-theme) .nav-item:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+body:not(.dark-theme) .nav-item:hover i {
+  color: #ffffff;
+}
+body:not(.dark-theme) .nav-item.active {
+  color: #ffffff;
+  background-color: #2563eb; /* Steel Blue active */
+  border: 1px solid rgba(37, 99, 235, 0.3);
+}
+body:not(.dark-theme) .nav-item.active i {
+  color: #ffffff;
+}
+body:not(.dark-theme) .sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+body:not(.dark-theme) .partner-badge {
+  color: #94a3b8;
+}
+body:not(.dark-theme) .partner-badge i {
+  color: #3b82f6;
+}
+body:not(.dark-theme) .sidebar-social a {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+body:not(.dark-theme) .sidebar-social a:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #2563eb;
+}
+body:not(.dark-theme) .sidebar-links a {
+  color: #64748b;
+}
+body:not(.dark-theme) .sidebar-links a:hover {
+  color: #94a3b8;
 }
 
 
