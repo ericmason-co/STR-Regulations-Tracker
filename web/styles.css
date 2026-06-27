@@ -589,12 +589,53 @@ body.dark-theme .glow-orb {
   font-weight: 500;
 }
 
-.kpi-subtext {
-  font-size: 0.65rem;
+.kpi-info-trigger {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
   color: var(--muted);
-  opacity: 0.75;
-  margin-top: 0.15rem;
-  line-height: 1.25;
+  cursor: pointer;
+  position: relative;
+  font-size: 0.72rem;
+  opacity: 0.6;
+  transition: var(--transition-fast);
+}
+
+.kpi-info-trigger:hover {
+  opacity: 1;
+  color: var(--brand);
+}
+
+/* Glassmorphic Tooltip bubble */
+.kpi-info-trigger::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 135%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px var(--shadow);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.68rem;
+  font-family: var(--font-body);
+  font-weight: 400;
+  width: 200px;
+  white-space: normal;
+  text-align: center;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.kpi-info-trigger:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ==========================================================================
