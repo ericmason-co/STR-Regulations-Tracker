@@ -420,6 +420,102 @@ async function ensureMapSvg() {
   $("map-svg").appendChild(svg);
   MAP_BUILT = true;
   updateMapTransform();
+  
+  // Set up Map Search and Settings controls
+  const searchInput = $("map-search-input");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      handleMapSearch(e.target.value);
+    });
+    searchInput.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        searchInput.value = "";
+        handleMapSearch("");
+        searchInput.blur();
+      }
+    });
+  }
+  
+  const settingsBtn = $("map-settings-btn");
+  if (settingsBtn) {
+    settingsBtn.addEventListener("click", () => {
+      showToast("Map Layer: Interactive Vector. High Contrast theme active.");
+    });
+  }
+}
+
+// Map Search Search & Highlight Handler
+function handleMapSearch(query) {
+  query = (query || "").trim().toLowerCase();
+  if (!query) {
+    // Reset path opacity and highlight styling
+    for (const paths of Object.values(MAP_PATHS)) {
+      for (const p of paths) {
+        p.style.opacity = "";
+        p.style.stroke = "";
+        p.style.strokeWidth = "";
+      }
+    }
+    return;
+  }
+
+  // Find matching city, state, or country in our database
+  const match = ALL.find(j => 
+    (j.city || "").toLowerCase().includes(query) ||
+    (j.state || "").toLowerCase().includes(query) ||
+    (j.country || "").toLowerCase().includes(query)
+  );
+
+  if (match) {
+    const geoCountry = ourToGeo(match.country);
+    const paths = MAP_PATHS[geoCountry];
+    if (paths && paths.length) {
+      // Fade out other countries and highlight matching paths
+      for (const [name, countryPaths] of Object.entries(MAP_PATHS)) {
+        const isMatch = name === geoCountry;
+        for (const p of countryPaths) {
+          p.style.opacity = isMatch ? "1" : "0.15";
+          p.style.stroke = isMatch ? "var(--brand)" : "";
+          p.style.strokeWidth = isMatch ? "1.5" : "";
+        }
+      }
+      
+      // Calculate Bounding Box of the target country paths to zoom/pan to it
+      const firstBBox = paths[0].getBBox();
+      let minX = firstBBox.x;
+      let minY = firstBBox.y;
+      let maxX = firstBBox.x + firstBBox.width;
+      let maxY = firstBBox.y + firstBBox.height;
+      
+      for (let i = 1; i < paths.length; i++) {
+        const b = paths[i].getBBox();
+        minX = Math.min(minX, b.x);
+        minY = Math.min(minY, b.y);
+        maxX = Math.max(maxX, b.x + b.width);
+        maxY = Math.max(maxY, b.y + b.height);
+      }
+      
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      const width = maxX - minX;
+      const height = maxY - minY;
+      
+      // Calculate responsive zoom factor
+      const zoomFactor = Math.max(1, Math.min(4.5, 400 / Math.max(width, height)));
+      
+      scale = zoomFactor;
+      offsetX = 500 - cx * scale;
+      offsetY = 210 - cy * scale;
+      constrainOffsets();
+      updateMapTransform();
+      
+      // If search query is an exact match for a tracked city, open the details modal directly
+      const exactCity = ALL.find(j => (j.city || "").toLowerCase() === query);
+      if (exactCity) {
+        openModal(exactCity);
+      }
+    }
+  }
 }
 
 // A country's color is its NATIONAL-level rule, not its strictest city — so a
@@ -1371,6 +1467,11 @@ function wire() {
       offsetX = 0;
       offsetY = 0;
       updateMapTransform();
+      const searchInput = $("map-search-input");
+      if (searchInput) {
+        searchInput.value = "";
+        handleMapSearch("");
+      }
     });
   }
 }

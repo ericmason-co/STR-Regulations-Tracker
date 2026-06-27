@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=87" />
+  <link rel="stylesheet" href="styles.css?v=88" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -262,20 +262,54 @@
         <section class="views-wrapper">
           <!-- 1. Map View -->
           <div id="map" hidden>
-            <div class="map-container-card glass">
-              <div class="map-header-row">
-                <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
-                <div class="map-zoom-controls">
-                  <button id="map-zoom-in" class="zoom-btn" type="button" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                  <button id="map-zoom-out" class="zoom-btn" type="button" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-                  <button id="map-zoom-reset" class="zoom-btn" type="button" title="Reset Zoom"><i class="fa-solid fa-arrows-rotate"></i></button>
+            <div class="map-container-card">
+              <!-- Floating Header with Title and Search -->
+              <div class="map-floating-header">
+                <h3 class="map-card-title">Global Map</h3>
+                <div class="map-search-row">
+                  <div class="map-search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="map-search-input" placeholder="Search..." autocomplete="off" />
+                  </div>
                 </div>
               </div>
+              
+              <!-- Floating Zoom Controls -->
+              <div class="map-floating-controls">
+                <button id="map-settings-btn" class="map-ctrl-btn" type="button" title="Map Settings"><i class="fa-solid fa-gear"></i></button>
+                <button id="map-zoom-in" class="map-ctrl-btn" type="button" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+                <button id="map-zoom-out" class="map-ctrl-btn" type="button" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+              </div>
+
+              <!-- Interactive Map SVG -->
               <div id="map-svg" class="map-svg-container"></div>
-              <div class="map-note">
-                <i class="fa-solid fa-circle-info"></i> Shading represents the <b>national</b>/<b>federal</b> framework. <span class="swatch"></span> = no federal law (delegated to local/city ordinances).
+              
+              <!-- Floating Legend Container -->
+              <div class="map-floating-legend">
+                <div class="legend-item">
+                  <span class="legend-swatch compliant"></span>
+                  <span class="legend-label">Compliant</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch caution"></span>
+                  <span class="legend-label">Caution</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch restricted"></span>
+                  <span class="legend-label">Restricted</span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-swatch non-compliant"></span>
+                  <span class="legend-label">Non-Compliant</span>
+                </div>
+              </div>
+
+              <!-- Floating Reset View in Bottom Right -->
+              <div class="map-floating-bottom-right">
+                <button id="map-zoom-reset" class="map-ctrl-btn" type="button" title="Reset View"><i class="fa-solid fa-expand"></i></button>
               </div>
             </div>
+            <div id="map-info" class="map-info-toast">Hover a country &mdash; click to explore</div>
           </div>
 
           <!-- 2. Tree View -->
@@ -900,6 +934,6 @@
     });
   </script>
 
-  <script src="app.js?v=87"></script>
+  <script src="app.js?v=88"></script>
 </body>
 </html>
