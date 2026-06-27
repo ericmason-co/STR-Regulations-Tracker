@@ -1214,6 +1214,16 @@ function wire() {
     render();
   });
 
+  document.querySelectorAll(".kpi-info-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const message = trigger.getAttribute("title") || "";
+      if (message) {
+        showToast(message);
+      }
+    });
+  });
+
   $("kpi-bans").addEventListener("click", () => {
     const s = $("status");
     s.value = s.value === "Banned" ? "" : "Banned";
@@ -1405,5 +1415,39 @@ function updateKpiCardActiveStates() {
   $("kpi-allowed").classList.toggle("active", status === "Active");
   $("kpi-tracked").classList.toggle("active", !status);
   $("kpi-monitored").classList.toggle("active", !status);
+}
+
+function showToast(message) {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    document.body.appendChild(container);
+  }
+  
+  // Clear any existing toasts to avoid spamming
+  container.innerHTML = "";
+  
+  const toast = document.createElement("div");
+  toast.className = "toast-message";
+  toast.innerHTML = `
+    <div class="toast-body">
+      <i class="fa-solid fa-circle-info toast-icon"></i>
+      <span class="toast-text">${message}</span>
+    </div>
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+  
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 4000);
 }
 

@@ -2865,6 +2865,59 @@ body.dark-theme .mock-ad-logo-img-vertical {
 
 /* Sidebar overrides cleaned up - using light-slate native panel color */
 
+/* Toast Notification System */
+#toast-container {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+.toast-message {
+  background-color: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: var(--border-radius-md);
+  padding: 0.85rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  min-width: 300px;
+  max-width: 450px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+}
+
+.toast-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-body {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toast-icon {
+  color: var(--brand);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.toast-text {
+  line-height: 1.4;
+}
+
 
 
 
