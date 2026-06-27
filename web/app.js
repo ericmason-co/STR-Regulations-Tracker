@@ -1207,6 +1207,13 @@ function wire() {
     render();
   });
 
+  $("kpi-monitored").addEventListener("click", () => {
+    ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
+    $("clear-search").style.display = "none";
+    updateCountrySelect();
+    render();
+  });
+
   $("kpi-bans").addEventListener("click", () => {
     const s = $("status");
     s.value = s.value === "Banned" ? "" : "Banned";
@@ -1391,5 +1398,6 @@ function updateKpiCardActiveStates() {
   $("kpi-caps").classList.toggle("active", status === "Restricted");
   $("kpi-allowed").classList.toggle("active", status === "Active");
   $("kpi-tracked").classList.toggle("active", !status);
+  $("kpi-monitored").classList.toggle("active", !status);
 }
 
