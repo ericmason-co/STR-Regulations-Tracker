@@ -249,6 +249,9 @@ function renderTree(filtered) {
     cSum.innerHTML = `<span>${esc(country)}</span><span class="tcount">${recs.length}</span>`;
     cDet.appendChild(cSum);
 
+    const cContent = document.createElement("div");
+    cContent.className = "t-content";
+
     const national = [];
     const byState = {};
     for (const j of recs) {
@@ -256,7 +259,7 @@ function renderTree(filtered) {
       if (!st) national.push(j);
       else (byState[st] = byState[st] || []).push(j);
     }
-    national.sort((a, b) => a.city.localeCompare(b.city)).forEach((j) => cDet.appendChild(leafEl(j, true)));
+    national.sort((a, b) => a.city.localeCompare(b.city)).forEach((j) => cContent.appendChild(leafEl(j, true)));
 
     for (const st of Object.keys(byState).sort()) {
       const items = byState[st].sort((a, b) => a.city.localeCompare(b.city));
@@ -265,9 +268,15 @@ function renderTree(filtered) {
       const sSum = document.createElement("summary");
       sSum.innerHTML = `<span>${esc(st)}</span><span class="tcount">${items.length}</span>`;
       sDet.appendChild(sSum);
-      items.forEach((j) => sDet.appendChild(leafEl(j, false)));
-      cDet.appendChild(sDet);
+      
+      const sContent = document.createElement("div");
+      sContent.className = "t-content";
+      items.forEach((j) => sContent.appendChild(leafEl(j, false)));
+      sDet.appendChild(sContent);
+      
+      cContent.appendChild(sDet);
     }
+    cDet.appendChild(cContent);
     tree.appendChild(cDet);
   }
 }

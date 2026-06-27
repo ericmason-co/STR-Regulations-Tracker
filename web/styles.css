@@ -1147,9 +1147,76 @@ details[open] > summary::before {
   border-radius: 20px;
 }
 
+/* Tree Content Wrapper (Spine/Trunk) */
+.t-content {
+  position: relative;
+  margin-left: 20px;
+  margin-right: 1.25rem;
+  margin-top: 0.4rem;
+  margin-bottom: 0.8rem;
+  padding-left: 20px;
+  border-left: 2px dashed rgba(37, 99, 235, 0.25); /* Dashed connection trunk */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+body.dark-theme .t-content {
+  border-left-color: rgba(20, 184, 166, 0.3);
+}
+
+/* Branch Connection Lines */
+.t-content > .t-leaf,
+.t-content > .t-state {
+  position: relative;
+  margin: 0 !important; /* Reset default margins when inside connection tree */
+}
+
+/* Horizontal dashed branch lines */
+.t-content > .t-leaf::before,
+.t-content > .t-state::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -20px; /* Connects child back to the left vertical border */
+  width: 20px;
+  height: 2px;
+  border-top: 2px dashed rgba(37, 99, 235, 0.25);
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+body.dark-theme .t-content > .t-leaf::before,
+body.dark-theme .t-content > .t-state::before {
+  border-top-color: rgba(20, 184, 166, 0.3);
+}
+
+/* Align branch line with the summary element for details */
+.t-content > .t-state::before {
+  top: 21px;
+  transform: none;
+}
+
+/* Last child spine masking so the vertical dashed line doesn't extend past the last branch */
+.t-content > .t-leaf:last-child > .badge::before,
+.t-content > .t-state:last-child > summary::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -22px;
+  width: 4px;
+  bottom: -20px;
+  background-color: var(--panel-2); /* Mask background match */
+  z-index: 2;
+  pointer-events: none;
+}
+.t-content > .t-state:last-child > summary::after {
+  top: 21px;
+}
+
 /* Nested Subtree nodes */
 details.t-state {
-  margin: 0.5rem 1.25rem;
   background-color: var(--panel);
 }
 
@@ -1160,7 +1227,6 @@ details.t-state {
   gap: 1rem;
   padding: 0.75rem 1.25rem;
   padding-right: 2.5rem;
-  margin: 0.4rem 1.25rem;
   background-color: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--border-radius-sm);
