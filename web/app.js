@@ -1369,6 +1369,12 @@ function wire() {
     trackedKpiNum.textContent = ALL.length;
   }
   
+  const monitoredKpiNum = document.querySelector("#kpi-monitored .kpi-num");
+  if (monitoredKpiNum) {
+    const totalListings = ALL.reduce((sum, j) => sum + (j.active_listings || 0), 0);
+    monitoredKpiNum.textContent = totalListings.toLocaleString();
+  }
+  
   wire();
   setupWizard();
   setupSubscribeDialog();
