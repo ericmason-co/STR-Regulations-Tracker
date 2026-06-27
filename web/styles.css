@@ -309,7 +309,7 @@ body.dark-theme .glow-orb {
 .sidebar {
   width: 250px;
   flex-shrink: 0;
-  background-color: var(--panel);
+  background-color: var(--panel-2);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-right: 1px solid var(--border);
@@ -2846,71 +2846,7 @@ body.dark-theme .mock-ad-logo-img-vertical {
   }
 }
 
-/* ==========================================================================
-   Classic Navy Sidebar Overrides (Light Mode)
-   ========================================================================== */
-body:not(.dark-theme) .sidebar {
-  background-color: #0f172a; /* Deep Navy Sidebar */
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-}
-body:not(.dark-theme) .sidebar-header {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-body:not(.dark-theme) .logo-group {
-  color: #f8fafc;
-}
-body:not(.dark-theme) .logo-icon-box {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #3b82f6; /* Steel Blue Icon */
-  border: 1px solid #2563eb;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.3);
-}
-body:not(.dark-theme) .nav-item {
-  color: #94a3b8; /* Slate light */
-}
-body:not(.dark-theme) .nav-item i {
-  color: #94a3b8;
-}
-body:not(.dark-theme) .nav-item:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.05);
-}
-body:not(.dark-theme) .nav-item:hover i {
-  color: #ffffff;
-}
-body:not(.dark-theme) .nav-item.active {
-  color: #ffffff;
-  background-color: #2563eb; /* Steel Blue active */
-  border: 1px solid rgba(37, 99, 235, 0.3);
-}
-body:not(.dark-theme) .nav-item.active i {
-  color: #ffffff;
-}
-body:not(.dark-theme) .sidebar-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-body:not(.dark-theme) .partner-badge {
-  color: #94a3b8;
-}
-body:not(.dark-theme) .partner-badge i {
-  color: #3b82f6;
-}
-body:not(.dark-theme) .sidebar-social a {
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
-}
-body:not(.dark-theme) .sidebar-social a:hover {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: #2563eb;
-}
-body:not(.dark-theme) .sidebar-links a {
-  color: #64748b;
-}
-body:not(.dark-theme) .sidebar-links a:hover {
-  color: #94a3b8;
-}
+/* Sidebar overrides cleaned up - using light-slate native panel color */
 
 
 
