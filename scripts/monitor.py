@@ -68,7 +68,7 @@ def normalize_status(raw: str) -> str:
     return "Pending"
 
 API_URL = "https://api.anthropic.com/v1/messages"
-MODEL = os.environ.get("MONITOR_MODEL", "claude-opus-4-8")
+MODEL = os.environ.get("MONITOR_MODEL", "claude-sonnet-4-6")
 
 # Rotating regional focus by weekday (Mon=0 .. Sun=6). Weekend = re-verify existing.
 REGION_BY_WEEKDAY = {
@@ -109,6 +109,8 @@ Favor authoritative sources (government ordinances, bills, official registries) 
 industry trackers (Rent Responsibly, iGMS, Awning, AirDNA). Ignore marketing blogs and listings.
 
 We already track these jurisdictions (avoid duplicating unless there is a genuine change): {labels}
+
+Limit the "changes" array to a maximum of 5 of the most significant changes found. Keep all summaries and compliance notes under 2 sentences to prevent output token truncation.
 
 Return ONLY a single JSON object, no prose, no markdown fences, with this exact shape:
 {{
