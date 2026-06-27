@@ -6,6 +6,8 @@
 
 const FIELD_LABELS = {
   status: "Regulatory Status",
+  active_listings: "Active Listings (AirDNA)",
+  official_licenses: "Official Municipal Licenses",
   license_required: "License/Registration Required",
   tax_registration_required: "Tax Registration Required",
   fees: "Fees",
@@ -594,7 +596,7 @@ function openModal(j) {
     {
       title: "Overview & Registry",
       icon: "fa-circle-info",
-      keys: ["status", "effective_date", "license_required", "fees", "source"]
+      keys: ["status", "effective_date", "license_required", "fees", "active_listings", "official_licenses", "source"]
     },
     {
       title: "Operational Rules",
@@ -621,9 +623,26 @@ function openModal(j) {
   const htmlContent = sections.map(sec => {
     const itemsHtml = sec.keys
       .map(k => {
-        const val = j[k];
+        let val = j[k];
         const label = FIELD_LABELS[k];
-        return `<dt>${label}</dt><dd>${linkify(val)}</dd>`;
+        
+        if (k === "active_listings" || k === "official_licenses") {
+          val = (val && typeof val === 'number') ? val.toLocaleString() : (val || "—");
+        }
+        
+        let rowHtml = `<dt>${label}</dt><dd>${linkify(val)}</dd>`;
+        
+        // If displaying active_listings and both active_listings and official_licenses are present,
+        // display the estimated unlicensed rate.
+        if (k === "active_listings" && j.active_listings && j.official_licenses) {
+          const diff = j.active_listings - j.official_licenses;
+          if (diff > 0) {
+            const pct = ((diff / j.active_listings) * 100).toFixed(1);
+            rowHtml += `<dt>Estimated Unlicensed Listings</dt><dd>${diff.toLocaleString()} properties (${pct}%)</dd>`;
+          }
+        }
+        
+        return rowHtml;
       })
       .join("");
     
