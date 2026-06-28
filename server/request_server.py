@@ -72,6 +72,28 @@ def send_email(loc, email, notes, ip, subscribe=False):
         s.send_message(msg)
 
 
+def send_monitor_request_email(airbnb_id, vrbo_id, email, ip):
+    host = ENV.get("SMTP_HOST")
+    if not host:
+        return
+    msg = EmailMessage()
+    msg["Subject"] = f"LawfulStay: listing monitor request — {email}"
+    msg["From"] = ENV.get("MAIL_FROM", ENV.get("SMTP_USER", ""))
+    msg["To"] = ENV.get("MAIL_TO", "ericmason.co@gmail.com")
+    msg.set_content(
+        "New listing monitor request via lawfulstay.com:\n\n"
+        f"Email: {email}\n"
+        f"Airbnb ID: {airbnb_id or '(none)'}\n"
+        f"VRBO ID: {vrbo_id or '(none)'}\n"
+        f"IP: {ip}\n"
+        f"Time: {datetime.now(timezone.utc).isoformat()}\n"
+    )
+    with smtplib.SMTP(host, int(ENV.get("SMTP_PORT", "587")), timeout=20) as s:
+        s.starttls()
+        s.login(ENV["SMTP_USER"], ENV["SMTP_PASS"])
+        s.send_message(msg)
+
+
 def send_sub_email(j_label, email, ip):
     host = ENV.get("SMTP_HOST")
     if not host:
@@ -206,6 +228,41 @@ class Handler(BaseHTTPRequestHandler):
             _last_hit[ip] = now
             return self._json(200, {"ok": True,
                                     "message": "Thanks — we'll research it and add it to the tracker."})
+
+        elif path == "/api/monitor-listing":
+            airbnb_id = str(data.get("airbnb_id", "")).strip()[:MAX_LOC]
+            vrbo_id = str(data.get("vrbo_id", "")).strip()[:MAX_LOC]
+            email = str(data.get("email", "")).strip()[:MAX_LOC]
+            
+            if not email or not EMAIL_RE.match(email):
+                return self._json(400, {"ok": False, "error": "Please enter a valid email address."})
+            if not airbnb_id and not vrbo_id:
+                return self._json(400, {"ok": False, "error": "Please enter at least one Listing ID."})
+                
+            rec = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "airbnb_id": airbnb_id,
+                "vrbo_id": vrbo_id,
+                "email": email,
+                "ip": ip
+            }
+            log_file = LOG.parent / "listing_monitoring_requests.jsonl"
+            log_file.parent.mkdir(parents=True, exist_ok=True)
+            with log_file.open("a") as f:
+                f.write(json.dumps(rec) + "\n")
+                
+            try:
+                send_monitor_request_email(airbnb_id, vrbo_id, email, ip)
+            except Exception as e:
+                print("monitor request email failed:", e, flush=True)
+                
+            try:
+                push_to_acumbamail(email, "[Listing Monitor Request]")
+            except Exception as e:
+                print("Acumbamail push failed in monitor request handler:", e, flush=True)
+                
+            _last_hit[ip] = now
+            return self._json(200, {"ok": True, "message": "Successfully registered! We will review your listing and enable alerts shortly."})
 
         elif path == "/api/subscribe-alerts":
             j_id = str(data.get("jurisdiction_id", "")).strip()[:MAX_LOC]
