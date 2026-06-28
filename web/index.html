@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=97" />
+  <link rel="stylesheet" href="styles.css?v=98" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -647,6 +647,13 @@
             <label for="request-email-input">Email Address <span class="optional">(optional)</span></label>
             <input type="email" id="request-email-input" name="email" placeholder="e.g. you@example.com" class="form-input" />
             <span style="font-size: 0.75rem; color: var(--muted); line-height: 1.3;">If provided, we will notify you as soon as this location is added.</span>
+            
+            <div class="form-group checkbox-group" style="display: flex; flex-direction: row; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 0;">
+              <input type="checkbox" id="request-subscribe-checkbox" name="subscribe" checked style="margin-top: 0.2rem; cursor: pointer;" />
+              <label for="request-subscribe-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; line-height: 1.4; font-weight: normal;">
+                Subscribe me to compliance alerts for this location once it is added.
+              </label>
+            </div>
           </div>
           
           <div class="form-group">
@@ -746,7 +753,8 @@
         location: form.location.value,
         email: form.email.value,
         notes: form.notes.value,
-        website: form.website.value
+        website: form.website.value,
+        subscribe: form.subscribe.checked
       };
       
       submitBtn.disabled = true;
@@ -917,6 +925,6 @@
     });
   </script>
 
-  <script src="app.js?v=97"></script>
+  <script src="app.js?v=98"></script>
 </body>
 </html>

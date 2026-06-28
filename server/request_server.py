@@ -49,7 +49,7 @@ ENV = load_env()
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
-def send_email(loc, email, notes, ip):
+def send_email(loc, email, notes, ip, subscribe=False):
     host = ENV.get("SMTP_HOST")
     if not host:
         return
@@ -62,6 +62,7 @@ def send_email(loc, email, notes, ip):
         f"Location: {loc}\n"
         f"Requester email: {email or '(none)'}\n"
         f"Notes: {notes or '(none)'}\n"
+        f"Subscribe on Add: {'Yes' if subscribe else 'No'}\n"
         f"IP: {ip}\n"
         f"Time: {datetime.now(timezone.utc).isoformat()}\n"
     )
@@ -180,20 +181,27 @@ class Handler(BaseHTTPRequestHandler):
             loc = str(data.get("location", "")).strip()[:MAX_LOC]
             email = str(data.get("email", "")).strip()[:MAX_LOC]
             notes = str(data.get("notes", "")).strip()[:1000]
+            subscribe = bool(data.get("subscribe", False))
             if len(loc) < 2:
                 return self._json(400, {"ok": False, "error": "Please enter a location."})
             if email and not EMAIL_RE.match(email):
                 return self._json(400, {"ok": False, "error": "Please enter a valid email."})
 
             rec = {"ts": datetime.now(timezone.utc).isoformat(), "location": loc,
-                   "email": email, "notes": notes, "ip": ip}
+                   "email": email, "notes": notes, "subscribe": subscribe, "ip": ip}
             LOG.parent.mkdir(parents=True, exist_ok=True)
             with LOG.open("a") as f:
                 f.write(json.dumps(rec) + "\n")
             try:
-                send_email(loc, email, notes, ip)
+                send_email(loc, email, notes, ip, subscribe)
             except Exception as e:  # don't fail the user if email hiccups
                 print("email failed:", e, flush=True)
+
+            if subscribe and email:
+                try:
+                    push_to_acumbamail(email, f"[Requested] {loc}")
+                except Exception as e:
+                    print("Acumbamail push failed in request handler:", e, flush=True)
 
             _last_hit[ip] = now
             return self._json(200, {"ok": True,
