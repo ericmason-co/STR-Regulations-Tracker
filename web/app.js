@@ -170,6 +170,24 @@ function matches(j) {
 function render() {
   const filtered = ALL.filter(matches);
   renderStats(filtered);
+  
+  // Update filter badge count
+  const activeFilters = [
+    $("continent").value,
+    $("country").value,
+    $("status").value
+  ].filter(Boolean).length;
+  
+  const filterBadge = $("filter-badge");
+  if (filterBadge) {
+    if (activeFilters > 0) {
+      filterBadge.textContent = activeFilters;
+      filterBadge.style.display = "inline-block";
+    } else {
+      filterBadge.style.display = "none";
+    }
+  }
+  
   const isTree = view === "tree";
   const isMap = view === "map";
   $("table-container").hidden = isTree || isMap || filtered.length === 0;
@@ -1315,6 +1333,14 @@ function wire() {
     $("clear-search").style.display = "none";
     updateCountrySelect();
     
+    // Close filter drawer if open
+    const filterDrawer = $("filter-drawer");
+    const filterBtn = $("filter-toggle-btn");
+    if (filterDrawer) {
+      filterDrawer.style.maxHeight = "0";
+      if (filterBtn) filterBtn.classList.remove("active");
+    }
+    
     // Reset map zoom
     scale = 1;
     offsetX = 0;
@@ -1323,6 +1349,22 @@ function wire() {
     
     render();
   });
+
+  // Toggle filter drawer
+  const filterBtn = $("filter-toggle-btn");
+  const filterDrawer = $("filter-drawer");
+  if (filterBtn && filterDrawer) {
+    filterBtn.addEventListener("click", () => {
+      const isCollapsed = filterDrawer.style.maxHeight === "0px" || !filterDrawer.style.maxHeight || filterDrawer.style.maxHeight === "0";
+      if (isCollapsed) {
+        filterDrawer.style.maxHeight = "150px";
+        filterBtn.classList.add("active");
+      } else {
+        filterDrawer.style.maxHeight = "0";
+        filterBtn.classList.remove("active");
+      }
+    });
+  }
 
   
   // Custom search clear button

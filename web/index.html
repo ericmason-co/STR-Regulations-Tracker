@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=104" />
+  <link rel="stylesheet" href="styles.css?v=105" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -198,42 +198,49 @@
             <div class="kpi-content">
               <span class="kpi-num">Allowed</span>
               <span class="kpi-label">Permitted STR Zones</span>
-            </div>
-          </div>
         </section>
 
         <!-- Search Filters Card -->
         <section id="database-section" class="controls-section">
           <div class="controls-card glass">
-            <div class="search-outer">
-              <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
-                <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+            <div class="search-controls-row" style="display: flex; gap: 0.75rem; align-items: center; width: 100%;">
+              <div class="search-outer" style="flex: 1; margin-bottom: 0;">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
+                  <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
               </div>
-              <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
+              
+              <button class="btn btn-secondary filter-toggle-btn" id="filter-toggle-btn" type="button" style="display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; height: 46px; border-radius: var(--border-radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer;">
+                <i class="fa-solid fa-filter"></i> Filters <span class="filter-badge" id="filter-badge" style="display: none; background: var(--active); color: white; padding: 0.05rem 0.35rem; border-radius: 50%; font-size: 0.75rem; font-weight: bold; margin-left: 0.25rem; line-height: 1;">0</span>
+              </button>
+              
+              <button id="reset" class="btn btn-secondary" type="button" style="display: flex; align-items: center; gap: 0.5rem; height: 46px; border-radius: var(--border-radius-sm); font-size: 0.9rem; font-weight: 500; white-space: nowrap; cursor: pointer;"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
             </div>
-
-            <div class="filters-grid">
-              <div class="select-wrapper">
-                <select id="continent" aria-label="Filter by Region">
-                  <option value="">All Regions</option>
-                </select>
+            
+            <div class="filter-drawer" id="filter-drawer" style="max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;">
+              <div class="filters-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding-top: 1.25rem; margin-top: 1rem; border-top: 1px solid var(--border);">
+                <div class="select-wrapper">
+                  <select id="continent" aria-label="Filter by Region">
+                    <option value="">All Regions</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <select id="country" aria-label="Filter by Country">
+                    <option value="">All Countries</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <select id="status" aria-label="Filter by Status">
+                    <option value="">All Statuses</option>
+                  </select>
+                </div>
               </div>
-              <div class="select-wrapper">
-                <select id="country" aria-label="Filter by Country">
-                  <option value="">All Countries</option>
-                </select>
-              </div>
-              <div class="select-wrapper">
-                <select id="status" aria-label="Filter by Status">
-                  <option value="">All Statuses</option>
-                </select>
-              </div>
-              <button id="reset" class="btn btn-secondary" type="button"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
             </div>
           </div>
-        </section>
+        </section>ction>
 
         <!-- Active View Results Statistics -->
         <section class="stats-bar-wrapper">
@@ -1026,6 +1033,6 @@
     });
   </script>
 
-  <script src="app.js?v=104"></script>
+  <script src="app.js?v=105"></script>
 </body>
 </html>

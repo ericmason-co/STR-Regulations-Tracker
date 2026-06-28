@@ -750,32 +750,33 @@ body.dark-theme .glow-orb {
 
 /* Stats Count Bar Chips */
 .stats-bar-wrapper {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.25rem 0.5rem;
 }
 .stats-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  column-gap: 1.25rem;
+  row-gap: 0.5rem;
   align-items: center;
 }
 .stats-chips .chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.35rem 0.75rem;
-  border-radius: var(--border-radius-sm);
-  background-color: var(--panel-2);
-  border: 1px solid var(--border);
-  font-size: 0.8rem;
-  color: var(--muted);
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 .stats-chips .chip b {
   color: var(--text);
+  font-weight: 600;
 }
 .stats-chips .chip .dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 .stats-chips .chip .dot-banned { background-color: var(--banned); }
 .stats-chips .chip .dot-restricted { background-color: var(--restricted); }
