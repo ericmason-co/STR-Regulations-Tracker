@@ -1456,6 +1456,7 @@ function wire() {
 
   const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
   renderLatest(changelog);
+  setupRecentlyAddedPills(changelog);
 
   window.searchForLocation = function(name) {
     const searchInput = $("search");
@@ -1476,6 +1477,55 @@ function wire() {
       setView("list");
     }
   };
+
+  function setupRecentlyAddedPills(changelog) {
+    const container = document.getElementById("recently-added-pills");
+    if (!container || !changelog || !changelog.entries) return;
+    
+    const uniqueIds = new Set();
+    const recentJurs = [];
+    
+    for (const entry of changelog.entries) {
+      const jId = entry.jurisdiction_id;
+      if (!jId || uniqueIds.has(jId)) continue;
+      
+      const jur = ALL.find(j => j.id === jId);
+      if (jur) {
+        uniqueIds.add(jId);
+        recentJurs.push(jur);
+        if (recentJurs.length >= 8) break;
+      }
+    }
+    
+    container.innerHTML = "";
+    
+    recentJurs.forEach(j => {
+      const btn = document.createElement("button");
+      btn.className = "rt-pill";
+      btn.type = "button";
+      
+      let name = j.city;
+      if (!name) name = j.state || j.country;
+      
+      let label = name;
+      if (j.city && j.state) {
+        const stateWords = j.state.split(/\s+/);
+        const stateAbbr = stateWords.length > 1 
+          ? stateWords.map(w => w[0]).join("") 
+          : j.state.slice(0, 2).toUpperCase();
+        
+        if (j.country === "United States" || j.country === "Canada") {
+          label = `${j.city}, ${stateAbbr}`;
+        }
+      }
+      
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        searchForLocation(label);
+      });
+      container.appendChild(btn);
+    });
+  }
 
   // DevTools deterrents: disable right-click and open shortcuts
   document.addEventListener('contextmenu', e => e.preventDefault());
