@@ -137,10 +137,29 @@ function matches(j) {
   const continent = $("continent").value;
   const status = $("status").value;
   const country = $("country").value;
+  
   if (continent && j.continent !== continent) return false;
   if (status && j.status !== status) return false;
   if (country && j.country !== country) return false;
-  if (q && !Object.values(j).join(" ").toLowerCase().includes(q)) return false;
+  
+  if (q) {
+    const terms = q.split(/[\s,]+/).filter(Boolean);
+    const searchString = `${j.city || ""} ${j.state || ""} ${j.country || ""} ${j.id || ""}`.toLowerCase();
+    
+    for (const term of terms) {
+      // Substring matches the identifying fields
+      if (searchString.includes(term)) continue;
+      
+      // Expand state abbreviation if term is 2 letters (e.g. BC -> British Columbia)
+      if (term.length === 2 && j.state) {
+        const initials = j.state.split(/\s+/).map(w => w[0]).join("").toLowerCase();
+        if (initials === term) continue;
+      }
+      
+      return false;
+    }
+  }
+  
   return true;
 }
 
