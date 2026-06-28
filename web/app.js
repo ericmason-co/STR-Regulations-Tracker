@@ -57,8 +57,25 @@ async function fetchJson(urls) {
   for (const url of urls) {
     try {
       const res = await fetch(url);
-      if (res.ok) return res.json();
+      if (res.ok) {
+        const data = await res.json();
+        // Extract clean filename without cache-buster query parameter
+        const cacheKey = url.split("?")[0];
+        localStorage.setItem("cache_" + cacheKey, JSON.stringify(data));
+        return data;
+      }
     } catch (_) { /* try next */ }
+  }
+  // Try loading from localStorage cache if all fetches fail
+  if (urls.length > 0) {
+    const cacheKey = urls[0].split("?")[0];
+    const cached = localStorage.getItem("cache_" + cacheKey);
+    if (cached) {
+      try {
+        console.warn(`Serving ${cacheKey} from local browser cache.`);
+        return JSON.parse(cached);
+      } catch (_) {}
+    }
   }
   return null;
 }
