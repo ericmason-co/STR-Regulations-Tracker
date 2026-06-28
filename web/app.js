@@ -150,9 +150,13 @@ function matches(j) {
       // Substring matches the identifying fields
       if (searchString.includes(term)) continue;
       
-      // Expand state abbreviation if term is 2 letters (e.g. BC -> British Columbia)
+      // Expand state abbreviation if term is 2 letters (e.g. BC -> British Columbia, DC -> District of Columbia)
       if (term.length === 2 && j.state) {
-        const initials = j.state.split(/\s+/).map(w => w[0]).join("").toLowerCase();
+        const stateWords = j.state.split(/\s+/)
+          .filter(w => !["of", "the", "and", "in"].includes(w.toLowerCase()));
+        const initials = stateWords.length > 1 
+          ? stateWords.map(w => w[0]).join("").toLowerCase()
+          : j.state.slice(0, 2).toLowerCase();
         if (initials === term) continue;
       }
       
@@ -1509,9 +1513,10 @@ function wire() {
       
       let label = name;
       if (j.city && j.state) {
-        const stateWords = j.state.split(/\s+/);
+        const stateWords = j.state.split(/\s+/)
+          .filter(w => !["of", "the", "and", "in"].includes(w.toLowerCase()));
         const stateAbbr = stateWords.length > 1 
-          ? stateWords.map(w => w[0]).join("") 
+          ? stateWords.map(w => w[0]).join("").toUpperCase()
           : j.state.slice(0, 2).toUpperCase();
         
         if (j.country === "United States" || j.country === "Canada") {
