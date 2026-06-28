@@ -259,10 +259,10 @@ function renderTree(filtered) {
       if (!st) national.push(j);
       else (byState[st] = byState[st] || []).push(j);
     }
-    national.sort((a, b) => a.city.localeCompare(b.city)).forEach((j) => cContent.appendChild(leafEl(j, true)));
+    national.sort((a, b) => (a.city || "").localeCompare(b.city || "")).forEach((j) => cContent.appendChild(leafEl(j, true)));
 
     for (const st of Object.keys(byState).sort()) {
-      const items = byState[st].sort((a, b) => a.city.localeCompare(b.city));
+      const items = byState[st].sort((a, b) => (a.city || "").localeCompare(b.city || ""));
       const sDet = document.createElement("details");
       sDet.className = "t-state";
       const sSum = document.createElement("summary");
@@ -729,7 +729,7 @@ function showAutocomplete(query) {
   if (!suggestBox) return;
 
   const matches = ALL.filter(j => 
-    j.city.toLowerCase().includes(query) ||
+    (j.city && j.city.toLowerCase().includes(query)) ||
     j.country.toLowerCase().includes(query) ||
     (j.state && j.state.toLowerCase().includes(query))
   ).slice(0, 5);
@@ -774,8 +774,8 @@ function setupWizard() {
   const cityClear = $("assistant-city-clear");
   const cityAutocomplete = $("assistant-autocomplete");
 
-  const validCities = ALL.filter(j => !/^(state level|state|nationwide|national|eu-wide)$/i.test(j.city))
-                        .sort((a, b) => a.city.localeCompare(b.city));
+  const validCities = ALL.filter(j => j.city && !/^(state level|state|nationwide|national|eu-wide)$/i.test(j.city))
+                        .sort((a, b) => (a.city || "").localeCompare(b.city || ""));
 
   function filterCitySuggestions() {
     const query = cityInput.value.toLowerCase().trim();
@@ -792,7 +792,7 @@ function setupWizard() {
     }
     
     const matches = validCities.filter(j => 
-      j.city.toLowerCase().includes(query) || 
+      (j.city && j.city.toLowerCase().includes(query)) || 
       (j.state && j.state.toLowerCase().includes(query)) ||
       j.country.toLowerCase().includes(query)
     );
@@ -1060,7 +1060,7 @@ function setupSubscribeDialog() {
     }
     
     const matches = ALL.filter(j => 
-      j.city.toLowerCase().includes(query) || 
+      (j.city && j.city.toLowerCase().includes(query)) || 
       (j.state && j.state.toLowerCase().includes(query)) ||
       j.country.toLowerCase().includes(query)
     );
