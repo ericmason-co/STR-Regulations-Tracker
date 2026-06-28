@@ -1438,6 +1438,26 @@ function wire() {
   const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
   renderLatest(changelog);
 
+  window.searchForLocation = function(name) {
+    const searchInput = $("search");
+    const clearBtn = $("clear-search");
+    const suggestBox = $("city-search-autocomplete");
+    
+    if (searchInput) {
+      searchInput.value = name;
+      if (clearBtn) clearBtn.style.display = "block";
+      if (suggestBox) suggestBox.style.display = "none";
+      
+      // Clear other dropdowns to make sure the selected location is not filtered out
+      ["continent", "status", "country"].forEach(id => {
+        const el = $(id);
+        if (el) el.value = "";
+      });
+      
+      render();
+    }
+  };
+
   // DevTools deterrents: disable right-click and open shortcuts
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {

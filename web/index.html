@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=96" />
+  <link rel="stylesheet" href="styles.css?v=97" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -234,6 +234,23 @@
         <!-- Active View Results Statistics -->
         <section class="stats-bar-wrapper">
           <div id="stats" class="stats-chips"></div>
+        </section>
+
+        <!-- Recently Tracked Locations -->
+        <section class="recently-tracked-wrapper">
+          <div class="recently-tracked-container">
+            <span class="rt-label"><i class="fa-solid fa-sparkles"></i> Recently Added:</span>
+            <div class="rt-pills">
+              <button class="rt-pill" type="button" onclick="searchForLocation('The Sea Ranch')">The Sea Ranch</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Victoria')">Victoria, BC</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Halifax')">Halifax</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Canary Islands')">Canary Islands</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Isle of Skye')">Isle of Skye</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Cornwall')">Cornwall</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('Malaga')">Malaga</button>
+              <button class="rt-pill" type="button" onclick="searchForLocation('San Sebastian')">San Sebastian</button>
+            </div>
+          </div>
         </section>
 
         <!-- View Navigation & Legend -->
@@ -900,6 +917,6 @@
     });
   </script>
 
-  <script src="app.js?v=96"></script>
+  <script src="app.js?v=97"></script>
 </body>
 </html>
