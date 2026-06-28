@@ -3059,6 +3059,16 @@ body.dark-theme .rt-pill:hover {
   box-shadow: 0 4px 10px rgba(20, 184, 166, 0.3);
 }
 
+.share-option-btn {
+  transition: all 0.2s ease-in-out !important;
+}
+.share-option-btn:hover {
+  background-color: var(--panel) !important;
+  border-color: var(--brand) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
 
 
 

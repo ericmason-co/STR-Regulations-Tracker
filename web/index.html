@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=106" />
+  <link rel="stylesheet" href="styles.css?v=107" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -145,6 +145,9 @@
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
             <i class="fa-solid fa-circle-plus"></i> Request Location
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openShareDialog()">
+            <i class="fa-solid fa-share-nodes"></i> Share
           </button>
           <button class="btn btn-primary btn-sm" onclick="switchTab('assistant')">
             <i class="fa-solid fa-square-check"></i> Check Compliance
@@ -764,6 +767,57 @@
       </div>
     </div>
 
+    <!-- 8. Share centered modal overlay -->
+    <div id="share-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeShareDialog()"></div>
+      <div class="dialog-card" style="max-width: 420px; text-align: center; padding: 2rem;">
+        <button onclick="closeShareDialog()" class="modal-close" aria-label="Close Dialog"><i class="fa-solid fa-xmark"></i></button>
+        <div class="dialog-header" style="margin-bottom: 1.5rem; text-align: center;">
+          <div style="background: var(--brand-light); color: var(--brand); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin: 0 auto 1rem auto;"><i class="fa-solid fa-share-nodes"></i></div>
+          <h3 class="dialog-title" id="share-dialog-title" style="margin-bottom: 0.25rem;">Share LawfulStay</h3>
+          <p class="dialog-desc" id="share-dialog-subtitle" style="margin: 0 auto; max-width: 100%;">Spread the word about short-term rental compliance.</p>
+        </div>
+        
+        <div class="share-options-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
+          <!-- Copy Link -->
+          <button onclick="handleShareAction('copy')" class="share-option-btn" type="button" style="background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-copy" style="font-size: 1.25rem; color: var(--text);"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Copy Link</span>
+          </button>
+          <!-- Text / SMS -->
+          <a id="share-link-sms" href="#" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-comment-sms" style="font-size: 1.25rem; color: #25D366;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Text (SMS)</span>
+          </a>
+          <!-- Email -->
+          <a id="share-link-email" href="#" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-envelope" style="font-size: 1.25rem; color: #EA4335;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Email</span>
+          </a>
+          <!-- Twitter / X -->
+          <a id="share-link-twitter" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-x-twitter" style="font-size: 1.25rem; color: var(--text);"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">X / Twitter</span>
+          </a>
+          <!-- Facebook -->
+          <a id="share-link-facebook" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-facebook" style="font-size: 1.25rem; color: #1877f2;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Facebook</span>
+          </a>
+          <!-- LinkedIn -->
+          <a id="share-link-linkedin" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-linkedin" style="font-size: 1.25rem; color: #0077b5;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">LinkedIn</span>
+          </a>
+        </div>
+        
+        <div class="share-copy-input-container" style="display: flex; gap: 0.5rem; background: var(--panel); border: 1px solid var(--border); padding: 0.4rem 0.6rem; border-radius: var(--border-radius-sm); align-items: center; margin-top: 1rem;">
+          <input type="text" id="share-copy-input" readonly value="https://lawfulstay.com" style="background: transparent; border: none; outline: none; font-size: 0.8rem; color: var(--text-muted); flex: 1; min-width: 0;" />
+          <button onclick="handleShareAction('copy')" class="btn btn-secondary btn-sm" id="share-copy-btn" type="button" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; white-space: nowrap; cursor: pointer;">Copy</button>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Tab Switching and Request Handlers script (Runs before app.js init) -->
@@ -936,6 +990,90 @@
       if (modal) modal.hidden = true;
     }
     
+    let currentShareUrl = "https://lawfulstay.com";
+    let currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
+    let currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
+
+    function openShareDialog(id, name) {
+      const dialog = document.getElementById("share-dialog");
+      const titleEl = document.getElementById("share-dialog-title");
+      const subtitleEl = document.getElementById("share-dialog-subtitle");
+      const copyInput = document.getElementById("share-copy-input");
+      
+      if (id && name) {
+        currentShareUrl = `https://lawfulstay.com/?id=${id}`;
+        currentShareTitle = `STR Regulations for ${name} — LawfulStay`;
+        currentShareText = `Check out short-term rental rules and zoning laws for ${name} on LawfulStay:`;
+        if (titleEl) titleEl.textContent = `Share ${name}`;
+        if (subtitleEl) subtitleEl.textContent = `Share specific short-term rental rules for this location.`;
+      } else {
+        currentShareUrl = "https://lawfulstay.com/";
+        currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
+        currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
+        if (titleEl) titleEl.textContent = "Share LawfulStay";
+        if (subtitleEl) subtitleEl.textContent = "Spread the word about short-term rental compliance.";
+      }
+      
+      if (copyInput) copyInput.value = currentShareUrl;
+      
+      const smsLink = document.getElementById("share-link-sms");
+      const emailLink = document.getElementById("share-link-email");
+      const twitterLink = document.getElementById("share-link-twitter");
+      const facebookLink = document.getElementById("share-link-facebook");
+      const linkedinLink = document.getElementById("share-link-linkedin");
+      
+      const smsBody = `${currentShareText} ${currentShareUrl}`;
+      const emailSubject = currentShareTitle;
+      const emailBody = `Hey,\n\nI thought you'd find this useful. Here are the short-term rental regulations and permit rules:\n\n${currentShareUrl}\n\nBest,`;
+      
+      if (smsLink) smsLink.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
+      if (emailLink) emailLink.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      if (twitterLink) twitterLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareText)}&url=${encodeURIComponent(currentShareUrl)}`;
+      if (facebookLink) facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
+      if (linkedinLink) linkedinLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentShareUrl)}`;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: currentShareTitle,
+          text: currentShareText,
+          url: currentShareUrl
+        }).catch(err => {
+          if (dialog) dialog.hidden = false;
+        });
+      } else {
+        if (dialog) dialog.hidden = false;
+      }
+    }
+
+    function closeShareDialog() {
+      const dialog = document.getElementById("share-dialog");
+      if (dialog) dialog.hidden = true;
+    }
+
+    function handleShareAction(action) {
+      if (action === 'copy') {
+        const copyInput = document.getElementById("share-copy-input");
+        const copyBtn = document.getElementById("share-copy-btn");
+        if (copyInput) {
+          copyInput.select();
+          copyInput.setSelectionRange(0, 99999);
+          navigator.clipboard.writeText(copyInput.value).then(() => {
+            if (copyBtn) {
+              const originalText = copyBtn.textContent;
+              copyBtn.textContent = "Copied!";
+              copyBtn.style.background = "var(--active)";
+              copyBtn.style.color = "white";
+              setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.background = "";
+                copyBtn.style.color = "";
+              }, 2000);
+            }
+          });
+        }
+      }
+    }
+    
     function openFeedbackDialog(jId, jName) {
       const dialog = document.getElementById("feedback-dialog");
       if (dialog) {
@@ -1033,6 +1171,6 @@
     });
   </script>
 
-  <script src="app.js?v=106"></script>
+  <script src="app.js?v=107"></script>
 </body>
 </html>

@@ -777,10 +777,9 @@ function openModal(j) {
         <a href="#" onclick="window.print(); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-print"></i> Print rules</a>
       </div>
       <div class="drawer-share-row" style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; color: var(--muted);">
-        <span><i class="fa-solid fa-share-nodes"></i> Share:</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u=https://lawfulstay.com/" target="_blank" rel="noopener" aria-label="Share on Facebook" style="color: #1877f2; font-size: 0.9rem; display: inline-flex; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fa-brands fa-facebook"></i></a>
-        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://lawfulstay.com/" target="_blank" rel="noopener" aria-label="Share on LinkedIn" style="color: #0077b5; font-size: 0.95rem; display: inline-flex; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fa-brands fa-linkedin"></i></a>
-        <a href="https://twitter.com/intent/tweet?text=${encodeURIComponent('Check out global short-term rental regulations for ' + disp.name + ' on LawfulStay:')}&url=https://lawfulstay.com/" target="_blank" rel="noopener" aria-label="Share on X" style="color: var(--text); font-size: 0.9rem; display: inline-flex; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"><i class="fa-brands fa-x-twitter"></i></a>
+        <button onclick="openShareDialog('${idEsc}', '${esc(disp.name)}')" class="btn btn-secondary btn-sm" type="button" style="padding: 0.25rem 0.50rem; font-size: 0.7rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 600; cursor: pointer; height: auto; border-radius: 4px;">
+          <i class="fa-solid fa-share-nodes"></i> Share Location
+        </button>
       </div>
     </div>
     <div class="detail-sections-container" style="margin-top: 0.5rem;">
@@ -1519,6 +1518,16 @@ function wire() {
   setupWizard();
   setupSubscribeDialog();
   render();
+
+  // Deep-linking URL check
+  const params = new URLSearchParams(window.location.search);
+  const cityId = params.get("id");
+  if (cityId) {
+    const matched = ALL.find((j) => j.id === cityId);
+    if (matched) {
+      setTimeout(() => openModal(matched), 200);
+    }
+  }
 
   const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
   renderLatest(changelog);
