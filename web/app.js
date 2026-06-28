@@ -1454,7 +1454,7 @@ function wire() {
         if (el) el.value = "";
       });
       
-      render();
+      setView("list");
     }
   };
 
