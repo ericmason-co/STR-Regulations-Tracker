@@ -18,6 +18,7 @@ import json
 import os
 import re
 import smtplib
+import sqlite3
 import time
 import urllib.parse
 import urllib.request
@@ -169,6 +170,173 @@ def push_to_acumbamail(email: str, j_label: str) -> bool:
         return False
 
 
+DB_PATH = Path("/opt/str-tracker/data/users.db")
+
+def init_db():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            created_at TEXT NOT NULL,
+            last_seen TEXT NOT NULL,
+            ip TEXT
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS location_requests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            location TEXT NOT NULL,
+            notes TEXT,
+            subscribe_on_add INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS alert_subscriptions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            jurisdiction_id TEXT NOT NULL,
+            jurisdiction_label TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS monitored_listings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            airbnb_id TEXT,
+            vrbo_id TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    """)
+    conn.commit()
+    conn.close()
+    
+    try:
+        migrate_existing_logs()
+    except Exception as e:
+        print("Log migration failed:", e, flush=True)
+
+def get_or_create_user(conn, email, ip, ts_fallback=None):
+    c = conn.cursor()
+    now_str = ts_fallback or datetime.now(timezone.utc).isoformat()
+    email_clean = email.strip().lower()
+    
+    c.execute("SELECT id FROM users WHERE LOWER(email) = ?", (email_clean,))
+    row = c.fetchone()
+    if row:
+        user_id = row[0]
+        c.execute("UPDATE users SET last_seen = ?, ip = ? WHERE id = ?", (now_str, ip, user_id))
+        return user_id
+    else:
+        c.execute("INSERT INTO users (email, created_at, last_seen, ip) VALUES (?, ?, ?, ?)",
+                  (email.strip(), now_str, now_str, ip))
+        return c.lastrowid
+
+def migrate_existing_logs():
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # 1. Migrate location requests
+    loc_log = Path("/opt/str-tracker/data/location_requests.jsonl")
+    if loc_log.exists():
+        with loc_log.open("r") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    rec = json.loads(line)
+                    ts = rec.get("ts", datetime.now(timezone.utc).isoformat())
+                    email = rec.get("email", "")
+                    loc = rec.get("location", "")
+                    notes = rec.get("notes", "")
+                    subscribe = bool(rec.get("subscribe", False))
+                    ip = rec.get("ip", "")
+                    
+                    user_id = get_or_create_user(conn, email, ip, ts) if email else None
+                    
+                    c.execute("""
+                        SELECT id FROM location_requests 
+                        WHERE (user_id = ? OR (user_id IS NULL AND ? IS NULL)) 
+                          AND location = ? AND created_at = ?
+                    """, (user_id, user_id, loc, ts))
+                    if not c.fetchone():
+                        c.execute("""
+                            INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, created_at)
+                            VALUES (?, ?, ?, ?, ?)
+                        """, (user_id, loc, notes, 1 if subscribe else 0, ts))
+                except Exception as e:
+                    print("Error migrating location request line:", e, flush=True)
+                    
+    # 2. Migrate alert subscriptions
+    sub_log = Path("/opt/str-tracker/data/regulation_subscriptions.jsonl")
+    if sub_log.exists():
+        with sub_log.open("r") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    rec = json.loads(line)
+                    ts = rec.get("ts", datetime.now(timezone.utc).isoformat())
+                    email = rec.get("email", "")
+                    j_id = rec.get("jurisdiction_id", "")
+                    j_label = rec.get("jurisdiction_label", "")
+                    ip = rec.get("ip", "")
+                    
+                    if email:
+                        user_id = get_or_create_user(conn, email, ip, ts)
+                        c.execute("""
+                            SELECT id FROM alert_subscriptions 
+                            WHERE user_id = ? AND jurisdiction_id = ? AND created_at = ?
+                        """, (user_id, j_id, ts))
+                        if not c.fetchone():
+                            c.execute("""
+                                INSERT INTO alert_subscriptions (user_id, jurisdiction_id, jurisdiction_label, created_at)
+                                VALUES (?, ?, ?, ?)
+                            """, (user_id, j_id, j_label, ts))
+                except Exception as e:
+                    print("Error migrating subscription line:", e, flush=True)
+                    
+    # 3. Migrate listing monitor requests
+    mon_log = Path("/opt/str-tracker/data/listing_monitoring_requests.jsonl")
+    if mon_log.exists():
+        with mon_log.open("r") as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                try:
+                    rec = json.loads(line)
+                    ts = rec.get("ts", datetime.now(timezone.utc).isoformat())
+                    email = rec.get("email", "")
+                    airbnb_id = rec.get("airbnb_id", "")
+                    vrbo_id = rec.get("vrbo_id", "")
+                    ip = rec.get("ip", "")
+                    
+                    if email:
+                        user_id = get_or_create_user(conn, email, ip, ts)
+                        c.execute("""
+                            SELECT id FROM monitored_listings 
+                            WHERE user_id = ? AND (airbnb_id = ? OR (airbnb_id IS NULL AND ? IS NULL)) AND created_at = ?
+                        """, (user_id, airbnb_id, airbnb_id, ts))
+                        if not c.fetchone():
+                            c.execute("""
+                                INSERT INTO monitored_listings (user_id, airbnb_id, vrbo_id, created_at)
+                                VALUES (?, ?, ?, ?)
+                            """, (user_id, airbnb_id, vrbo_id, ts))
+                except Exception as e:
+                    print("Error migrating listing monitor line:", e, flush=True)
+                    
+    conn.commit()
+    conn.close()
+
+
 class Handler(BaseHTTPRequestHandler):
     def _json(self, code, obj):
         body = json.dumps(obj).encode()
@@ -180,7 +348,7 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.rstrip("/")
-        if path not in ("/api/request-location", "/api/subscribe-alerts", "/api/submit-feedback"):
+        if path not in ("/api/request-location", "/api/subscribe-alerts", "/api/submit-feedback", "/api/monitor-listing"):
             return self._json(404, {"ok": False, "error": "not found"})
 
         ip = self.headers.get("X-Forwarded-For", "-").split(",")[0].strip()
@@ -214,6 +382,22 @@ class Handler(BaseHTTPRequestHandler):
             LOG.parent.mkdir(parents=True, exist_ok=True)
             with LOG.open("a") as f:
                 f.write(json.dumps(rec) + "\n")
+                
+            # SQLite insertion
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                user_id = get_or_create_user(conn, email, ip) if email else None
+                c = conn.cursor()
+                now_str = datetime.now(timezone.utc).isoformat()
+                c.execute("""
+                    INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, created_at)
+                    VALUES (?, ?, ?, ?, ?)
+                """, (user_id, loc, notes, 1 if subscribe else 0, now_str))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                print("SQLite location request insert failed:", e, flush=True)
+
             try:
                 send_email(loc, email, notes, ip, subscribe)
             except Exception as e:  # don't fail the user if email hiccups
@@ -251,6 +435,21 @@ class Handler(BaseHTTPRequestHandler):
             with log_file.open("a") as f:
                 f.write(json.dumps(rec) + "\n")
                 
+            # SQLite insertion
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                user_id = get_or_create_user(conn, email, ip)
+                c = conn.cursor()
+                now_str = datetime.now(timezone.utc).isoformat()
+                c.execute("""
+                    INSERT INTO monitored_listings (user_id, airbnb_id, vrbo_id, created_at)
+                    VALUES (?, ?, ?, ?)
+                """, (user_id, airbnb_id, vrbo_id, now_str))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                print("SQLite monitored listing insert failed:", e, flush=True)
+                
             try:
                 send_monitor_request_email(airbnb_id, vrbo_id, email, ip)
             except Exception as e:
@@ -285,11 +484,27 @@ class Handler(BaseHTTPRequestHandler):
             sub_log.parent.mkdir(parents=True, exist_ok=True)
             with sub_log.open("a") as f:
                 f.write(json.dumps(rec) + "\n")
+                
+            # SQLite insertion
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                user_id = get_or_create_user(conn, email, ip)
+                c = conn.cursor()
+                now_str = datetime.now(timezone.utc).isoformat()
+                c.execute("""
+                    INSERT INTO alert_subscriptions (user_id, jurisdiction_id, jurisdiction_label, created_at)
+                    VALUES (?, ?, ?, ?)
+                """, (user_id, j_id, j_label, now_str))
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                print("SQLite alert subscription insert failed:", e, flush=True)
+
             try:
                 send_sub_email(j_label, email, ip)
             except Exception as e:
                 print("subscription email failed:", e, flush=True)
-
+ 
             try:
                 push_to_acumbamail(email, j_label)
             except Exception as e:
@@ -334,6 +549,7 @@ class Handler(BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    init_db()
     port = int(os.environ.get("PORT", "8090"))
     print(f"request_server listening on 127.0.0.1:{port}", flush=True)
     ThreadingHTTPServer(("127.0.0.1", port), Handler).serve_forever()
