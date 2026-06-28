@@ -549,11 +549,31 @@ async function renderMap() {
 }
 
 function renderStats(filtered) {
+  const q = $("search").value.trim();
+  const activeFilters = [
+    $("continent").value,
+    $("country").value,
+    $("status").value
+  ].filter(Boolean).length;
+  
+  const wrapper = document.querySelector(".stats-bar-wrapper");
+  if (!wrapper) return;
+  
+  if (!q && activeFilters === 0) {
+    wrapper.style.display = "none";
+    return;
+  }
+  
+  wrapper.style.display = "block";
+  
   const byStatus = {};
   for (const j of filtered) byStatus[j.status] = (byStatus[j.status] || 0) + 1;
-  const chips = [`<span class="chip"><i class="fa-solid fa-earth-americas"></i> <b>${filtered.length}</b> shown</span>`];
-  for (const s of ["Banned", "Restricted", "Active", "Pending", "None"]) {
-    if (byStatus[s]) chips.push(`<span class="chip"><span class="dot dot-${s.toLowerCase()}"></span> ${s}: <b>${byStatus[s]}</b></span>`);
+  
+  const chips = [`<span class="chip"><i class="fa-solid fa-magnifying-glass"></i> <b>${filtered.length}</b> matches found</span>`];
+  for (const s of ["Banned", "Restricted", "Active", "Pending"]) {
+    if (byStatus[s]) {
+      chips.push(`<span class="chip"><span class="dot dot-${s.toLowerCase()}"></span> ${s}: <b>${byStatus[s]}</b></span>`);
+    }
   }
   $("stats").innerHTML = chips.join("");
 }
