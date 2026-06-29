@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=110" />
+  <link rel="stylesheet" href="styles.css?v=111" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -1015,14 +1015,21 @@
         }
         
         if (activeTab && activeTab !== "database") {
-          currentShareUrl = `https://lawfulstay.com/?tab=${activeTab}`;
+          let prettyPath = "/";
+          if (activeTab === "database") prettyPath = "/RegulationsDB";
+          else if (activeTab === "assistant") prettyPath = "/ComplianceWizard";
+          else if (activeTab === "market-updates") prettyPath = "/MarketUpdates";
+          else if (activeTab === "monitoring") prettyPath = "/MonitorListings";
+          else if (activeTab === "about") prettyPath = "/AboutFAQ";
+          
+          currentShareUrl = `https://lawfulstay.com${prettyPath}`;
           const tabLabel = activeNav ? activeNav.querySelector("span").textContent : activeTab;
           currentShareTitle = `LawfulStay: ${tabLabel}`;
           currentShareText = `Check out the ${tabLabel} view on LawfulStay:`;
           if (titleEl) titleEl.textContent = `Share ${tabLabel}`;
           if (subtitleEl) subtitleEl.textContent = `Share this view directly with your network.`;
         } else {
-          currentShareUrl = "https://lawfulstay.com/";
+          currentShareUrl = "https://lawfulstay.com/RegulationsDB";
           currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
           currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
           if (titleEl) titleEl.textContent = "Share LawfulStay";
@@ -1181,12 +1188,22 @@
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".nav-item").forEach(item => {
         item.addEventListener("click", () => {
-          switchTab(item.dataset.tab);
+          const tab = item.dataset.tab;
+          switchTab(tab);
+          
+          let prettyPath = "/";
+          if (tab === "database") prettyPath = "/RegulationsDB";
+          else if (tab === "assistant") prettyPath = "/ComplianceWizard";
+          else if (tab === "market-updates") prettyPath = "/MarketUpdates";
+          else if (tab === "monitoring") prettyPath = "/MonitorListings";
+          else if (tab === "about") prettyPath = "/AboutFAQ";
+          
+          history.pushState(null, "", prettyPath);
         });
       });
     });
   </script>
 
-  <script src="app.js?v=110"></script>
+  <script src="app.js?v=111"></script>
 </body>
 </html>

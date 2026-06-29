@@ -1527,13 +1527,37 @@ function wire() {
     }
   }
   
-  const tabName = params.get("tab");
-  if (tabName) {
-    if (["database", "assistant", "market-updates", "monitoring", "about"].includes(tabName)) {
-      if (typeof switchTab === "function") {
-        switchTab(tabName);
-      } else if (typeof window.switchTab === "function") {
-        window.switchTab(tabName);
+  // Dynamic path routing for pretty URLs
+  const pathname = window.location.pathname.toLowerCase().replace(/\/$/, "");
+  let activeTab = null;
+  
+  if (pathname === "/regulationsdb" || pathname === "/regulations-db" || pathname === "/database") {
+    activeTab = "database";
+  } else if (pathname === "/compliancewizard" || pathname === "/compliance-wizard" || pathname === "/wizard") {
+    activeTab = "assistant";
+  } else if (pathname === "/marketupdates" || pathname === "/market-updates" || pathname === "/updates") {
+    activeTab = "market-updates";
+  } else if (pathname === "/monitorlistings" || pathname === "/monitor-listings" || pathname === "/monitoring") {
+    activeTab = "monitoring";
+  } else if (pathname === "/aboutfaq" || pathname === "/about-faq" || pathname === "/about") {
+    activeTab = "about";
+  }
+  
+  if (activeTab) {
+    if (typeof switchTab === "function") {
+      switchTab(activeTab);
+    } else if (typeof window.switchTab === "function") {
+      window.switchTab(activeTab);
+    }
+  } else {
+    const tabName = params.get("tab");
+    if (tabName) {
+      if (["database", "assistant", "market-updates", "monitoring", "about"].includes(tabName)) {
+        if (typeof switchTab === "function") {
+          switchTab(tabName);
+        } else if (typeof window.switchTab === "function") {
+          window.switchTab(tabName);
+        }
       }
     }
   }

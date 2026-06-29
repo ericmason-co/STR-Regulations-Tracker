@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /
+
+# Support specific pretty URL paths
+RewriteRule ^(RegulationsDB|ComplianceWizard|MarketUpdates|MonitorListings|AboutFAQ)/?$ index.html [L,NC]
+# Also support lowercase/kebab equivalents
+RewriteRule ^(regulations-db|compliance-wizard|market-updates|monitor-listings|about-faq)/?$ index.html [L,NC]
