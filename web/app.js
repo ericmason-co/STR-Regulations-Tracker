@@ -1561,6 +1561,19 @@ function wire() {
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
 
+  // Wire click handlers for any statically pre-rendered pills (data-search attr)
+  document.querySelectorAll(".rt-pill[data-search]").forEach(btn => {
+    btn.addEventListener("click", () => searchForLocation(btn.dataset.search));
+  });
+  // Wire click handlers for statically pre-rendered timeline links (data-search attr)
+  document.querySelectorAll(".timeline-list a.where[data-search]").forEach(a => {
+    a.addEventListener("click", ev => {
+      ev.preventDefault();
+      const j = Object.values(BY_ID).find(x => (x.city || x.state || x.country) === a.dataset.search);
+      if (j) openModal(j);
+    });
+  });
+
   window.searchForLocation = function(name) {
     const searchInput = $("search");
     const clearBtn = $("clear-search");
