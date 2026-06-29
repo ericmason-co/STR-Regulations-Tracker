@@ -1,6 +1,10 @@
 RewriteEngine On
 RewriteBase /
 
+# Proxy live data files from DigitalOcean (single source of truth - droplet updates these)
+RewriteRule ^jurisdictions\.json$ http://64.23.242.186/jurisdictions.json [P,L]
+RewriteRule ^timeline\.json$ http://64.23.242.186/timeline.json [P,L]
+
 # Support specific pretty URL paths
 RewriteRule ^(RegulationsDB|ComplianceWizard|MarketUpdates|MonitorListings|AboutFAQ)/?$ index.html [L,NC]
 # Also support lowercase/kebab equivalents
