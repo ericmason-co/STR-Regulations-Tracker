@@ -300,9 +300,9 @@ body.dark-theme .glow-orb {
    ========================================================================== */
 .app-shell {
   display: flex;
-  height: 100vh;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  width: 100%;
+  align-items: flex-start;
 }
 
 /* Sidebar navigation */
@@ -315,7 +315,10 @@ body.dark-theme .glow-orb {
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
   z-index: 10;
   transition: var(--transition-normal);
 }
@@ -423,12 +426,10 @@ body.dark-theme .glow-orb {
 /* Main Content Wrapper */
 .main-content {
   flex: 1 1 0;
-  min-height: 0;
-  overflow-y: auto;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   background-color: transparent;
-  min-width: 0;
 }
 
 /* Top bar Header */
@@ -471,8 +472,6 @@ body.dark-theme .glow-orb {
 .panel {
   display: none;
   padding: 2rem;
-  flex-grow: 1;
-  flex-shrink: 0;
   flex-direction: column;
 }
 .panel.active {
@@ -899,7 +898,6 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
-  overflow-y: auto;
   box-shadow: 0 4px 15px var(--shadow);
 }
 
