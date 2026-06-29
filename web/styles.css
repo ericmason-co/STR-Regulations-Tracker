@@ -472,8 +472,8 @@ body.dark-theme .glow-orb {
   display: none;
   padding: 2rem;
   flex-grow: 1;
+  flex-shrink: 0;
   flex-direction: column;
-  min-height: 0;
 }
 .panel.active {
   display: flex;
@@ -899,7 +899,7 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: auto;
   box-shadow: 0 4px 15px var(--shadow);
 }
 
