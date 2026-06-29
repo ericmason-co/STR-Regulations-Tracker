@@ -354,7 +354,7 @@ def main() -> None:
     export_xlsx.main(ROOT / "web" / "Global_STR_Regulations_Comprehensive_Database.xlsx")
     # Sync both data files into the web app so the table and the "latest changes"
     # panel stay current.
-    for name in ("jurisdictions.json", "changelog.json"):
+    for name in ("jurisdictions.json", "policy_updates.json"):
         (ROOT / "web" / name).write_text((ROOT / "data" / name).read_text())
     sys.argv = ["build_digest.py", "--days", str(args.days)]
     build_digest.main()

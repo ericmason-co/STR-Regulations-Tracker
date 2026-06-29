@@ -1,6 +1,4 @@
-// LawfulStay — static frontend.
-// Force redeploy trigger for GitHub Actions #4.
-// Loads jurisdictions.json + changelog.json and renders a searchable/filterable/
+// Loads jurisdictions.json + policy_updates.json and renders a searchable/filterable/
 // sortable table, a "latest regulatory changes" panel, a detail modal, and flags
 // recently-changed jurisdictions. Includes interactive autocomplete and a compliance wizard.
 
@@ -1540,7 +1538,7 @@ function wire() {
     }
   }
 
-  const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
+  const changelog = await fetchJson([`policy_updates.json?t=${t}`, `../data/policy_updates.json?t=${t}`]);
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
 
