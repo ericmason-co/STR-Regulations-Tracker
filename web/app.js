@@ -1568,7 +1568,7 @@ function wire() {
       const j = BY_ID[a.dataset.id];
       if (!j) return;
       if (typeof window.switchTab === "function") window.switchTab("database");
-      openModal(j);
+      setTimeout(() => openModal(j), 50);
     });
   });
 
@@ -1620,13 +1620,29 @@ function wire() {
           const j = BY_ID[btn.dataset.id];
           if (!j) return;
           if (typeof window.switchTab === "function") window.switchTab("database");
-          openModal(j);
+          setTimeout(() => openModal(j), 50);
         });
       });
       return;
     }
 
     // Replace with fresh dynamic pills
+    const STATE_ABBR = {
+      "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
+      "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
+      "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
+      "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
+      "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
+      "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM",
+      "New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
+      "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+      "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
+      "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
+      "District of Columbia":"DC","Puerto Rico":"PR",
+      "Alberta":"AB","British Columbia":"BC","Manitoba":"MB","New Brunswick":"NB",
+      "Newfoundland and Labrador":"NL","Nova Scotia":"NS","Ontario":"ON",
+      "Prince Edward Island":"PE","Quebec":"QC","Saskatchewan":"SK",
+    };
     container.innerHTML = "";
     recentJurs.forEach(j => {
       const btn = document.createElement("button");
@@ -1638,11 +1654,10 @@ function wire() {
       if (!name) name = j.state || j.country;
       let label = name;
       if (j.city && j.state) {
-        const stateWords = j.state.split(/\s+/)
-          .filter(w => !["of", "the", "and", "in"].includes(w.toLowerCase()));
-        const stateAbbr = stateWords.length > 1
-          ? stateWords.map(w => w[0]).join("").toUpperCase()
-          : j.state.slice(0, 2).toUpperCase();
+        const stateAbbr = STATE_ABBR[j.state] || (() => {
+          const words = j.state.split(/\s+/).filter(w => !["of","the","and","in"].includes(w.toLowerCase()));
+          return words.length > 1 ? words.map(w => w[0]).join("").toUpperCase() : j.state.slice(0,2).toUpperCase();
+        })();
         if (j.country === "United States" || j.country === "Canada") {
           label = `${j.city}, ${stateAbbr}`;
         }
@@ -1651,7 +1666,7 @@ function wire() {
       btn.textContent = label;
       btn.addEventListener("click", () => {
         if (typeof window.switchTab === "function") window.switchTab("database");
-        openModal(j);
+        setTimeout(() => openModal(j), 50);
       });
       container.appendChild(btn);
     });
