@@ -586,20 +586,20 @@ function renderLatest(changelog) {
     .filter((e) => !ADMIN_ENTRY.test(e.jurisdiction_id || "") && e.summary)
     .slice(0, 6);
   if (!entries.length) return;
-  $("latest-list").innerHTML = entries.map((e) => {
+  $("timeline-list-container").innerHTML = entries.map((e) => {
     const where = BY_ID[e.jurisdiction_id]
       ? `<a class="where" href="#" data-id="${esc(e.jurisdiction_id)}">${esc(e.jurisdiction_label)}</a>`
       : `<span class="where">${esc(e.jurisdiction_label)}</span>`;
     return `<li><span class="when"><i class="fa-regular fa-calendar-days"></i> ${esc(e.date)}</span>` +
       `<span class="lc-content">${where} <span class="what">&mdash; ${esc(e.summary)}</span></span></li>`;
   }).join("");
-  $("latest-list").querySelectorAll("a.where").forEach((a) =>
+  $("timeline-list-container").querySelectorAll("a.where").forEach((a) =>
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
       const j = BY_ID[a.dataset.id];
       if (j) openModal(j);
     }));
-  $("latest").hidden = false;
+  $("timeline-section").hidden = false;
 }
 
 function updateWizardProgress(step) {

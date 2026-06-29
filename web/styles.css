@@ -1682,7 +1682,7 @@ details.t-state {
 /* ==========================================================================
    Changelog / Timeline view
    ========================================================================== */
-.changelog-card {
+.timeline-card {
   border-radius: var(--border-radius-lg);
   padding: 2.25rem 2rem;
   box-shadow: 0 4px 15px var(--shadow);
@@ -1700,7 +1700,7 @@ details.t-state {
   gap: 0.5rem;
 }
 
-.changelog-icon {
+.timeline-icon {
   color: var(--brand);
 }
 
@@ -1711,12 +1711,12 @@ details.t-state {
   margin-bottom: 2rem;
 }
 
-.changelog-timeline {
+.timeline-list {
   list-style: none;
   position: relative;
   padding-left: 2rem;
 }
-.changelog-timeline::before {
+.timeline-list::before {
   content: "";
   position: absolute;
   top: 6px;
@@ -1726,13 +1726,13 @@ details.t-state {
   background-color: var(--border);
 }
 
-.changelog-timeline li {
+.timeline-list li {
   position: relative;
   margin-bottom: 1.75rem;
   display: flex;
   flex-direction: column;
 }
-.changelog-timeline li::before {
+.timeline-list li::before {
   content: "";
   position: absolute;
   left: -2rem;
@@ -1746,7 +1746,7 @@ details.t-state {
   box-sizing: border-box;
 }
 
-.changelog-timeline .when {
+.timeline-list .when {
   font-family: var(--font-heading);
   font-size: 0.75rem;
   font-weight: 700;
@@ -1759,19 +1759,19 @@ details.t-state {
   gap: 0.35rem;
 }
 
-.changelog-timeline .where {
+.timeline-list .where {
   font-weight: 700;
   color: var(--text);
   text-decoration: none;
   font-size: 0.95rem;
   transition: var(--transition-fast);
 }
-.changelog-timeline a.where:hover {
+.timeline-list a.where:hover {
   color: var(--brand);
   text-decoration: underline;
 }
 
-.changelog-timeline .what {
+.timeline-list .what {
   color: var(--muted);
   font-size: 0.85rem;
   margin-top: 0.15rem;
