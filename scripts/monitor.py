@@ -290,7 +290,7 @@ def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
 
     data["meta"]["last_full_refresh"] = today()
     (ROOT / "data" / "jurisdictions.json").write_text(json.dumps(data, indent=2) + "\n")
-    (ROOT / "data" / "policy_updates.json").write_text(json.dumps(changelog, indent=2) + "\n")
+    (ROOT / "data" / "policy_news.json").write_text(json.dumps(changelog, indent=2) + "\n")
     return new_entries, updated, added
 
 
@@ -354,7 +354,7 @@ def main() -> None:
     export_xlsx.main(ROOT / "web" / "Global_STR_Regulations_Comprehensive_Database.xlsx")
     # Sync both data files into the web app so the table and the "latest changes"
     # panel stay current.
-    for name in ("jurisdictions.json", "policy_updates.json"):
+    for name in ("jurisdictions.json", "policy_news.json"):
         (ROOT / "web" / name).write_text((ROOT / "data" / name).read_text())
     sys.argv = ["build_digest.py", "--days", str(args.days)]
     build_digest.main()

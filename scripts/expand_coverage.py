@@ -204,7 +204,7 @@ def main() -> None:
     import build_digest  # noqa: E402
     import export_xlsx  # noqa: E402
     export_xlsx.main(ROOT / "web" / "Global_STR_Regulations_Comprehensive_Database.xlsx")
-    for name in ("jurisdictions.json", "policy_updates.json"):
+    for name in ("jurisdictions.json", "policy_news.json"):
         (ROOT / "web" / name).write_text((ROOT / "data" / name).read_text())
     print("Rebuilt XLSX + synced web data.", flush=True)
 
