@@ -289,6 +289,7 @@ def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
         new_entries.append(entry)
 
     data["meta"]["last_full_refresh"] = today()
+    data["timeline"] = changelog.get("entries", [])
     (ROOT / "data" / "jurisdictions.json").write_text(json.dumps(data, indent=2) + "\n")
     (ROOT / "data" / "timeline.json").write_text(json.dumps(changelog, indent=2) + "\n")
     return new_entries, updated, added

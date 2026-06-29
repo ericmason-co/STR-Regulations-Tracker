@@ -147,7 +147,9 @@ def add_list(items, label, desc):
             "old_value": f"{start} jurisdictions", "new_value": f"{start + added} jurisdictions",
             "effective_date": M.today(), "source_url": "https://lawfulstay.com", "confidence": "medium",
         })
-        (ROOT / "data" / "changelog.json").write_text(json.dumps(cl, indent=2) + "\n")
+        (ROOT / "data" / "timeline.json").write_text(json.dumps(cl, indent=2) + "\n")
+        data["timeline"] = cl["entries"]
+        (ROOT / "data" / "jurisdictions.json").write_text(json.dumps(data, indent=2) + "\n")
 
     print(f"\nDONE. {start} -> {len(data['jurisdictions'])} (+{added}).", flush=True)
     problems = validate()

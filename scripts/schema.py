@@ -105,6 +105,12 @@ def load_jurisdictions() -> dict:
 
 
 def load_changelog() -> dict:
+    try:
+        data = json.loads(JURISDICTIONS_FILE.read_text())
+        if "timeline" in data:
+            return {"entries": data["timeline"]}
+    except Exception:
+        pass
     return json.loads(CHANGELOG_FILE.read_text())
 
 

@@ -1562,7 +1562,7 @@ function wire() {
     }
   }
 
-  const changelog = await fetchJson([`timeline.json?t=${t}`, `../data/timeline.json?t=${t}`]);
+  const changelog = { entries: data.timeline || [] };
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
 

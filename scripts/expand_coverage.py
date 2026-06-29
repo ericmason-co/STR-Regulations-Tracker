@@ -190,7 +190,9 @@ def main() -> None:
             "source_url": "https://lawfulstay.com",
             "confidence": "medium",
         })
-        (ROOT / "data" / "changelog.json").write_text(json.dumps(cl, indent=2) + "\n")
+        (ROOT / "data" / "timeline.json").write_text(json.dumps(cl, indent=2) + "\n")
+        data["timeline"] = cl["entries"]
+        (ROOT / "data" / "jurisdictions.json").write_text(json.dumps(data, indent=2) + "\n")
 
     print(f"\nDONE. {start_count} -> {len(data['jurisdictions'])} jurisdictions "
           f"({added} added, {filled} filled).", flush=True)
