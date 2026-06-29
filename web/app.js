@@ -599,7 +599,6 @@ function renderLatest(changelog) {
       const j = BY_ID[a.dataset.id];
       if (j) openModal(j);
     }));
-  $("timeline-section").hidden = false;
 }
 
 function updateWizardProgress(step) {

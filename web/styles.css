@@ -1778,6 +1778,17 @@ details.t-state {
   line-height: 1.5;
 }
 
+.timeline-list .timeline-loading {
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 1.5rem 0;
+  text-align: center;
+  list-style: none;
+}
+.timeline-list .timeline-loading::before {
+  display: none;
+}
+
 /* ==========================================================================
    Details Slide Drawer
    ========================================================================== */
