@@ -682,6 +682,7 @@ function openJurisdiction(j) {
     openModal(j);  // already on DB tab — open immediately
   }
 }
+window.openJurisdiction = openJurisdiction;
 
 function openModal(j) {
 
@@ -1608,6 +1609,18 @@ function wire() {
   const changelog = { entries: data.timeline || [] };
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
+
+  // Direct pill wiring — runs after BY_ID is fully populated.
+  // This is the authoritative handler; setupRecentlyAddedPills also tries but this is the safety net.
+  document.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
+    // Remove any previous listeners by cloning the node
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener("click", () => {
+      const j = BY_ID[fresh.dataset.id];
+      if (j) openJurisdiction(j);
+    });
+  });
 
   // Wire click handlers for statically pre-rendered timeline links → open modal
   document.querySelectorAll(".timeline-list a.where[data-id]").forEach(a => {
