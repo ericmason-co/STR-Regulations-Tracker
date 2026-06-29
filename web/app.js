@@ -1,4 +1,4 @@
-// Loads jurisdictions.json + policy_news.json and renders a searchable/filterable/
+// Loads jurisdictions.json + timeline.json and renders a searchable/filterable/
 // sortable table, a "latest regulatory changes" panel, a detail modal, and flags
 // recently-changed jurisdictions. Includes interactive autocomplete and a compliance wizard.
 
@@ -1562,7 +1562,7 @@ function wire() {
     }
   }
 
-  const changelog = await fetchJson([`policy_news.json?t=${t}`, `../data/policy_news.json?t=${t}`]);
+  const changelog = await fetchJson([`timeline.json?t=${t}`, `../data/timeline.json?t=${t}`]);
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
 

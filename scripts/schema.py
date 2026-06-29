@@ -16,7 +16,7 @@ from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 JURISDICTIONS_FILE = DATA_DIR / "jurisdictions.json"
-CHANGELOG_FILE = DATA_DIR / "policy_news.json"
+CHANGELOG_FILE = DATA_DIR / "timeline.json"
 
 # The 21 fields, in canonical order, mapped to their spreadsheet column headers.
 # Order here drives the column order in the exported XLSX.

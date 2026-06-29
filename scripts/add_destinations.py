@@ -156,7 +156,7 @@ def add_list(items, label, desc):
 
     import build_digest, export_xlsx  # noqa: E402
     export_xlsx.main(ROOT / "web" / "Global_STR_Regulations_Comprehensive_Database.xlsx")
-    for name in ("jurisdictions.json", "policy_news.json"):
+    for name in ("jurisdictions.json", "timeline.json"):
         (ROOT / "web" / name).write_text((ROOT / "data" / name).read_text())
     print("Rebuilt XLSX + synced web data.", flush=True)
 
