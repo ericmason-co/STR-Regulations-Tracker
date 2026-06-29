@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=107" />
+  <link rel="stylesheet" href="styles.css?v=108" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -1007,11 +1007,26 @@
         if (titleEl) titleEl.textContent = `Share ${name}`;
         if (subtitleEl) subtitleEl.textContent = `Share specific short-term rental rules for this location.`;
       } else {
-        currentShareUrl = "https://lawfulstay.com/";
-        currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
-        currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
-        if (titleEl) titleEl.textContent = "Share LawfulStay";
-        if (subtitleEl) subtitleEl.textContent = "Spread the word about short-term rental compliance.";
+        let activeTab = "database";
+        const activeNav = document.querySelector(".nav-item.active");
+        if (activeNav && activeNav.dataset.tab) {
+          activeTab = activeNav.dataset.tab;
+        }
+        
+        if (activeTab && activeTab !== "database") {
+          currentShareUrl = `https://lawfulstay.com/?tab=${activeTab}`;
+          const tabLabel = activeNav ? activeNav.querySelector("span").textContent : activeTab;
+          currentShareTitle = `LawfulStay: ${tabLabel}`;
+          currentShareText = `Check out the ${tabLabel} view on LawfulStay:`;
+          if (titleEl) titleEl.textContent = `Share ${tabLabel}`;
+          if (subtitleEl) subtitleEl.textContent = `Share this view directly with your network.`;
+        } else {
+          currentShareUrl = "https://lawfulstay.com/";
+          currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
+          currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
+          if (titleEl) titleEl.textContent = "Share LawfulStay";
+          if (subtitleEl) subtitleEl.textContent = "Spread the word about short-term rental compliance.";
+        }
       }
       
       if (copyInput) copyInput.value = currentShareUrl;
@@ -1171,6 +1186,6 @@
     });
   </script>
 
-  <script src="app.js?v=107"></script>
+  <script src="app.js?v=108"></script>
 </body>
 </html>

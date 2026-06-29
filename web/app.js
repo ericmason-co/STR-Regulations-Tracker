@@ -1528,6 +1528,17 @@ function wire() {
       setTimeout(() => openModal(matched), 200);
     }
   }
+  
+  const tabName = params.get("tab");
+  if (tabName) {
+    if (["database", "assistant", "market-updates", "monitoring", "about"].includes(tabName)) {
+      if (typeof switchTab === "function") {
+        switchTab(tabName);
+      } else if (typeof window.switchTab === "function") {
+        window.switchTab(tabName);
+      }
+    }
+  }
 
   const changelog = await fetchJson([`changelog.json?t=${t}`, `../data/changelog.json?t=${t}`]);
   renderLatest(changelog);
