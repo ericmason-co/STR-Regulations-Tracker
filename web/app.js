@@ -1561,22 +1561,13 @@ function wire() {
   renderLatest(changelog);
   setupRecentlyAddedPills(changelog);
 
-  // Wire click handlers for statically pre-rendered pills → open regulation detail modal
-  document.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const j = BY_ID[btn.dataset.id];
-      if (!j) return;
-      if (typeof switchTab === "function") switchTab("database");
-      openModal(j);
-    });
-  });
   // Wire click handlers for statically pre-rendered timeline links → open modal
   document.querySelectorAll(".timeline-list a.where[data-id]").forEach(a => {
     a.addEventListener("click", ev => {
       ev.preventDefault();
       const j = BY_ID[a.dataset.id];
       if (!j) return;
-      if (typeof switchTab === "function") switchTab("database");
+      if (typeof window.switchTab === "function") window.switchTab("database");
       openModal(j);
     });
   });
@@ -1603,53 +1594,69 @@ function wire() {
 
   function setupRecentlyAddedPills(changelog) {
     const container = document.getElementById("recently-added-pills");
-    if (!container || !changelog || !changelog.entries) return;
-    
+    if (!container) return;
+
+    // Build dynamic pills from changelog
     const uniqueIds = new Set();
     const recentJurs = [];
-    
-    for (const entry of changelog.entries) {
-      const jId = entry.jurisdiction_id;
-      if (!jId || uniqueIds.has(jId)) continue;
-      
-      const jur = ALL.find(j => j.id === jId);
-      if (jur) {
-        uniqueIds.add(jId);
-        recentJurs.push(jur);
-        if (recentJurs.length >= 8) break;
+    if (changelog && changelog.entries) {
+      for (const entry of changelog.entries) {
+        const jId = entry.jurisdiction_id;
+        if (!jId || uniqueIds.has(jId)) continue;
+        const jur = ALL.find(j => j.id === jId);
+        if (jur) {
+          uniqueIds.add(jId);
+          recentJurs.push(jur);
+          if (recentJurs.length >= 8) break;
+        }
       }
     }
-    
+
+    // Only replace static pills if we have dynamic ones — otherwise keep the baked-in HTML
+    if (recentJurs.length === 0) {
+      // Wire click handlers on the existing static pills (data-id attr)
+      container.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const j = BY_ID[btn.dataset.id];
+          if (!j) return;
+          if (typeof window.switchTab === "function") window.switchTab("database");
+          openModal(j);
+        });
+      });
+      return;
+    }
+
+    // Replace with fresh dynamic pills
     container.innerHTML = "";
-    
     recentJurs.forEach(j => {
       const btn = document.createElement("button");
       btn.className = "rt-pill";
       btn.type = "button";
-      
+      btn.dataset.id = j.id;
+
       let name = j.city;
       if (!name) name = j.state || j.country;
-      
       let label = name;
       if (j.city && j.state) {
         const stateWords = j.state.split(/\s+/)
           .filter(w => !["of", "the", "and", "in"].includes(w.toLowerCase()));
-        const stateAbbr = stateWords.length > 1 
+        const stateAbbr = stateWords.length > 1
           ? stateWords.map(w => w[0]).join("").toUpperCase()
           : j.state.slice(0, 2).toUpperCase();
-        
         if (j.country === "United States" || j.country === "Canada") {
           label = `${j.city}, ${stateAbbr}`;
         }
       }
-      
+
       btn.textContent = label;
       btn.addEventListener("click", () => {
-        searchForLocation(label);
+        if (typeof window.switchTab === "function") window.switchTab("database");
+        openModal(j);
       });
       container.appendChild(btn);
     });
   }
+
 
   // DevTools deterrents: disable right-click and open shortcuts
   document.addEventListener('contextmenu', e => e.preventDefault());
