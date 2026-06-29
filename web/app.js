@@ -581,19 +581,27 @@ function renderStats(filtered) {
 const ADMIN_ENTRY = /(^seed$|-add$|expansion$)/;
 
 function renderLatest(changelog) {
-  if (!changelog || !changelog.entries) return;
+  const container = $("timeline-list-container");
+  if (!container) return;
+  if (!changelog || !changelog.entries || !changelog.entries.length) {
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
+    return;
+  }
   const entries = changelog.entries
     .filter((e) => !ADMIN_ENTRY.test(e.jurisdiction_id || "") && e.summary)
     .slice(0, 6);
-  if (!entries.length) return;
-  $("timeline-list-container").innerHTML = entries.map((e) => {
+  if (!entries.length) {
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
+    return;
+  }
+  container.innerHTML = entries.map((e) => {
     const where = BY_ID[e.jurisdiction_id]
       ? `<a class="where" href="#" data-id="${esc(e.jurisdiction_id)}">${esc(e.jurisdiction_label)}</a>`
       : `<span class="where">${esc(e.jurisdiction_label)}</span>`;
     return `<li><span class="when"><i class="fa-regular fa-calendar-days"></i> ${esc(e.date)}</span>` +
       `<span class="lc-content">${where} <span class="what">&mdash; ${esc(e.summary)}</span></span></li>`;
   }).join("");
-  $("timeline-list-container").querySelectorAll("a.where").forEach((a) =>
+  container.querySelectorAll("a.where").forEach((a) =>
     a.addEventListener("click", (ev) => {
       ev.preventDefault();
       const j = BY_ID[a.dataset.id];
