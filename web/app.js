@@ -669,7 +669,22 @@ async function handleAlertSubscribe(event, id, label) {
 }
 window.handleAlertSubscribe = handleAlertSubscribe;
 
+// Navigate to the Regulations DB tab (if not already there) then open the regulation detail modal.
+// This avoids the switchTab→closeDrawer race condition that prevented the modal from showing.
+function openJurisdiction(j) {
+  if (!j) return;
+  const activeNav = document.querySelector(".nav-item.active");
+  const alreadyOnDB = activeNav && activeNav.dataset.tab === "database";
+  if (!alreadyOnDB && typeof window.switchTab === "function") {
+    window.switchTab("database");   // calls closeDrawer() internally
+    setTimeout(() => openModal(j), 80);  // wait for closeDrawer to finish
+  } else {
+    openModal(j);  // already on DB tab — open immediately
+  }
+}
+
 function openModal(j) {
+
   const sections = [
     {
       title: "Overview & Registry",
@@ -1598,10 +1613,7 @@ function wire() {
   document.querySelectorAll(".timeline-list a.where[data-id]").forEach(a => {
     a.addEventListener("click", ev => {
       ev.preventDefault();
-      const j = BY_ID[a.dataset.id];
-      if (!j) return;
-      if (typeof window.switchTab === "function") window.switchTab("database");
-      setTimeout(() => openModal(j), 50);
+      openJurisdiction(BY_ID[a.dataset.id]);
     });
   });
 
@@ -1649,12 +1661,7 @@ function wire() {
     if (recentJurs.length === 0) {
       // Wire click handlers on the existing static pills (data-id attr)
       container.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const j = BY_ID[btn.dataset.id];
-          if (!j) return;
-          if (typeof window.switchTab === "function") window.switchTab("database");
-          setTimeout(() => openModal(j), 50);
-        });
+        btn.addEventListener("click", () => openJurisdiction(BY_ID[btn.dataset.id]));
       });
       return;
     }
@@ -1697,10 +1704,7 @@ function wire() {
       }
 
       btn.textContent = label;
-      btn.addEventListener("click", () => {
-        if (typeof window.switchTab === "function") window.switchTab("database");
-        setTimeout(() => openModal(j), 50);
-      });
+      btn.addEventListener("click", () => openJurisdiction(j));
       container.appendChild(btn);
     });
   }
