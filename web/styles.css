@@ -1998,83 +1998,267 @@ details.t-state {
    Responsive Breakpoints
    ========================================================================== */
 @media (max-width: 900px) {
+  /* ── App shell: sidebar goes to bottom tab bar ── */
   .app-shell {
     flex-direction: column;
+    padding-bottom: 64px; /* space for bottom tab bar */
   }
-  
+
   .sidebar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
     height: auto;
-    position: relative;
+    top: auto;
     border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  
-  .sidebar-menu {
+    border-top: 1px solid var(--border);
+    z-index: 100;
     flex-direction: row;
-    padding: 0.75rem 1rem;
-    overflow-x: auto;
-    gap: 0.5rem;
-    -webkit-overflow-scrolling: touch;
+    background-color: var(--panel-2);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
   }
-  
-  .nav-item {
-    white-space: nowrap;
-    padding: 0.5rem 0.85rem;
-    font-size: 0.85rem;
-    justify-content: center;
-    width: auto;
-    flex-shrink: 0;
-  }
-  
-  .sidebar-footer {
+
+  .sidebar-header {
     display: none;
   }
-  
-  .topbar {
-    padding: 1rem 1.25rem;
+
+  .sidebar-menu {
+    flex-direction: row;
+    width: 100%;
+    padding: 0;
+    gap: 0;
+    overflow: visible;
   }
-  
+
+  .nav-item {
+    flex: 1;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.5rem 0.25rem 0.6rem;
+    font-size: 0.62rem;
+    border-radius: 0;
+    white-space: nowrap;
+    border-left: none;
+    border-bottom: none;
+    border-top: 2px solid transparent;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+  }
+
+  .nav-item.active {
+    border-top-color: var(--brand);
+    background: transparent;
+  }
+
+  .nav-item .nav-icon {
+    font-size: 1.1rem;
+  }
+
+  .sidebar-footer,
+  .sidebar-sponsor {
+    display: none;
+  }
+
+  /* ── Topbar ── */
+  .topbar {
+    padding: 0.75rem 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .topbar-pretitle {
+    display: none;
+  }
+
+  .topbar-title {
+    font-size: 1.1rem;
+  }
+
+  .topbar-right .btn span,
+  .topbar-right .btn-label {
+    display: none;
+  }
+
+  /* ── Panel ── */
   .panel {
-    padding: 1.25rem;
+    padding: 0.875rem;
+  }
+
+  /* ── KPI cards: 2-column grid ── */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+  }
+
+  .kpi-card {
+    padding: 0.875rem 1rem;
+    gap: 0.75rem;
+  }
+
+  .kpi-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .kpi-value {
+    font-size: 1.3rem;
+  }
+
+  .kpi-label {
+    font-size: 0.7rem;
+  }
+
+  /* ── Search + filter row ── */
+  .search-filter-row,
+  .search-controls-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .search-wrapper,
+  .search-outer {
+    flex: 1 1 100%;
+    min-width: 0;
+    margin-bottom: 0 !important;
+  }
+
+  #search {
+    width: 100%;
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+
+  /* ── Recently Added pills ── */
+  .rt-pills {
+    padding-bottom: 0.25rem;
+  }
+
+  /* ── View mode / legend ── */
+  .view-legend-section {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+
+  .legend {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  /* ── TABLE → CARD LIST on mobile ── */
+  .table-responsive {
+    max-height: none;
+    overflow-y: visible;
+    box-shadow: none;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  #table thead {
+    display: none; /* hide column headers */
+  }
+
+  #table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 0.6rem;
+    padding: 0.875rem;
+    gap: 0.35rem;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  #table tbody tr:hover {
+    background: var(--panel-2);
+  }
+
+  /* Hide region and updated columns on mobile, show name/status/license */
+  #table tbody tr td:nth-child(1) { /* Jurisdiction */
+    font-size: 1rem;
+    font-weight: 600;
+    order: 1;
+  }
+
+  #table tbody tr td:nth-child(2) { /* Region */
+    font-size: 0.75rem;
+    color: var(--muted);
+    order: 2;
+  }
+
+  #table tbody tr td:nth-child(3) { /* Status */
+    order: 3;
+  }
+
+  #table tbody tr td:nth-child(4) { /* License */
+    font-size: 0.8rem;
+    order: 4;
+    color: var(--muted);
+  }
+
+  #table tbody tr td:nth-child(5), /* Day Cap */
+  #table tbody tr td:nth-child(6), /* Tax */
+  #table tbody tr td:nth-child(7) { /* Updated */
+    display: none;
+  }
+
+  #table tbody tr td .clip {
+    max-width: 100%;
+    white-space: normal;
+    overflow: visible;
+  }
+
+  /* ── Modal full-screen on mobile ── */
+  .modal-drawer .modal-card {
+    width: 100%;
+    height: 90vh;
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    overflow-y: auto;
+  }
+
+  .modal-drawer {
+    align-items: flex-end;
   }
 }
 
 @media (max-width: 600px) {
   .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.85rem;
-  }
-  
-  .topbar-right {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
   }
+
+  .topbar-right {
+    display: flex;
+    flex-direction: row;
+    gap: 0.4rem;
+  }
+
   .topbar-right .btn {
-    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
   }
-  
-  .view-legend-section {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
+
   .map-header-row {
     flex-direction: column;
     align-items: stretch;
     gap: 0.75rem;
   }
-  
-  .legend {
-    flex-direction: column;
-    gap: 0.5rem;
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .modal-drawer .modal-card {
-    width: 100%;
+
+  /* Filter buttons inline */
+  .filter-btn-row {
+    flex-wrap: wrap;
+    gap: 0.4rem;
   }
 }
 
