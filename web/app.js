@@ -1388,10 +1388,15 @@ function wire() {
   });
   
   $("reset").addEventListener("click", () => {
-    ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
-    $("clear-search").style.display = "none";
+    // Clear all filter inputs
+    ["search", "continent", "status", "country"].forEach((id) => {
+      const el = $(id);
+      if (el) el.value = "";
+    });
+    const clearBtn = $("clear-search");
+    if (clearBtn) clearBtn.style.display = "none";
     updateCountrySelect();
-    
+
     // Close filter drawer if open
     const filterDrawer = $("filter-drawer");
     const filterBtn = $("filter-toggle-btn");
@@ -1399,13 +1404,15 @@ function wire() {
       filterDrawer.style.maxHeight = "0";
       if (filterBtn) filterBtn.classList.remove("active");
     }
-    
+
     // Reset map zoom
     scale = 1;
     offsetX = 0;
     offsetY = 0;
     updateMapTransform();
-    
+
+    // Switch back to list view and re-render all rows
+    setView("list");
     render();
   });
 

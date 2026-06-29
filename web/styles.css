@@ -898,6 +898,8 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
   box-shadow: 0 4px 15px var(--shadow);
 }
 
@@ -906,6 +908,11 @@ table {
   border-collapse: collapse;
   text-align: left;
   font-size: 0.9rem;
+}
+thead tr {
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 th {
