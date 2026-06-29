@@ -898,7 +898,7 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: visible;
   box-shadow: 0 4px 15px var(--shadow);
 }
 
@@ -1925,9 +1925,6 @@ details.t-state {
 }
 .field-grid dd a:hover {
   text-decoration: underline;
-}
-.field-grid dd {
-  word-break: break-word;
 }
 /* Source links: clean external badge style */
 .src-link {
