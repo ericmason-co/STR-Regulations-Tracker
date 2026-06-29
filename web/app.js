@@ -785,10 +785,43 @@ function esc(s) {
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 function linkify(s) {
-  const t = (s ?? "—").toString();
-  return /^https?:\/\//.test(t)
-    ? `<a href="${esc(t)}" target="_blank" rel="noopener">${esc(t)} <i class="fa-solid fa-up-right-from-square" style="font-size: 0.8rem"></i></a>`
-    : esc(t || "—");
+  if (!s && s !== 0) return "—";
+  const t = s.toString().trim();
+  if (!t || t === "—") return "—";
+
+  // Split on semicolons to handle multiple sources
+  const parts = t.split(/\s*;\s*/);
+  const rendered = parts.map(part => {
+    part = part.trim();
+    if (!part) return null;
+
+    // If the whole segment is a URL, render as a clean linked icon+domain
+    if (/^https?:\/\/\S+/i.test(part)) {
+      try {
+        const url = new URL(part);
+        const label = url.hostname.replace(/^www\./, "");
+        return `<a href="${esc(part)}" target="_blank" rel="noopener noreferrer" class="src-link">${esc(label)} <i class="fa-solid fa-up-right-from-square" style="font-size:0.72rem"></i></a>`;
+      } catch(e) { /* fall through */ }
+    }
+
+    // If segment contains a URL embedded in text, linkify just the URL
+    const urlMatch = part.match(/https?:\/\/\S+/i);
+    if (urlMatch) {
+      const url = urlMatch[0];
+      const before = esc(part.slice(0, urlMatch.index));
+      try {
+        const u = new URL(url);
+        const label = u.hostname.replace(/^www\./, "");
+        const after = esc(part.slice(urlMatch.index + url.length));
+        return `${before}<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="src-link">${esc(label)} <i class="fa-solid fa-up-right-from-square" style="font-size:0.72rem"></i></a>${after}`;
+      } catch(e) { /* fall through */ }
+    }
+
+    // Plain text segment
+    return esc(part);
+  }).filter(Boolean);
+
+  return rendered.length ? rendered.join(" &nbsp;·&nbsp; ") : esc(t);
 }
 
 // Autocomplete suggestions for search input

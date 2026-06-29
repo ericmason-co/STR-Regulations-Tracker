@@ -1926,6 +1926,28 @@ details.t-state {
 .field-grid dd a:hover {
   text-decoration: underline;
 }
+.field-grid dd {
+  word-break: break-word;
+}
+/* Source links: clean external badge style */
+.src-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: none;
+  background: color-mix(in srgb, var(--brand) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 25%, transparent);
+  border-radius: 5px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.82rem;
+  transition: background 0.15s;
+}
+.src-link:hover {
+  background: color-mix(in srgb, var(--brand) 18%, transparent);
+  text-decoration: none;
+}
 
 /* ==========================================================================
    Footer
