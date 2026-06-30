@@ -13361,6 +13361,19 @@
   ],
   "timeline": [
     {
+      "date": "2026-06-30",
+      "jurisdiction_id": "us-fl-lake-worth-beach",
+      "jurisdiction_label": "Lake Worth Beach, Florida",
+      "change_type": "new_entry",
+      "field": "multiple",
+      "summary": "Lake Worth Beach, FL prohibits short-term rentals of fewer than 60 days under existing zoning ordinance. The City Commission reaffirmed this policy at the February 9, 2023 Commission Meeting, with a code enforcement plan developed to address non-compliant properties.",
+      "old_value": "Not in database",
+      "new_value": "Banned \u2014 60-day minimum stay required; STRs of <60 days prohibited citywide",
+      "effective_date": "2023-02-09",
+      "source_url": "https://lakeworthbeachfl.gov/community-sustainability/vacation-short-term-rentals",
+      "confidence": "high"
+    },
+    {
       "date": "2026-06-29",
       "jurisdiction_id": "us-california-nevada-city",
       "jurisdiction_label": "Nevada City, California",
