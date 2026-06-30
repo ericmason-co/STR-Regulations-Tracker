@@ -92,7 +92,7 @@ body.dark-theme {
 }
 
 html, body {
-  height: auto;
+  height: 100%;
   scroll-behavior: smooth;
   font-size: 16px;
 }
@@ -104,7 +104,6 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   position: relative;
-  overflow-x: hidden;
 }
 
 /* Interactive Glowing Background Orbs */
@@ -300,25 +299,22 @@ body.dark-theme .glow-orb {
    ========================================================================== */
 .app-shell {
   display: flex;
-  min-height: 100vh;
-  width: 100%;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
 /* Sidebar navigation */
 .sidebar {
   width: 250px;
   flex-shrink: 0;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  overflow-y: auto;
   background-color: var(--panel-2);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
+  height: 100%;
   z-index: 10;
   transition: var(--transition-normal);
 }
@@ -425,8 +421,9 @@ body.dark-theme .glow-orb {
 
 /* Main Content Wrapper */
 .main-content {
-  flex: 1;
-  margin-left: 250px;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   background-color: transparent;
@@ -901,6 +898,8 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: calc(100vh - 300px);
   box-shadow: 0 4px 15px var(--shadow);
 }
 
@@ -2004,11 +2003,6 @@ details.t-state {
     flex-direction: column;
     padding-bottom: 64px; /* space for bottom tab bar */
   }
-
-  .main-content {
-    margin-left: 0;
-  }
-
 
   .sidebar {
     position: fixed;
