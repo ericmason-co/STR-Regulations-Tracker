@@ -28,7 +28,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=140" />
+  <link rel="stylesheet" href="styles.css?v=144" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -1089,17 +1089,7 @@
       if (facebookLink) facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
       if (linkedinLink) linkedinLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentShareUrl)}`;
       
-      if (navigator.share) {
-        navigator.share({
-          title: currentShareTitle,
-          text: currentShareText,
-          url: currentShareUrl
-        }).catch(err => {
-          if (dialog) dialog.hidden = false;
-        });
-      } else {
-        if (dialog) dialog.hidden = false;
-      }
+      if (dialog) dialog.hidden = false;
     }
 
     function closeShareDialog() {
@@ -1238,6 +1228,6 @@
     });
   </script>
 
-  <script src="app.js?v=140"></script>
-</body>
+  <script src="app.js?v=144"></script>
+<div style="position:fixed;bottom:0;left:0;right:0;background:#f59e0b;color:#000;text-align:center;padding:6px 0;font-weight:700;font-size:0.85rem;z-index:99999;letter-spacing:0.05em;">⚠️ DEV ENVIRONMENT — Not Production</div></body>
 </html>

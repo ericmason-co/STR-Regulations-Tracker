@@ -218,7 +218,7 @@ function renderList(filtered) {
 
 // Derive a quick license indicator from the free-text license field.
 function licClass(text) {
-  const s = (text || "").trim().toLowerCase();
+  const s = (text == null ? "" : String(text)).trim().toLowerCase();
   if (!s || s === "unknown") return "unknown";
   if (s.startsWith("yes")) return "yes";
   if (s.startsWith("no")) return "no";
@@ -573,11 +573,18 @@ function renderLatest(changelog) {
     container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
     return;
   }
-  const entries = changelog.entries
-    .filter((e) => !ADMIN_ENTRY.test(e.jurisdiction_id || "") && e.summary)
-    .slice(0, 6);
+  // Show ONLY entries dated today (UTC). No fallback to older dates.
+  // The daily monitoring agent stamps all findings with today's date.
+  const todayStr = new Date().toISOString().slice(0, 10);
+
+  const entries = changelog.entries.filter((e) => {
+    if (!e.summary || !e.date) return false;
+    if (ADMIN_ENTRY.test(e.jurisdiction_id || "")) return false;
+    return e.date === todayStr;
+  });
+
   if (!entries.length) {
-    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-clock"></i> No regulation changes reported in the last 24 hours. Check back tomorrow or browse the full database above.</li>`;
     return;
   }
   container.innerHTML = entries.map((e) => {
@@ -673,13 +680,16 @@ window.handleAlertSubscribe = handleAlertSubscribe;
 // This avoids the switchTab→closeDrawer race condition that prevented the modal from showing.
 function openJurisdiction(j) {
   if (!j) return;
-  if (typeof window.switchTab === "function") {
-    window.switchTab("database");
+  const activeNav = document.querySelector(".nav-item.active");
+  const alreadyOnDB = activeNav && activeNav.dataset.tab === "database";
+  if (!alreadyOnDB && typeof window.switchTab === "function") {
+    window.switchTab("database");   // calls closeDrawer() internally
+    setTimeout(() => openModal(j), 80);  // wait for closeDrawer to finish
+  } else {
+    openModal(j);  // already on DB tab — open immediately
   }
-  setTimeout(() => openModal(j), 120);
 }
 window.openJurisdiction = openJurisdiction;
-
 
 function openModal(j) {
 
@@ -778,7 +788,7 @@ function openModal(j) {
       <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
         <a href="#" onclick="openFeedbackDialog('${idEsc}', '${labelEsc}'); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-pen-to-square"></i> Report correction</a>
         <span style="color: var(--border);">|</span>
-        <a href="#" onclick="window.print(); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-print"></i> Print rules</a>
+        <a href="#" onclick="printJurisdictionRules(); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-print"></i> Print rules</a>
       </div>
       <div class="drawer-share-row" style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; color: var(--muted);">
         <button onclick="openShareDialog('${idEsc}', '${esc(disp.name)}')" class="btn btn-secondary btn-sm" type="button" style="padding: 0.25rem 0.50rem; font-size: 0.7rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 600; cursor: pointer; height: auto; border-radius: 4px;">
@@ -792,6 +802,46 @@ function openModal(j) {
     </div>`;
   $("modal").hidden = false;
 }
+
+function printJurisdictionRules() {
+  var body = document.getElementById('modal-body');
+  if (!body) return;
+
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LawfulStay — Jurisdiction Rules</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; background: #fff; padding: 2rem; }
+    h2 { font-size: 2rem; font-weight: 800; color: #0f1e1a; margin-bottom: 0.25rem; }
+    .loc { font-size: 1rem; color: #6b7280; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; }
+    .detail-sections-container { margin-top: 1rem; }
+    .detail-section-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; page-break-inside: avoid; }
+    .detail-section-card h3 { font-size: 1.1rem; font-weight: 700; color: #111827; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; }
+    .field-grid { display: grid; gap: 0.75rem; }
+    .field-grid dt { font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 0.15rem; }
+    .field-grid dd { font-size: 0.92rem; color: #111827; background: #f9fafb; border: 1px solid #e5e7eb; padding: 0.4rem 0.65rem; border-radius: 4px; margin: 0; }
+    /* Hide UI-only elements */
+    .subscribe-alerts-card, .drawer-share-row, a[onclick*="openFeedbackDialog"],
+    a[onclick*="printJurisdictionRules"], a[onclick*="window.print"],
+    .modal-close, button { display: none !important; }
+    a { color: #1d4ed8; text-decoration: underline; }
+    .status-badge, .recent-tag, span[class*="badge"] { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid #e5e7eb; }
+    footer-note { display: block; margin-top: 2rem; font-size: 0.75rem; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem; }
+  </style>
+</head>
+<body>
+` + body.innerHTML + `
+<footer-note>Printed from LawfulStay.com — verify regulations at official government sources before making decisions.</footer-note>
+</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(function() { win.print(); win.close(); }, 400);
+}
+
 
 function esc(s) {
   return (s ?? "").toString().replace(/[&<>"]/g, (c) =>
@@ -1710,13 +1760,21 @@ function wire() {
       let name = j.city;
       if (!name) name = j.state || j.country;
       let label = name;
-      if (j.city && j.state) {
+      // For US/Canada: show "City, ST"
+      if (j.city && j.state && (j.country === "United States" || j.country === "Canada")) {
         const stateAbbr = STATE_ABBR[j.state] || (() => {
           const words = j.state.split(/\s+/).filter(w => !["of","the","and","in"].includes(w.toLowerCase()));
           return words.length > 1 ? words.map(w => w[0]).join("").toUpperCase() : j.state.slice(0,2).toUpperCase();
         })();
-        if (j.country === "United States" || j.country === "Canada") {
-          label = `${j.city}, ${stateAbbr}`;
+        label = `${j.city}, ${stateAbbr}`;
+      }
+      // For international entries: if city is generic ("Nationwide", "National", etc.) show country instead
+      else if (j.country && j.country !== "United States" && j.country !== "Canada") {
+        const genericCities = ["nationwide", "national", "countrywide", "all"];
+        if (!j.city || genericCities.includes(j.city.toLowerCase())) {
+          label = j.country;
+        } else {
+          label = j.city;
         }
       }
 

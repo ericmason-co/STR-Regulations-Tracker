@@ -1,17 +1,6 @@
 RewriteEngine On
 RewriteBase /
 
-# ── Cache Control ──────────────────────────────────────────────────────────
-# CSS + JS: no long-term cache — force revalidation so version bumps work
-<FilesMatch "\.(css|js)$">
-  Header set Cache-Control "no-cache, must-revalidate"
-  Header unset Expires
-</FilesMatch>
-# Static assets: keep long cache (they don't change)
-<FilesMatch "\.(png|jpg|jpeg|svg|woff|woff2|ttf|ico)$">
-  Header set Cache-Control "public, max-age=604800"
-</FilesMatch>
-
 # Proxy live data files from DigitalOcean (single source of truth - droplet updates these)
 RewriteRule ^jurisdictions\.json$ http://64.23.242.186/jurisdictions.json [P,L]
 RewriteRule ^timeline\.json$ http://64.23.242.186/timeline.json [P,L]
@@ -20,4 +9,3 @@ RewriteRule ^timeline\.json$ http://64.23.242.186/timeline.json [P,L]
 RewriteRule ^(RegulationsDB|ComplianceWizard|MarketUpdates|MonitorListings|AboutFAQ)/?$ index.html [L,NC]
 # Also support lowercase/kebab equivalents
 RewriteRule ^(regulations-db|compliance-wizard|market-updates|monitor-listings|about-faq)/?$ index.html [L,NC]
-
