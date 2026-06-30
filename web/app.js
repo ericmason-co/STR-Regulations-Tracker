@@ -673,16 +673,13 @@ window.handleAlertSubscribe = handleAlertSubscribe;
 // This avoids the switchTab→closeDrawer race condition that prevented the modal from showing.
 function openJurisdiction(j) {
   if (!j) return;
-  const activeNav = document.querySelector(".nav-item.active");
-  const alreadyOnDB = activeNav && activeNav.dataset.tab === "database";
-  if (!alreadyOnDB && typeof window.switchTab === "function") {
-    window.switchTab("database");   // calls closeDrawer() internally
-    setTimeout(() => openModal(j), 80);  // wait for closeDrawer to finish
-  } else {
-    openModal(j);  // already on DB tab — open immediately
+  if (typeof window.switchTab === "function") {
+    window.switchTab("database");
   }
+  setTimeout(() => openModal(j), 120);
 }
 window.openJurisdiction = openJurisdiction;
+
 
 function openModal(j) {
 

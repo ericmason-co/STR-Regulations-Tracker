@@ -898,8 +898,6 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
-  overflow-y: auto;
-  max-height: calc(100vh - 300px);
   box-shadow: 0 4px 15px var(--shadow);
 }
 
