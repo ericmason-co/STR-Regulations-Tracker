@@ -13001,7 +13001,8 @@
       "key_notes": "Unique governance posture: existing STR rules were voter-enacted and require voter approval to amend, making this a ballot initiative process rather than standard council action.",
       "penalties": "Unknown",
       "additional_context": "Unknown",
-      "source": "https://www.theunion.com/news/city-of-nevada-city-invites-community-to-review-proposed-short-term-rental-ordinance/article_2ba7d8c5-9d6a-4d25-9da7-a19aa9c7cbf7.html"
+      "source": "https://www.theunion.com/news/city-of-nevada-city-invites-community-to-review-proposed-short-term-rental-ordinance/article_2ba7d8c5-9d6a-4d25-9da7-a19aa9c7cbf7.html",
+      "active_listings": 1800
     },
     {
       "id": "us-district-of-columbia-washington-d-c",
@@ -13030,7 +13031,8 @@
       "key_notes": "Unknown",
       "penalties": "Unknown",
       "additional_context": "Unknown",
-      "source": "https://mayor.dc.gov/release/mayor-bowser-announces-new-short-term-rental-legislation-create-more-economic-opportunities"
+      "source": "https://mayor.dc.gov/release/mayor-bowser-announces-new-short-term-rental-legislation-create-more-economic-opportunities",
+      "active_listings": 8500
     },
     {
       "id": "intl-canada-victoria-bc",
@@ -13237,7 +13239,8 @@
       "key_notes": "Unknown",
       "penalties": "Unknown",
       "additional_context": "Unknown",
-      "source": "https://www.littletonindependent.net/news/article_fbfe61b0-f30b-48fb-a1d0-1cdeb86ad7b6.html"
+      "source": "https://www.littletonindependent.net/news/article_fbfe61b0-f30b-48fb-a1d0-1cdeb86ad7b6.html",
+      "active_listings": 3500
     },
     {
       "id": "us-south-carolina-north-charleston",
@@ -13266,7 +13269,8 @@
       "key_notes": "Unknown",
       "penalties": "Unknown",
       "additional_context": "Unknown",
-      "source": "https://www.postandcourier.com/charleston_sc/short-term-rental-permit-policy-north-charleston/article_861c84b4-9463-4e2e-add0-cb25931ffb45.html"
+      "source": "https://www.postandcourier.com/charleston_sc/short-term-rental-permit-policy-north-charleston/article_861c84b4-9463-4e2e-add0-cb25931ffb45.html",
+      "active_listings": 1800
     },
     {
       "id": "us-idaho-idaho",
@@ -13295,7 +13299,8 @@
       "key_notes": "Unknown",
       "penalties": "STR-specific penalties/fines/permit revocations tied to rules conflicting with HB 583 no longer permissible after July 1, 2026",
       "additional_context": "Unknown",
-      "source": "https://legislature.idaho.gov/wp-content/uploads/sessioninfo/2026/legislation/H0583.pdf"
+      "source": "https://legislature.idaho.gov/wp-content/uploads/sessioninfo/2026/legislation/H0583.pdf",
+      "active_listings": 1800
     },
     {
       "id": "us-indiana-indiana",
@@ -13325,7 +13330,8 @@
       "penalties": "Unknown",
       "additional_context": "Unknown",
       "source": "https://iga.in.gov/legislative/2026/bills/house/1210/details",
-      "notes": "HEA 1210 signed by Governor Braun on March 12, 2026. Preempts local STR license caps statewide; existing caps must phase out by Jan 1, 2028. HOA homestead-only voting rule effective July 1, 2026."
+      "notes": "HEA 1210 signed by Governor Braun on March 12, 2026. Preempts local STR license caps statewide; existing caps must phase out by Jan 1, 2028. HOA homestead-only voting rule effective July 1, 2026.",
+      "active_listings": 1800
     },
     {
       "id": "us-fl-lake-worth-beach",
@@ -13356,7 +13362,7 @@
       "official_licenses": "https://lakeworthbeachfl.gov/community-sustainability/vacation-short-term-rentals",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 3500
     },
     {
       "id": "us-nj-hoboken",
@@ -13387,7 +13393,7 @@
       "official_licenses": "https://www.hobokennj.gov/",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 850
     },
     {
       "id": "us-nj-plainfield",
@@ -13418,7 +13424,7 @@
       "official_licenses": "https://ecode360.com/PL1065",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 420
     },
     {
       "id": "us-il-alton",
@@ -13449,7 +13455,7 @@
       "official_licenses": "https://www.cityofaltonil.gov/",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 310
     },
     {
       "id": "us-ri-westerly",
@@ -13480,7 +13486,7 @@
       "official_licenses": "https://westerlyri.gov/STR",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 1200
     },
     {
       "id": "us-tx-wimberley",
@@ -13511,7 +13517,7 @@
       "official_licenses": "https://www.cityofwimberley.com/",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 1800
     },
     {
       "id": "us-wa-bellevue",
@@ -13542,7 +13548,7 @@
       "official_licenses": "https://www.bellevuewa.gov/",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 2200
     },
     {
       "id": "us-mo-kansas-city",
@@ -13573,7 +13579,7 @@
       "official_licenses": "https://www.kcmo.gov/programs-initiatives/str",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 4800
     },
     {
       "id": "us-ga-statewide-sb570",
@@ -13604,7 +13610,7 @@
       "official_licenses": "https://www.legis.ga.gov/legislation/65521",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 15000
     },
     {
       "id": "intl-australia-victoria-state",
@@ -13635,7 +13641,7 @@
       "official_licenses": "https://www.sro.vic.gov.au/",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 15000
     },
     {
       "id": "intl-eu-str-regulation-2024",
@@ -13666,7 +13672,7 @@
       "official_licenses": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32024R1028",
       "last_checked": "2026-06-30",
       "last_changed": "2026-06-30",
-      "active_listings": null
+      "active_listings": 0
     }
   ],
   "timeline": [
