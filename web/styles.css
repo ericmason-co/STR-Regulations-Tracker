@@ -95,6 +95,7 @@ html, body {
   height: 100%;
   scroll-behavior: smooth;
   font-size: 16px;
+  overflow: hidden;
 }
 
 body {
@@ -423,7 +424,7 @@ body.dark-theme .glow-orb {
 .main-content {
   flex: 1 1 0;
   min-height: 0;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   background-color: transparent;
@@ -470,8 +471,9 @@ body.dark-theme .glow-orb {
 .panel {
   display: none;
   padding: 2rem;
-  flex-grow: 1;
-  flex-shrink: 0;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-y: auto;
   flex-direction: column;
 }
 .panel.active {
@@ -898,8 +900,6 @@ body.dark-theme .glow-orb {
 .table-responsive {
   border-radius: var(--border-radius-md);
   overflow-x: auto;
-  overflow-y: auto;
-  max-height: calc(100vh - 300px);
   box-shadow: 0 4px 15px var(--shadow);
 }
 
