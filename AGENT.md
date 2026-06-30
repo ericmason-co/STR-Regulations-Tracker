@@ -89,3 +89,27 @@ Working directory: `/Users/williammason/Documents/str-tracker`
 - Keep `last_full_refresh` in `jurisdictions.json` meta updated when a run touches
   the majority of jurisdictions.
 - No emojis in any output (Eric's standing preference).
+
+## ⚠️ RULE: Always use add_jurisdiction.py to add new jurisdictions
+
+**NEVER** add a jurisdiction by hand-editing `data/jurisdictions.json` directly.
+
+Always use `scripts/add_jurisdiction.py`. It atomically:
+1. Adds the entry to the `jurisdictions` array
+2. Prepends a `timeline` entry — which populates the "Recently Added" bar on the site
+3. Validates required fields before writing
+4. Deploys to the server
+
+If adding jurisdictions programmatically (not interactively), call the helper
+functions in the script directly rather than duplicating logic:
+
+```python
+from scripts.add_jurisdiction import validate, make_timeline_entry
+
+# Then append to jurisdictions and insert(0, ...) on timeline manually
+# but ALWAYS do both steps — never one without the other.
+```
+
+The invariant: **every jurisdiction in `jurisdictions[]` must have a corresponding
+entry in `timeline[]`**. If you break this, the Recently Added bar silently drops
+that city.
