@@ -67,6 +67,37 @@ def normalize_status(raw: str) -> str:
         return "Active"
     return "Pending"
 
+
+
+# String fields that must never be boolean/int/None in the JSON output.
+_STRING_FIELDS = [
+    "city", "state", "country", "status", "license_required",
+    "tax_registration_required", "fees", "primary_residence_required",
+    "rental_day_cap", "occupancy_limit", "tax_rate", "zoning_restrictions",
+    "min_stay", "density_rules", "insurance_required", "platform_obligations",
+    "compliance_notes", "effective_date", "key_notes", "penalties",
+    "additional_context", "source",
+]
+
+def coerce_strings(record: dict) -> dict:
+    """Ensure every string-typed field is actually a str, not a bool/int/None.
+
+    The Claude model occasionally emits JSON booleans (true/false) for fields
+    like license_required or primary_residence_required.  A bare Python True
+    has no .trim() method, which crashes the JS renderList() loop and silently
+    hides every row after the first bad record.  Convert here so bad model
+    output can never reach the browser.
+    """
+    for key in _STRING_FIELDS:
+        val = record.get(key)
+        if val is None or val == "":
+            continue  # leave empties alone — UI treats them as Unknown
+        if isinstance(val, bool):
+            record[key] = "Yes" if val else "No"
+        elif not isinstance(val, str):
+            record[key] = str(val)
+    return record
+
 API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = os.environ.get("MONITOR_MODEL", "claude-sonnet-4-6")
 
@@ -88,29 +119,66 @@ def today() -> str:
     return dt.date.today().isoformat()
 
 
-def build_prompt(region: str, existing: list[dict]) -> str:
+def build_prompt(region: str, existing: list[dict], recent: list[dict] | None = None) -> str:
     labels = ", ".join(
         f"{j['city']} ({j.get('state') or j.get('country')})" for j in existing
     )
     field_list = ", ".join(FIELD_KEYS)
+    recent = recent or []
+    recent_block = "\n".join(
+        f"- {r.get('jurisdiction_label', '')} | effective {r.get('effective_date', '?')} | "
+        f"{(r.get('summary', '') or '')[:110]}"
+        for r in recent[:25]
+    ) or "(none yet)"
     return f"""You are the research engine for LawfulStay, a global short-term-rental (STR) \
 regulation tracker. Today is {today()}.
 
-Use web search to find NEW, PROPOSED, or MODIFIED short-term-rental / vacation-rental / \
-holiday-let regulations and restrictions announced or updated in roughly the last 7 days, \
-ANYWHERE in the world, at any level (country, state/province, county, region, city, town, \
-or village).
+Search the OPEN WEB BROADLY — news outlets, government gazettes, council/legislature pages, \
+legal and industry coverage — for short-term-rental / vacation-rental / holiday-let regulation \
+AND closely related topics: housing policy, tourism / occupancy / visitor / lodging taxes and \
+levies, zoning, licensing and registration schemes, platform (Airbnb/Vrbo) regulation, night/day \
+caps, primary-residence rules, bans, moratoria, and enforcement actions. Look ANYWHERE in the \
+world, at any level (country, state/province, county, region, city, town, or village). Do NOT \
+limit yourself to a fixed set of sites — cast a wide net to find the news, then cite the \
+primary/official source for each item. Ignore marketing and listing-spam pages.
 
-Do TWO things:
-1. A GLOBAL DISCOVERY SWEEP for anything new/proposed/modified worldwide in the last week.
-2. A focused DEEP DIVE on this region today: {region}.
+STRICT RECENCY WINDOW — report an item ONLY if it meets at least one of these, relative to today \
+({today()}):
+  (a) the regulatory ACTION (a vote, signing, adoption, proposal, ruling, announcement, or \
+      enforcement action) occurred within the PAST 24 HOURS; OR
+  (b) the regulation/rule TAKES EFFECT within the NEXT 48 HOURS.
+Reject anything whose action is older than 24 hours UNLESS it takes effect within the next 48 \
+hours. State each item's date in the "summary", and reject any item you cannot date.
 
-Favor authoritative sources (government ordinances, bills, official registries) and reputable \
-industry trackers (Rent Responsibly, iGMS, Awning, AirDNA). Ignore marketing blogs and listings.
+Also specifically scan today's focus region for qualifying items: {region}.
+
+SOURCE AUTHORITY & NO DUPLICATES — the same regulatory action will often appear across several \
+outlets. Report each distinct action exactly ONCE, and cite the SINGLE most authoritative source, \
+in this priority:
+  1. Official government / legislature / city-council / ordinance / registry / court page
+  2. Government press release or official gazette
+  3. Established news outlet or newswire (Reuters, AP, major local paper)
+  4. Reputable industry tracker
+  5. (never) blogs, listing pages, marketing/SEO content
+Never emit two entries for the same action just because it appeared on different sites — \
+consolidate into one entry with the best source_url. Treat two reports as the SAME action if they \
+concern the same jurisdiction and the same effective date or the same vote/ordinance.
+
+ALREADY REPORTED — these are already in the Market Updates feed. Do NOT report them again; only \
+surface something genuinely NEW or a further development beyond what is listed here:
+{recent_block}
 
 We already track these jurisdictions (avoid duplicating unless there is a genuine change): {labels}
 
-Limit the "changes" array to a maximum of 5 of the most significant changes found. Keep all summaries and compliance notes under 2 sentences to prevent output token truncation.
+Limit the "changes" array to a maximum of 5 of the most significant changes found.
+
+CRITICAL — for EVERY change you report, you MUST populate these fields in the "fields" object:
+- "compliance_notes": 2-4 sentence plain-English summary of what the current rules require and what hosts must do to stay compliant. Rewrite this fully whenever any part of the regulation changes — do not leave it as the old text.
+- "key_notes": The 2-4 most critical facts a host must know (permit requirements, night/day cap, primary-residence rule, tax rate, enforcement penalties). Use concise bullet-style prose.
+- "source": The direct URL to the official government page, ordinance, or bill. Never leave blank.
+- "penalties": Fines or enforcement consequences if known (e.g. "Up to ,000 per violation"). Use "Not specified" if genuinely not found.
+
+Keep the top-level "summary" field under 2 sentences.
 
 Return ONLY a single JSON object, no prose, no markdown fences, with this exact shape:
 {{
@@ -172,6 +240,19 @@ def call_anthropic(prompt: str, api_key: str, max_searches: int = 8,
 
 
 def extract_json(text: str) -> dict:
+    """Robustly pull the JSON object out of the model output, tolerating markdown
+    fences or trailing prose after the closing brace (which broke a naive slice)."""
+    dec = json.JSONDecoder()
+    i = text.find("{")
+    while i != -1:
+        try:
+            obj, _ = dec.raw_decode(text, i)          # parse first complete object
+            if isinstance(obj, dict) and "changes" in obj:
+                return obj
+        except json.JSONDecodeError:
+            pass
+        i = text.find("{", i + 1)
+    # Fallback to the old first-to-last slice if no clean object found.
     start, end = text.find("{"), text.rfind("}")
     if start == -1 or end == -1:
         raise ValueError(f"No JSON object found in model output:\n{text[:500]}")
@@ -223,6 +304,62 @@ def make_id(region: str, state: str, city: str, country: str) -> str:
     return f"{prefix}-{slug(geo)}-{slug(city)}"
 
 
+_EFF_FMTS = ("%Y-%m-%d", "%B %d, %Y", "%b %d, %Y", "%B %d %Y", "%m/%d/%Y", "%d %B %Y")
+
+
+def _tl_label(s):
+    # city + state/region (first two comma parts) so "Austin, Texas" == "Austin, Texas, USA"
+    parts = [p.strip() for p in (s or "").split(",")]
+    base = " ".join(parts[:2]) if len(parts) >= 2 else (parts[0] if parts else "")
+    return " ".join(base.lower().split())
+
+
+def _tl_eff(s):
+    import datetime as _dt
+    import re as _re
+    s = (s or "").strip()
+    if not s or s.lower() in ("unknown", "not specified", "n/a", "none", "current"):
+        return ""
+    for f in _EFF_FMTS:
+        try:
+            return _dt.datetime.strptime(s, f).date().isoformat()
+        except ValueError:
+            pass
+    m = _re.search(r"(\d{4})-(\d{2})-(\d{2})", s)
+    return m.group(0) if m else ""
+
+
+def dedup_timeline(entries):
+    """Keep the Market Updates feed clean. Two passes, each keeping the newest/fullest:
+      1) one entry per jurisdiction per DAY (collapses same-day repeats even when the
+         change_type or effective-date wording differs);
+      2) merge same jurisdiction + same EFFECTIVE DATE across days (an upcoming rule
+         re-caught each day by the 48h window)."""
+    def score(e):
+        return (len(e.get("summary", "") or ""), 1 if e.get("source_url") else 0)
+
+    def collapse(items, keyfn):
+        keep, order = {}, []
+        for e in items:  # newest-first order preserved
+            k = keyfn(e)
+            if k not in keep:
+                keep[k] = e
+                order.append(k)
+            elif score(e) > score(keep[k]):
+                keep[k] = e
+        return [keep[k] for k in order]
+
+    # Pass 1: one per jurisdiction per day.
+    out = collapse(entries, lambda e: (_tl_label(e.get("jurisdiction_label", "")), e.get("date", "")))
+
+    # Pass 2: collapse the same rule re-reported on different days (by effective date).
+    def eff_key(e):
+        eff = _tl_eff(e.get("effective_date", ""))
+        return ("eff", _tl_label(e.get("jurisdiction_label", "")), eff) if eff else ("uniq", id(e))
+
+    return collapse(out, eff_key)
+
+
 def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
     """Apply changes to jurisdictions.json + changelog.json. Returns (entries, updated, added)."""
     data = load_jurisdictions()
@@ -246,9 +383,12 @@ def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
 
         if existing:
             for k, v in fields.items():
-                if k in FIELD_KEYS and v:
-                    existing[k] = v
+                # Update when model explicitly provides a value (even empty string = intentional clear).
+                # Only skip when value is None, which means the model did not address that field.
+                if k in FIELD_KEYS and v is not None:
+                    existing[k] = v if v != "" else existing.get(k, "Unknown")
             existing["status"] = normalize_status(existing.get("status", ""))
+            coerce_strings(existing)
             existing["last_changed"] = today()
             existing["last_checked"] = today()
             jid = existing["id"]
@@ -269,6 +409,14 @@ def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
             record["state"] = state or "National"
             record["city"] = city
             record["status"] = normalize_status(record.get("status", ""))
+            # Seed an active_listings estimate so new locations always feed the
+            # "Rentals Monitored" KPI (15k for state/national-level, 1.8k otherwise).
+            _c = (record["city"] or "").lower()
+            record["active_listings"] = (
+                15000 if (_c in ("national", "nationwide", "state level", "state")
+                          or record["city"] == record["state"]) else 1800
+            )
+            coerce_strings(record)
             data["jurisdictions"].append(record)
             added += 1
 
@@ -288,8 +436,10 @@ def apply_changes(changes: list[dict]) -> tuple[list[dict], int, int]:
         changelog["entries"].insert(0, entry)
         new_entries.append(entry)
 
+    deduped = dedup_timeline(changelog.get("entries", []))
+    changelog["entries"] = deduped
     data["meta"]["last_full_refresh"] = today()
-    data["timeline"] = changelog.get("entries", [])
+    data["timeline"] = deduped
     (ROOT / "data" / "jurisdictions.json").write_text(json.dumps(data, indent=2) + "\n")
     (ROOT / "data" / "timeline.json").write_text(json.dumps(changelog, indent=2) + "\n")
     return new_entries, updated, added
@@ -327,7 +477,8 @@ def main() -> None:
     print(f"[{today()}] LawfulStay monitor — focus: {region}")
 
     existing = load_jurisdictions()["jurisdictions"]
-    raw = call_anthropic(build_prompt(region, existing), api_key)
+    recent = load_changelog().get("entries", [])
+    raw = call_anthropic(build_prompt(region, existing, recent), api_key)
     try:
         result = extract_json(raw)
     except ValueError as e:
@@ -343,9 +494,27 @@ def main() -> None:
     print(f"Applied: {updated} updated, {added} added.")
 
     problems = validate()
-    if problems:
-        print("VALIDATION ISSUES:")
-        for p in problems:
+    type_errors = [p for p in problems if "expected str" in p]
+    warnings    = [p for p in problems if "expected str" not in p]
+    if type_errors:
+        print("BLOCKING TYPE ERRORS — auto-repairing before web sync:")
+        for p in type_errors:
+            print("  REPAIR:", p)
+        import json as _json
+        from schema import FIELDS as _FIELDS
+        _data = _json.loads((ROOT / "data" / "jurisdictions.json").read_text())
+        _repaired = 0
+        for _rec in _data.get("jurisdictions", []):
+            for _key, _ in _FIELDS:
+                _val = _rec.get(_key)
+                if _val is not None and not isinstance(_val, str):
+                    _rec[_key] = "Yes" if (_val is True) else ("No" if (_val is False) else str(_val))
+                    _repaired += 1
+        (ROOT / "data" / "jurisdictions.json").write_text(_json.dumps(_data, indent=2) + "\n")
+        print(f"  Auto-repaired {_repaired} type error(s) in data/jurisdictions.json.")
+    if warnings:
+        print("Validation warnings (non-blocking):")
+        for p in warnings:
             print("  -", p)
 
     # Rebuild outputs (reuse the existing scripts via import).

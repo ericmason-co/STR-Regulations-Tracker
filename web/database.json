@@ -1,0 +1,275 @@
+[
+  {
+    "id": "new-york-city",
+    "city": "New York City",
+    "state": "NY",
+    "country": "United States",
+    "status": "Strict",
+    "permit_required": true,
+    "primary_residence_required": true,
+    "max_nights_cap": null,
+    "tax_rate": "5.875% + $2.00/key per night",
+    "permit_cost": "$250 (valid for 4 years)",
+    "compliance_summary": "Very strict regulations. Hosts must register with the Office of Special Enforcement (OSE). Unhosted rentals of less than 30 days are generally prohibited, and booking platforms are prohibited from processing transactions for unregistered listings.",
+    "key_rules": [
+      "The host must reside in the unit and be present during the entire stay.",
+      "A maximum of two paying guests are allowed at one time.",
+      "Guests must have access to all parts of the apartment (no locked rooms).",
+      "Rentals of 30 consecutive days or more do not require registration."
+    ],
+    "official_portal": "https://www.nyc.gov/site/specialenforcement/registration-licensing/short-term-rental-registration.page",
+    "last_updated": "2026-06-01"
+  },
+  {
+    "id": "london",
+    "city": "London",
+    "state": "England",
+    "country": "United Kingdom",
+    "status": "Moderate",
+    "permit_required": false,
+    "primary_residence_required": false,
+    "max_nights_cap": 90,
+    "tax_rate": "20% VAT (only if host exceeds standard VAT thresholds)",
+    "permit_cost": "Free (Planning permission required only if exceeding the 90-night limit)",
+    "compliance_summary": "Short-term rentals are restricted to a maximum of 90 nights per calendar year. Once this limit is reached, booking platforms will automatically block bookings unless planning permission is granted by the local council.",
+    "key_rules": [
+      "90-night annual limit applies to entire home rentals.",
+      "The night count resets every calendar year on January 1st.",
+      "Hosts wishing to exceed 90 nights must apply for change of use planning permission.",
+      "Standard residential properties do not require a separate license below the cap."
+    ],
+    "official_portal": "https://www.london.gov.uk/programmes-strategies/housing-and-land/improving-private-rented-sector/short-term-lets-london",
+    "last_updated": "2026-05-15"
+  },
+  {
+    "id": "paris",
+    "city": "Paris",
+    "state": "Île-de-France",
+    "country": "France",
+    "status": "Moderate",
+    "permit_required": true,
+    "primary_residence_required": true,
+    "max_nights_cap": 120,
+    "tax_rate": "€0.20 to €4.60 per person per night (Taxe de Séjour)",
+    "permit_cost": "Free online registration",
+    "compliance_summary": "Primary residences can be rented for up to 120 nights per year, but hosts must obtain a registration number from the Paris Town Hall website. Renting a secondary residence requires complex commercial authorization and offsetting.",
+    "key_rules": [
+      "120-night annual limit for renting out a primary residence.",
+      "Registration number must be displayed on all online listings.",
+      "Secondary residences cannot be rented out unless offset by purchasing commercial space of equal size.",
+      "Co-op or condominium association rules must explicitly permit short-term rentals."
+    ],
+    "official_portal": "https://www.paris.fr/pages/meubla-s-touristiques-601",
+    "last_updated": "2026-06-10"
+  },
+  {
+    "id": "tokyo",
+    "city": "Tokyo",
+    "state": "Kanto",
+    "country": "Japan",
+    "status": "Strict",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": 180,
+    "tax_rate": "10% Consumption Tax + local accommodation tax (¥100–¥200 per night)",
+    "permit_cost": "¥15,000 to ¥30,000 application fee",
+    "compliance_summary": "Regulated under the 2018 Minpaku Law (Private Lodging Business Act). Hosts must register with the local government. Rentals are capped at 180 nights per year, and individual wards can apply tighter limits.",
+    "key_rules": [
+      "180-night cap per year across Japan.",
+      "Must submit a notification to the local ward office prior to hosting.",
+      "Mandatory guest registry log, including copies of passports for foreign visitors.",
+      "Certain wards (like Shibuya and Shinjuku) restrict operations to weekends only in residential zones."
+    ],
+    "official_portal": "https://www.mlit.go.jp/kankocho/minpaku/index_en.html",
+    "last_updated": "2026-04-20"
+  },
+  {
+    "id": "barcelona",
+    "city": "Barcelona",
+    "state": "Catalonia",
+    "country": "Spain",
+    "status": "Highly Restricted",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": null,
+    "tax_rate": "€2.25 to €6.25 per person per night (includes city surcharge)",
+    "permit_cost": "No new licenses are being issued",
+    "compliance_summary": "Barcelona has implemented a strict ban on renting out private rooms for short stays. Tourist apartments (HUTs) require a license, but the city has stopped issuing new licenses and plans to eliminate all tourist flats by 2028.",
+    "key_rules": [
+      "Renting individual rooms in private homes for less than 31 days is illegal.",
+      "Entire apartments require an active HUT license, which must be shown on all ads.",
+      "Severe fines (up to €60,000) for hosts operating unlicensed listings.",
+      "The city employs specialized inspection teams to audit booking platforms."
+    ],
+    "official_portal": "https://ajuntament.barcelona.cat/en/housing/tourist-accommodation",
+    "last_updated": "2026-06-18"
+  },
+  {
+    "id": "los-angeles",
+    "city": "Los Angeles",
+    "state": "CA",
+    "country": "United States",
+    "status": "Strict",
+    "permit_required": true,
+    "primary_residence_required": true,
+    "max_nights_cap": 120,
+    "tax_rate": "14% Transient Occupancy Tax (TOT)",
+    "permit_cost": "$89 per year (regular registration) or $890 (extended registration)",
+    "compliance_summary": "Under the Home-Sharing Ordinance, hosts may only rent out their primary residence (where they live for at least 6 months of the year). Rentals are capped at 120 days per year unless hosts obtain an Extended Home-Sharing approval.",
+    "key_rules": [
+      "Only primary residences can be registered; second homes and investment properties are banned.",
+      "Regular registration caps rentals at 120 nights per year.",
+      "Extended registration allows up to 365 nights but requires host history and neighbor notification.",
+      "Rent-controlled (RSO) units cannot be used for short-term home sharing."
+    ],
+    "official_portal": "https://planning.lacity.gov/plans-policies/initiative-programs/home-sharing",
+    "last_updated": "2026-05-30"
+  },
+  {
+    "id": "miami-beach",
+    "city": "Miami Beach",
+    "state": "FL",
+    "country": "United States",
+    "status": "Highly Restricted",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": null,
+    "tax_rate": "6% State Sales Tax + 4% Resort Tax + 3% Convention Development Tax",
+    "permit_cost": "$1,000 resort tax registration fee + $600 annual renewal fee",
+    "compliance_summary": "Short-term rentals are strictly banned in all single-family homes and in most residential zoning districts. They are only permitted in designated high-density commercial and multi-family zoning districts, subject to heavy licensing.",
+    "key_rules": [
+      "Short-term rentals of less than 6 months and 1 day are illegal in restricted zones.",
+      "Allowed zones require both a Business Tax Receipt (BTR) and a Resort Tax Certificate.",
+      "Fines start at $20,000 for the first violation and scale up to $100,000.",
+      "Advertising without active license numbers visible is subject to immediate fines."
+    ],
+    "official_portal": "https://www.miamibeachfl.gov/government/finance/resort-tax/short-term-rentals/",
+    "last_updated": "2026-06-05"
+  },
+  {
+    "id": "sydney",
+    "city": "Sydney",
+    "state": "NSW",
+    "country": "Australia",
+    "status": "Moderate",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": 180,
+    "tax_rate": "Income Tax (subject to Australian income brackets)",
+    "permit_cost": "$65 registration fee",
+    "compliance_summary": "Hosts must register their properties on the NSW Planning Portal. For unhosted dwellings, a cap of 180 nights per year applies within Greater Sydney. Hosted rentals (where the host is present) have no cap.",
+    "key_rules": [
+      "Hosted short-term letting is exempt from the night cap.",
+      "Unhosted rentals are capped at 180 nights per year in Greater Sydney.",
+      "All short-term rental properties must comply with the Fire Safety Standard guidelines.",
+      "Code of Conduct applies, with a disciplinary 'strike' system for rowdy guests."
+    ],
+    "official_portal": "https://www.planning.nsw.gov.uk/policy-and-legislation/housing/short-term-rental-accommodation",
+    "last_updated": "2026-05-02"
+  },
+  {
+    "id": "amsterdam",
+    "city": "Amsterdam",
+    "state": "North Holland",
+    "country": "Netherlands",
+    "status": "Strict",
+    "permit_required": true,
+    "primary_residence_required": true,
+    "max_nights_cap": 30,
+    "tax_rate": "7% Tourist Tax (Toeristenbelasting) on the room price",
+    "permit_cost": "Free registration (annual permit renewal required)",
+    "compliance_summary": "Amsterdam enforces a strict 30-night annual cap for entire-home short-term rentals of primary residences. As of April 2026, eight central neighborhoods (including the Jordaan, Grachtengordel, and Oude Pijp) have been reduced to just 15 nights per year. All listings require a city-issued registration number displayed on every platform.",
+    "key_rules": [
+      "Maximum 30 nights per calendar year for most of the city; only 15 nights in 8 designated central neighborhoods.",
+      "Only primary residences qualify; renting social housing to tourists is prohibited.",
+      "A maximum of 4 paying guests are allowed at any one time.",
+      "Hosts must notify the municipality before each rental period and display their registration number on all listings."
+    ],
+    "official_portal": "https://www.amsterdam.nl/en/housing/holiday-rental/",
+    "last_updated": "2026-06-20"
+  },
+  {
+    "id": "dubai",
+    "city": "Dubai",
+    "state": "Dubai",
+    "country": "United Arab Emirates",
+    "status": "Moderate",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": null,
+    "tax_rate": "Tourism Dirham fee (AED 10–20 per room per night, tiered by property class)",
+    "permit_cost": "AED 1,520 operator registration + annual per-unit permit fee (varies by bedrooms)",
+    "compliance_summary": "Dubai's Department of Economy and Tourism (DET) oversees a mandatory Holiday Home licensing program. Both an operator license and a per-unit annual permit are required. Individual owners may self-manage up to 8 units; managing more requires a commercial operator license. No annual night cap applies, making it relatively host-friendly once licensed.",
+    "key_rules": [
+      "Every individual unit must hold its own annually-renewed DET Unit Permit; the permit number must appear on all listings.",
+      "Property must be fully furnished and in a DET-approved residential building.",
+      "Mandatory smart locks (SIRA-compliant) and fire safety equipment must be installed.",
+      "All guest information must be registered in the DET guest system prior to check-in."
+    ],
+    "official_portal": "https://holidayhomes.dubaitourism.ae/",
+    "last_updated": "2026-06-15"
+  },
+  {
+    "id": "singapore",
+    "city": "Singapore",
+    "state": "Singapore",
+    "country": "Singapore",
+    "status": "Highly Restricted",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": null,
+    "tax_rate": "9% GST on all accommodation services",
+    "permit_cost": "No permit pathway available for private residential properties",
+    "compliance_summary": "Short-term rentals of residential property are effectively banned in Singapore. Private condominiums and landed homes cannot be rented for fewer than 3 consecutive months, and HDB public housing flats cannot be rented for fewer than 6 months. Violations of the Planning Act carry fines up to S$200,000 and/or imprisonment. Platforms like Airbnb operate in Singapore, but listings of residential properties for short stays are illegal.",
+    "key_rules": [
+      "Private residential property minimum rental: 3 consecutive months (enforced by the Urban Redevelopment Authority).",
+      "HDB public housing minimum rental: 6 consecutive months (enforced by the Housing Development Board).",
+      "Fines of up to S$200,000 and possible imprisonment for unauthorized short-term hosting.",
+      "Only licensed hotels and URA-approved serviced apartments may legally offer stays shorter than 3 months."
+    ],
+    "official_portal": "https://www.ura.gov.sg/Corporate/Guidelines/Residential/Short-term-accommodation",
+    "last_updated": "2026-06-01"
+  },
+  {
+    "id": "mexico-city",
+    "city": "Mexico City",
+    "state": "CDMX",
+    "country": "Mexico",
+    "status": "Moderate",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": 180,
+    "tax_rate": "16% IVA (VAT) + 3% lodging tax; platforms withhold a portion automatically",
+    "permit_cost": "Free digital registration via Llave CDMX portal",
+    "compliance_summary": "Mexico City launched a mandatory digital registration system for all short-term rental hosts in May 2026. Every property must be registered and display a unique folio number on all listings. Rentals are capped at 180 nights per year, and hosts managing more than three properties are subject to commercial establishment regulations. Platforms are required to block unregistered listings.",
+    "key_rules": [
+      "All properties must obtain a free registration folio via the official Llave CDMX portal before hosting.",
+      "Annual cap of 180 nights per property.",
+      "Hosts managing more than 3 properties are subject to additional commercial regulations.",
+      "Condo/HOA bylaws may independently prohibit short-term rentals regardless of city registration."
+    ],
+    "official_portal": "https://www.cdmx.gob.mx/",
+    "last_updated": "2026-06-21"
+  },
+  {
+    "id": "lisbon",
+    "city": "Lisbon",
+    "state": "Lisbon",
+    "country": "Portugal",
+    "status": "Highly Restricted",
+    "permit_required": true,
+    "primary_residence_required": false,
+    "max_nights_cap": null,
+    "tax_rate": "€2.00 per person per night Tourist Tax (waived for children under 13)",
+    "permit_cost": "Free registration via Balcão Único Eletrónico (BUE) portal",
+    "compliance_summary": "Lisbon's Municipal Short-Term Rental Regulation (RMAL), finalized in December 2025, is the city's most restrictive framework yet. Central districts including Santa Maria Maior, Misericórdia, and Santo António are in \"Absolute Containment\" zones where AL (Alojamento Local) density exceeds 10% of housing stock — no new licenses are issued in these areas. EU Regulation 2024/1028 now requires platforms to automatically delist properties without a verified AL registration number.",
+    "key_rules": [
+      "No new AL licenses in Absolute Containment zones (10%+ AL housing density) — covers most of central Lisbon.",
+      "New licenses may be available outside containment zones; check your specific address on the city's monitoring portal.",
+      "Room-only rentals may be allowed in primary residences located in non-containment zones (minimum T2 flat).",
+      "All active AL registrations must display a license number on every online listing platform."
+    ],
+    "official_portal": "https://www.visitlisboa.com/en/plan-your-trip/useful-info/accommodation",
+    "last_updated": "2026-06-25"
+  }
+]
