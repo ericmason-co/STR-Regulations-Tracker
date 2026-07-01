@@ -562,8 +562,8 @@ function renderStats(filtered) {
   $("stats").innerHTML = chips.join("");
 }
 
-// Coverage/admin entries (bulk adds, expansions, seed) are audit records, not
-// regulatory news — keep them out of the "Latest changes" feed.
+// Seed/expansion bulk-load entries are internal audit records — exclude them.
+// new_entry, regulatory changes, and enforcement updates all display.
 const ADMIN_ENTRY = /(^seed$|-add$|expansion$)/;
 
 function renderLatest(changelog) {
@@ -573,18 +573,22 @@ function renderLatest(changelog) {
     container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
     return;
   }
-  // Show ONLY entries dated today (UTC). No fallback to older dates.
-  // The daily monitoring agent stamps all findings with today's date.
-  const todayStr = new Date().toISOString().slice(0, 10);
 
-  const entries = changelog.entries.filter((e) => {
-    if (!e.summary || !e.date) return false;
-    if (ADMIN_ENTRY.test(e.jurisdiction_id || "")) return false;
-    return e.date === todayStr;
-  });
+  // Show entries from the last 30 days, capped at 50 most recent.
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const entries = changelog.entries
+    .filter((e) => {
+      if (!e.summary || !e.date) return false;
+      if (ADMIN_ENTRY.test(e.jurisdiction_id || "")) return false;
+      return e.date >= cutoffStr;
+    })
+    .slice(0, 50);
 
   if (!entries.length) {
-    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-clock"></i> No regulation changes reported in the last 24 hours. Check back tomorrow or browse the full database above.</li>`;
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-clock"></i> No regulation changes in the last 30 days. Browse the full database above.</li>`;
     return;
   }
   container.innerHTML = entries.map((e) => {
