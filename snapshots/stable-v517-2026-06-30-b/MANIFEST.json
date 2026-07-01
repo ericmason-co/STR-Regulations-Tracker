@@ -1,0 +1,9 @@
+{
+  "snapshot": "stable-v517-2026-06-30-b",
+  "date": "2026-06-30",
+  "jurisdictions": 517,
+  "rentals_monitored": 4115008,
+  "git_commit": "70cadd7",
+  "app_version": "v145",
+  "notes": "data/ and web/ fully in sync. Market Updates fixed (30-day window). Stale HTML entries removed."
+}

@@ -1,0 +1,1849 @@
+// Loads jurisdictions.json + timeline.json and renders a searchable/filterable/
+// sortable table, a "latest regulatory changes" panel, a detail modal, and flags
+// recently-changed jurisdictions. Includes interactive autocomplete and a compliance wizard.
+
+const FIELD_LABELS = {
+  status: "Regulatory Status",
+  active_listings: "Active Listings (AirDNA)",
+  official_licenses: "Official Municipal Licenses",
+  license_required: "License/Registration Required",
+  tax_registration_required: "Tax Registration Required",
+  fees: "Fees",
+  primary_residence_required: "Primary Residence Required",
+  rental_day_cap: "Annual Rental Day Cap",
+  occupancy_limit: "Occupancy Limit",
+  tax_rate: "Tax Rate",
+  zoning_restrictions: "Zoning Restrictions",
+  min_stay: "Minimum Stay Requirement",
+  density_rules: "Density/Spacing Rules",
+  insurance_required: "Insurance Required",
+  platform_obligations: "Platform Obligations",
+  compliance_notes: "Compliance Notes",
+  effective_date: "Effective Date / Last Updated",
+  key_notes: "Key Notes",
+  penalties: "Penalties",
+  additional_context: "Additional Context",
+  source: "Source",
+};
+
+const RECENT_DAYS = 21;
+let view = "list";
+const CONTINENT_ORDER = [
+  "North America", "Central America & Caribbean", "South America",
+  "Europe", "Africa", "Middle East", "Asia", "Oceania", "Other",
+];
+let ALL = [];
+let BY_ID = {};
+let sortKey = "city";
+let sortDir = 1;
+
+// Map zoom and pan state
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let isPanning = false;
+let startX = 0;
+let startY = 0;
+let lastMouseX = 0;
+let lastMouseY = 0;
+let dragMoved = false;
+const dragThreshold = 5;
+
+const $ = (id) => document.getElementById(id);
+
+async function fetchJson(urls) {
+  for (const url of urls) {
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        return data;
+      }
+    } catch (_) { /* try next */ }
+  }
+  return null;
+}
+
+function daysSince(iso) {
+  const d = Date.parse((iso || "") + "T00:00:00");
+  if (Number.isNaN(d)) return Infinity;
+  return (Date.now() - d) / 86400000;
+}
+const isRecent = (j) => daysSince(j.last_changed) <= RECENT_DAYS;
+
+// When "city" is a level descriptor (State Level / Nationwide) rather than an
+// actual place, show the real geography as the headline and the descriptor below.
+function displayName(j) {
+  const c = (j.city || "").trim();
+  if (/^(state level|state|nationwide|national)$/i.test(c)) {
+    return { name: j.state || j.country, sub: c };
+  }
+  // Avoid repeating the city in the subtitle (e.g. "Lagos / Lagos"); fall back to country.
+  const st = (j.state || "").trim();
+  const subName = st && st !== c ? `${st}, ${j.country}` : j.country;
+  return { name: c, sub: subName };
+}
+
+function uniqueSorted(key) {
+  return [...new Set(ALL.map((j) => j[key]).filter(Boolean))].sort();
+}
+
+function fillSelect(el, values) {
+  for (const v of values) {
+    const opt = document.createElement("option");
+    opt.value = v; opt.textContent = v;
+    el.appendChild(opt);
+  }
+}
+
+function updateCountrySelect() {
+  const continent = $("continent").value;
+  const countrySelect = $("country");
+  const selectedCountry = countrySelect.value;
+  
+  countrySelect.innerHTML = '<option value="">All Countries</option>';
+  const jurisdictions = continent 
+    ? ALL.filter(j => j.continent === continent)
+    : ALL;
+  const countries = [...new Set(jurisdictions.map(j => j.country).filter(Boolean))].sort();
+  
+  fillSelect(countrySelect, countries);
+  if (countries.includes(selectedCountry)) {
+    countrySelect.value = selectedCountry;
+  } else {
+    countrySelect.value = "";
+  }
+}
+
+
+function matches(j) {
+  const q = $("search").value.trim().toLowerCase();
+  const continent = $("continent").value;
+  const status = $("status").value;
+  const country = $("country").value;
+  
+  if (continent && j.continent !== continent) return false;
+  if (status && j.status !== status) return false;
+  if (country && j.country !== country) return false;
+  
+  if (q) {
+    const terms = q.split(/[\s,]+/).filter(Boolean);
+    const searchString = `${j.city || ""} ${j.state || ""} ${j.country || ""} ${j.id || ""}`.toLowerCase();
+    
+    for (const term of terms) {
+      // Substring matches the identifying fields
+      if (searchString.includes(term)) continue;
+      
+      // Expand state abbreviation if term is 2 letters (e.g. BC -> British Columbia, DC -> District of Columbia)
+      if (term.length === 2 && j.state) {
+        const stateWords = j.state.split(/\s+/)
+          .filter(w => !["of", "the", "and", "in"].includes(w.toLowerCase()));
+        const initials = stateWords.length > 1 
+          ? stateWords.map(w => w[0]).join("").toLowerCase()
+          : j.state.slice(0, 2).toLowerCase();
+        if (initials === term) continue;
+      }
+      
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+function render() {
+  const filtered = ALL.filter(matches);
+  renderStats(filtered);
+  
+  // Update filter badge count
+  const activeFilters = [
+    $("continent").value,
+    $("country").value,
+    $("status").value
+  ].filter(Boolean).length;
+  
+  const filterBadge = $("filter-badge");
+  if (filterBadge) {
+    if (activeFilters > 0) {
+      filterBadge.textContent = activeFilters;
+      filterBadge.style.display = "inline-block";
+    } else {
+      filterBadge.style.display = "none";
+    }
+  }
+  
+  const isTree = view === "tree";
+  const isMap = view === "map";
+  $("table-container").hidden = isTree || isMap || filtered.length === 0;
+  $("tree").hidden = !isTree || filtered.length === 0;
+  $("map").hidden = !isMap;
+  $("tree-hint").hidden = !isTree || filtered.length === 0;
+  $("map-hint").hidden = !isMap;
+  $("empty").hidden = ALL.length === 0 || filtered.length > 0 || isMap;
+  if (isTree) {
+    if (filtered.length > 0) renderTree(filtered);
+  } else if (isMap) {
+    renderMap();
+  } else {
+    if (filtered.length > 0) renderList(filtered);
+  }
+  updateKpiCardActiveStates();
+}
+
+function renderList(filtered) {
+  const rows = $("rows");
+  rows.innerHTML = "";
+  const sorted = filtered.slice().sort((a, b) => {
+    const av = (a[sortKey] || "").toString().toLowerCase();
+    const bv = (b[sortKey] || "").toString().toLowerCase();
+    return av < bv ? -sortDir : av > bv ? sortDir : 0;
+  });
+  for (const j of sorted) {
+    const tr = document.createElement("tr");
+    if (isRecent(j)) tr.className = "recent";
+    const tag = recentTag(j);
+    const disp = displayName(j);
+    tr.innerHTML = `
+      <td><div class="j-head"><span class="j-name">${esc(disp.name)}</span>${tag}</div><div class="j-sub">${esc(disp.sub)}</div></td>
+      <td>${esc(j.continent)}</td>
+      <td><span class="badge ${esc(j.status)}">${esc(j.status)}</span></td>
+      <td><div class="clip" title="${esc(j.license_required)}">${licDot(j.license_required)}${esc(j.license_required)}</div></td>
+      <td><div class="clip" title="${esc(j.rental_day_cap)}">${esc(j.rental_day_cap)}</div></td>
+      <td><div class="clip" title="${esc(j.tax_rate)}">${esc(j.tax_rate)}</div></td>
+      <td class="col-updated">${esc(j.last_changed)}</td>`;
+    tr.addEventListener("click", () => openModal(j));
+    rows.appendChild(tr);
+  }
+}
+
+// Derive a quick license indicator from the free-text license field.
+function licClass(text) {
+  const s = (text == null ? "" : String(text)).trim().toLowerCase();
+  if (!s || s === "unknown") return "unknown";
+  if (s.startsWith("yes")) return "yes";
+  if (s.startsWith("no")) return "no";
+  if (s.includes("varies") || s.includes("development") || s.includes("pending") ||
+      s.includes("proposed") || s.includes("scheme")) return "varies";
+  if (s.includes("license") || s.includes("permit") || s.includes("registration") ||
+      s.includes("required")) return "yes";
+  return "unknown";
+}
+const LIC_LABEL = {
+  yes: "License required", no: "No license required",
+  varies: "License varies / pending", unknown: "License status unknown",
+};
+function licDot(text) {
+  const c = licClass(text);
+  return `<span class="lic-dot lic-${c}" title="${LIC_LABEL[c]}"></span>`;
+}
+
+function recentTag(j) {
+  return isRecent(j)
+    ? `<span class="recent-tag" data-date="Updated ${esc(j.last_changed)}">Updated</span>`
+    : "";
+}
+
+const GENERIC_CITY = /^(state level|state|nationwide|national|eu-wide)$/i;
+
+function leafFacts(j) {
+  const parts = [];
+  const add = (lbl, v) => {
+    const s = (v == null ? "" : String(v)).trim();
+    if (s && s.toLowerCase() !== "unknown") parts.push(`${lbl} ${esc(s)}`);
+  };
+  add("License:", j.license_required);
+  add("Cap:", j.rental_day_cap);
+  add("Tax:", j.tax_rate);
+  return parts.join(" &middot; ");
+}
+
+function leafEl(j, national) {
+  const div = document.createElement("div");
+  div.className = "t-leaf" + (national ? " national" : "");
+  const c = (j.city || "").trim();
+  const label = national && GENERIC_CITY.test(c) ? "Nationwide" : c;
+  const tag = recentTag(j);
+  const facts = leafFacts(j);
+  div.innerHTML =
+    `<span class="badge ${esc(j.status)}">${esc(j.status)}</span>` +
+    `<span class="t-body">` +
+    `<span class="t-head"><span class="t-name">${esc(label)}</span>${tag}</span>` +
+    (facts ? `<span class="t-facts">${facts}</span>` : "") +
+    `</span>`;
+  div.addEventListener("click", () => openModal(j));
+  return div;
+}
+
+// Build a collapsible Country > State > City tree from the filtered set.
+function renderTree(filtered) {
+  const tree = $("tree");
+  tree.innerHTML = "";
+  if (!filtered.length) return;
+
+  const byCountry = {};
+  for (const j of filtered) (byCountry[j.country] = byCountry[j.country] || []).push(j);
+
+  for (const country of Object.keys(byCountry).sort()) {
+    const recs = byCountry[country];
+    const cDet = document.createElement("details");
+    cDet.className = "t-country";
+    const cSum = document.createElement("summary");
+    cSum.innerHTML = `<span>${esc(country)}</span><span class="tcount">${recs.length}</span>`;
+    cDet.appendChild(cSum);
+
+    const cContent = document.createElement("div");
+    cContent.className = "t-content";
+
+    const national = [];
+    const byState = {};
+    for (const j of recs) {
+      const st = (j.state || "").trim();
+      if (!st) national.push(j);
+      else (byState[st] = byState[st] || []).push(j);
+    }
+    national.sort((a, b) => (a.city || "").localeCompare(b.city || "")).forEach((j) => cContent.appendChild(leafEl(j, true)));
+
+    for (const st of Object.keys(byState).sort()) {
+      const items = byState[st].sort((a, b) => (a.city || "").localeCompare(b.city || ""));
+      const sDet = document.createElement("details");
+      sDet.className = "t-state";
+      const sSum = document.createElement("summary");
+      sSum.innerHTML = `<span>${esc(st)}</span><span class="tcount">${items.length}</span>`;
+      sDet.appendChild(sSum);
+      
+      const sContent = document.createElement("div");
+      sContent.className = "t-content";
+      items.forEach((j) => sContent.appendChild(leafEl(j, false)));
+      sDet.appendChild(sContent);
+      
+      cContent.appendChild(sDet);
+    }
+    cDet.appendChild(cContent);
+    tree.appendChild(cDet);
+  }
+}
+
+function setView(v) {
+  view = v;
+  $("view-list").classList.toggle("active", v === "list");
+  $("view-tree").classList.toggle("active", v === "tree");
+  $("view-map").classList.toggle("active", v === "map");
+  render();
+}
+
+// ---- Map view (client-side SVG, equirectangular projection) ----
+const GEO_ALIAS = {
+  "United States": "USA", "Czechia": "Czech Republic",
+  "Bahamas": "The Bahamas", "United Kingdom": "England",
+  "Serbia": "Republic of Serbia", "North Macedonia": "Macedonia",
+};
+const GEO_TO_OUR = Object.fromEntries(Object.entries(GEO_ALIAS).map(([k, v]) => [v, k]));
+const STATUS_SEVERITY = { Banned: 4, Restricted: 3, Pending: 2, Active: 1, None: 0 };
+let MAP_BUILT = false;
+const MAP_PATHS = {};
+
+function projPoint(lon, lat) {
+  return ((lon + 180) / 360 * 1000).toFixed(1) + "," + ((90 - lat) / 180 * 500).toFixed(1);
+}
+function ringToPath(r) { return "M" + r.map((c) => projPoint(c[0], c[1])).join("L") + "Z"; }
+function geomToPath(g) {
+  if (g.type === "Polygon") return g.coordinates.map(ringToPath).join("");
+  if (g.type === "MultiPolygon") return g.coordinates.map((p) => p.map(ringToPath).join("")).join("");
+  return "";
+}
+const geoToOur = (g) => GEO_TO_OUR[g] || g;
+const ourToGeo = (c) => GEO_ALIAS[c] || c;
+
+function updateMapTransform() {
+  const viewport = $("map-viewport");
+  if (viewport) {
+    viewport.setAttribute("transform", `translate(${offsetX}, ${offsetY}) scale(${scale})`);
+  }
+}
+
+function constrainOffsets() {
+  if (scale <= 1) {
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    return;
+  }
+  const minX = 1000 * (1 - scale) - 200;
+  const maxX = 200;
+  const minY = 420 * (1 - scale) - 100;
+  const maxY = 100;
+  
+  offsetX = Math.min(Math.max(offsetX, minX), maxX);
+  offsetY = Math.min(Math.max(offsetY, minY), maxY);
+}
+
+function zoomAt(factor, cx, cy) {
+  const oldScale = scale;
+  scale = Math.min(Math.max(scale * factor, 1), 8);
+  if (scale === oldScale) return;
+  
+  offsetX = cx - (scale / oldScale) * (cx - offsetX);
+  offsetY = cy - (scale / oldScale) * (cy - offsetY);
+  
+  constrainOffsets();
+  updateMapTransform();
+}
+
+async function ensureMapSvg() {
+  if (MAP_BUILT) return;
+  const geo = await fetchJson(["world.json"]);
+  if (!geo) { $("map-svg").innerHTML = "<p class='empty'>Map data unavailable.</p>"; return; }
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "0 0 1000 420");
+  
+  const viewport = document.createElementNS(NS, "g");
+  viewport.id = "map-viewport";
+  
+  for (const f of geo.features) {
+    if (f.properties.name === "Antarctica") continue;
+    const d = geomToPath(f.geometry);
+    if (!d) continue;
+    const p = document.createElementNS(NS, "path");
+    p.setAttribute("d", d);
+    p.dataset.geo = f.properties.name;
+    viewport.appendChild(p);
+    (MAP_PATHS[f.properties.name] = MAP_PATHS[f.properties.name] || []).push(p);
+  }
+  svg.appendChild(viewport);
+  
+  svg.addEventListener("click", onMapClick);
+  svg.addEventListener("mousemove", onMapHover);
+  svg.addEventListener("mouseleave", () => {
+    if (window.mapScrollTimeout) {
+      clearTimeout(window.mapScrollTimeout);
+      window.mapScrollTimeout = null;
+    }
+    if (!isPanning) {
+      $("map-info").textContent = "Hover a country — click to drill in";
+    }
+  });
+  
+  // Drag-to-pan handlers
+  svg.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return;
+    isPanning = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    lastMouseX = offsetX;
+    lastMouseY = offsetY;
+    dragMoved = false;
+    svg.style.cursor = "grabbing";
+    e.preventDefault();
+  });
+
+  svg.addEventListener("wheel", (e) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const rect = svg.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      const cx = (mouseX / rect.width) * 1000;
+      const cy = (mouseY / rect.height) * 420;
+      const factor = e.deltaY < 0 ? 1.2 : 1 / 1.2;
+      zoomAt(factor, cx, cy);
+    } else {
+      const info = $("map-info");
+      if (info) {
+        const isMac = /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent || navigator.platform || "");
+        const keyName = isMac ? "⌘ (Cmd)" : "Ctrl";
+        const oldText = info.innerHTML;
+        
+        if (!info.innerHTML.includes("scroll to zoom")) {
+          info.innerHTML = `<span style="color: var(--brand); font-weight: bold;"><i class="fa-solid fa-circle-info"></i> Use ${keyName} + scroll to zoom the map</span>`;
+          if (window.mapScrollTimeout) clearTimeout(window.mapScrollTimeout);
+          window.mapScrollTimeout = setTimeout(() => {
+            if (info.innerHTML.includes("scroll to zoom")) {
+              info.innerHTML = oldText;
+            }
+          }, 1800);
+        }
+      }
+    }
+  }, { passive: false });
+
+  $("map-svg").innerHTML = "";
+  $("map-svg").appendChild(svg);
+  MAP_BUILT = true;
+  updateMapTransform();
+}
+
+// A country's color is its NATIONAL-level rule, not its strictest city — so a
+// single city ban (e.g. Santa Monica) doesn't paint the whole US red.
+function nationalStatusFor(ourCountry) {
+  const recs = ALL.filter((j) => j.country === ourCountry);
+  if (!recs.length) return null; // untracked
+  const nat = recs.find(
+    (j) => (j.state || "").trim() === "" && /nationwide|national|eu-wide/i.test(j.city || "")
+  );
+  return nat ? nat.status : "LOCAL"; // tracked, but regulated locally (no national law)
+}
+
+function onMapHover(e) {
+  if (window.mapScrollTimeout) {
+    clearTimeout(window.mapScrollTimeout);
+    window.mapScrollTimeout = null;
+  }
+  const g = e.target.dataset && e.target.dataset.geo;
+  const info = $("map-info");
+  if (!g) { info.textContent = "Hover a country — click to drill in"; return; }
+  const our = geoToOur(g);
+  const recs = ALL.filter((j) => j.country === our);
+  if (!recs.length) { info.innerHTML = `<b>${esc(g)}</b> — not yet tracked`; return; }
+  const ns = nationalStatusFor(our);
+  const frame = ns === "LOCAL" ? "no national STR law (local control)" : `national framework: ${esc(ns)}`;
+  const n = recs.length;
+  info.innerHTML = `<b>${esc(our)}</b> — ${frame} · ${n} jurisdiction${n > 1 ? "s" : ""} · click to explore`;
+}
+
+function onMapClick(e) {
+  if (dragMoved) {
+    dragMoved = false;
+    return;
+  }
+  const g = e.target.dataset && e.target.dataset.geo;
+  if (!g) return;
+  const our = geoToOur(g);
+  const matched = ALL.find((j) => j.country === our);
+  if (!matched) return;
+  
+  $("continent").value = matched.continent;
+  updateCountrySelect();
+  $("country").value = our;
+  
+  setView("tree");
+  const det = [...document.querySelectorAll("#tree details.t-country")]
+    .find((d) => d.querySelector("summary span").textContent === our);
+  if (det) { det.open = true; det.scrollIntoView({ block: "start" }); }
+}
+
+async function renderMap() {
+  await ensureMapSvg();
+  for (const [geoName, paths] of Object.entries(MAP_PATHS)) {
+    const ns = nationalStatusFor(geoToOur(geoName));
+    const cls =
+      ns === null ? "mc-untracked" : ns === "LOCAL" ? "tracked mc-local" : `tracked mc-${ns}`;
+    for (const p of paths) p.setAttribute("class", cls);
+  }
+}
+
+function renderStats(filtered) {
+  const q = $("search").value.trim();
+  const activeFilters = [
+    $("continent").value,
+    $("country").value,
+    $("status").value
+  ].filter(Boolean).length;
+  
+  const wrapper = document.querySelector(".stats-bar-wrapper");
+  if (!wrapper) return;
+  
+  if (!q && activeFilters === 0) {
+    wrapper.style.display = "none";
+    return;
+  }
+  
+  wrapper.style.display = "block";
+  
+  const byStatus = {};
+  for (const j of filtered) byStatus[j.status] = (byStatus[j.status] || 0) + 1;
+  
+  const chips = [`<span class="chip"><i class="fa-solid fa-magnifying-glass"></i> <b>${filtered.length}</b> matches found</span>`];
+  for (const s of ["Banned", "Restricted", "Active", "Pending"]) {
+    if (byStatus[s]) {
+      chips.push(`<span class="chip"><span class="dot dot-${s.toLowerCase()}"></span> ${s}: <b>${byStatus[s]}</b></span>`);
+    }
+  }
+  $("stats").innerHTML = chips.join("");
+}
+
+// Seed/expansion bulk-load entries are internal audit records — exclude them.
+// new_entry, regulatory changes, and enforcement updates all display.
+const ADMIN_ENTRY = /(^seed$|-add$|expansion$)/;
+
+function renderLatest(changelog) {
+  const container = $("timeline-list-container");
+  if (!container) return;
+  if (!changelog || !changelog.entries || !changelog.entries.length) {
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-circle-info"></i> No regulatory updates found yet. Check back soon.</li>`;
+    return;
+  }
+
+  // Show entries from the last 30 days, capped at 50 most recent.
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().slice(0, 10);
+
+  const entries = changelog.entries
+    .filter((e) => {
+      if (!e.summary || !e.date) return false;
+      if (ADMIN_ENTRY.test(e.jurisdiction_id || "")) return false;
+      return e.date >= cutoffStr;
+    })
+    .slice(0, 50);
+
+  if (!entries.length) {
+    container.innerHTML = `<li class="timeline-loading"><i class="fa-solid fa-clock"></i> No regulation changes in the last 30 days. Browse the full database above.</li>`;
+    return;
+  }
+  container.innerHTML = entries.map((e) => {
+    const where = BY_ID[e.jurisdiction_id]
+      ? `<a class="where" href="#" data-id="${esc(e.jurisdiction_id)}">${esc(e.jurisdiction_label)}</a>`
+      : `<span class="where">${esc(e.jurisdiction_label)}</span>`;
+    return `<li><span class="when"><i class="fa-regular fa-calendar-days"></i> ${esc(e.date)}</span>` +
+      `<span class="lc-content">${where} <span class="what">&mdash; ${esc(e.summary)}</span></span></li>`;
+  }).join("");
+  container.querySelectorAll("a.where").forEach((a) =>
+    a.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      const j = BY_ID[a.dataset.id];
+      if (j) openModal(j);
+    }));
+}
+
+function updateWizardProgress(step) {
+  const stepsList = [1, 2, 3, "result"];
+  stepsList.forEach((s) => {
+    const el = $(`prog-step-${s}`);
+    if (el) el.classList.remove("active", "completed");
+  });
+  
+  const idx = stepsList.indexOf(step);
+  for (let i = 0; i <= idx; i++) {
+    const s = stepsList[i];
+    const el = $(`prog-step-${s}`);
+    if (el) {
+      if (i === idx) {
+        el.classList.add("active");
+      } else {
+        el.classList.add("completed");
+      }
+    }
+  }
+}
+
+async function handleAlertSubscribe(event, id, label) {
+  event.preventDefault();
+  const form = event.target;
+  const emailInput = form.email;
+  const submitBtn = form.querySelector("button[type='submit']");
+  const successMsg = form.querySelector(".subscribe-success-msg");
+  const errorMsg = form.querySelector(".subscribe-error-msg");
+  
+  successMsg.style.display = "none";
+  errorMsg.style.display = "none";
+  
+  const payload = {
+    jurisdiction_id: id,
+    jurisdiction_label: label,
+    email: emailInput.value,
+    website: form.website.value
+  };
+  
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+  
+  try {
+    const res = await fetch("/api/subscribe-alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+    
+    const result = await res.json();
+    
+    if (res.ok && result.ok) {
+      successMsg.textContent = result.message || "Subscribed successfully!";
+      successMsg.style.display = "block";
+      form.reset();
+      // Keep disabled to prevent duplicate clicks
+    } else {
+      errorMsg.textContent = result.error || "An error occurred. Please try again.";
+      errorMsg.style.display = "block";
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  } catch (err) {
+    errorMsg.textContent = "Unable to connect to server. Please try again later.";
+    errorMsg.style.display = "block";
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+}
+window.handleAlertSubscribe = handleAlertSubscribe;
+
+// Navigate to the Regulations DB tab (if not already there) then open the regulation detail modal.
+// This avoids the switchTab→closeDrawer race condition that prevented the modal from showing.
+function openJurisdiction(j) {
+  if (!j) return;
+  const activeNav = document.querySelector(".nav-item.active");
+  const alreadyOnDB = activeNav && activeNav.dataset.tab === "database";
+  if (!alreadyOnDB && typeof window.switchTab === "function") {
+    window.switchTab("database");   // calls closeDrawer() internally
+    setTimeout(() => openModal(j), 80);  // wait for closeDrawer to finish
+  } else {
+    openModal(j);  // already on DB tab — open immediately
+  }
+}
+window.openJurisdiction = openJurisdiction;
+
+function openModal(j) {
+
+  const sections = [
+    {
+      title: "Overview & Registry",
+      icon: "fa-circle-info",
+      keys: ["status", "effective_date", "license_required", "fees", "active_listings", "official_licenses", "source"]
+    },
+    {
+      title: "Operational Rules",
+      icon: "fa-sliders",
+      keys: ["primary_residence_required", "rental_day_cap", "occupancy_limit", "min_stay", "insurance_required"]
+    },
+    {
+      title: "Zoning & Density",
+      icon: "fa-map-location-dot",
+      keys: ["zoning_restrictions", "density_rules"]
+    },
+    {
+      title: "Taxes & Platform Rules",
+      icon: "fa-receipt",
+      keys: ["tax_registration_required", "tax_rate", "platform_obligations"]
+    },
+    {
+      title: "Compliance Notes & Penalties",
+      icon: "fa-triangle-exclamation",
+      keys: ["compliance_notes", "key_notes", "penalties", "additional_context"]
+    }
+  ];
+
+  const htmlContent = sections.map(sec => {
+    const itemsHtml = sec.keys
+      .map(k => {
+        let val = j[k];
+        const label = FIELD_LABELS[k];
+        
+        if (k === "active_listings" || k === "official_licenses") {
+          val = (val && typeof val === 'number') ? val.toLocaleString() : (val || "—");
+        }
+        
+        let rowHtml = `<dt>${label}</dt><dd>${linkify(val)}</dd>`;
+        
+        // If displaying active_listings and both active_listings and official_licenses are present,
+        // display the estimated unlicensed rate.
+        if (k === "active_listings" && j.active_listings && j.official_licenses) {
+          const diff = j.active_listings - j.official_licenses;
+          if (diff > 0) {
+            const pct = ((diff / j.active_listings) * 100).toFixed(1);
+            rowHtml += `<dt>Estimated Unlicensed Listings</dt><dd>${diff.toLocaleString()} properties (${pct}%)</dd>`;
+          }
+        }
+        
+        return rowHtml;
+      })
+      .join("");
+    
+    return `
+      <div class="detail-section-card">
+        <h3 class="detail-section-title"><i class="fa-solid ${sec.icon}"></i> ${sec.title}</h3>
+        <dl class="field-grid">${itemsHtml}</dl>
+      </div>
+    `;
+  }).join("");
+
+  const rt = recentTag(j);
+  const recent = rt ? " " + rt : "";
+  const disp = displayName(j);
+  const locParts = [...new Set([j.state !== disp.name ? j.state : null, j.country, j.continent].filter(Boolean))];
+  
+  const labelEsc = esc(`${j.city}, ${j.country}`);
+  const idEsc = esc(j.id);
+  const subscribeCardHtml = `
+    <div class="subscribe-alerts-card">
+      <h4><i class="fa-solid fa-bell"></i> Stay Updated</h4>
+      <p>Subscribe to receive email alerts when regulations change in ${esc(disp.name)}.</p>
+      <form id="subscribe-alerts-form" onsubmit="handleAlertSubscribe(event, '${idEsc}', '${labelEsc}')">
+        <div style="display: none;" aria-hidden="true">
+          <label for="subscribe-website">Website</label>
+          <input type="text" id="subscribe-website" name="website" autocomplete="off" />
+        </div>
+        <div class="subscribe-input-group">
+          <input type="email" name="email" required placeholder="Enter your email address" class="form-input" aria-label="Email address" />
+          <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+        </div>
+        <div class="subscribe-success-msg" style="display: none; color: var(--active);"></div>
+        <div class="subscribe-error-msg" style="display: none; color: var(--banned);"></div>
+      </form>
+    </div>
+  `;
+
+  $("modal-body").innerHTML = `
+    <h2>${esc(disp.name)}${recent}</h2>
+    <p class="loc">${esc(locParts.join(" · "))}</p>
+    <div style="margin: -0.5rem 0 0.5rem 0; font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; border-bottom: 1px dashed var(--border); padding-bottom: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="#" onclick="openFeedbackDialog('${idEsc}', '${labelEsc}'); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-pen-to-square"></i> Report correction</a>
+        <span style="color: var(--border);">|</span>
+        <a href="#" onclick="printJurisdictionRules(); return false;" style="color: var(--brand); font-weight: 600; text-decoration: underline;"><i class="fa-solid fa-print"></i> Print rules</a>
+      </div>
+      <div class="drawer-share-row" style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.4rem; color: var(--muted);">
+        <button onclick="openShareDialog('${idEsc}', '${esc(disp.name)}')" class="btn btn-secondary btn-sm" type="button" style="padding: 0.25rem 0.50rem; font-size: 0.7rem; display: flex; align-items: center; gap: 0.35rem; font-weight: 600; cursor: pointer; height: auto; border-radius: 4px;">
+          <i class="fa-solid fa-share-nodes"></i> Share Location
+        </button>
+      </div>
+    </div>
+    <div class="detail-sections-container" style="margin-top: 0.5rem;">
+      ${subscribeCardHtml}
+      ${htmlContent}
+    </div>`;
+  $("modal").hidden = false;
+}
+
+function printJurisdictionRules() {
+  var body = document.getElementById('modal-body');
+  if (!body) return;
+
+  var win = window.open('', '_blank', 'width=900,height=700');
+  win.document.write(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LawfulStay — Jurisdiction Rules</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #111827; background: #fff; padding: 2rem; }
+    h2 { font-size: 2rem; font-weight: 800; color: #0f1e1a; margin-bottom: 0.25rem; }
+    .loc { font-size: 1rem; color: #6b7280; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 2px solid #e5e7eb; }
+    .detail-sections-container { margin-top: 1rem; }
+    .detail-section-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.25rem; page-break-inside: avoid; }
+    .detail-section-card h3 { font-size: 1.1rem; font-weight: 700; color: #111827; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.4rem; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8rem; }
+    .field-grid { display: grid; gap: 0.75rem; }
+    .field-grid dt { font-weight: 600; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; margin-bottom: 0.15rem; }
+    .field-grid dd { font-size: 0.92rem; color: #111827; background: #f9fafb; border: 1px solid #e5e7eb; padding: 0.4rem 0.65rem; border-radius: 4px; margin: 0; }
+    /* Hide UI-only elements */
+    .subscribe-alerts-card, .drawer-share-row, a[onclick*="openFeedbackDialog"],
+    a[onclick*="printJurisdictionRules"], a[onclick*="window.print"],
+    .modal-close, button { display: none !important; }
+    a { color: #1d4ed8; text-decoration: underline; }
+    .status-badge, .recent-tag, span[class*="badge"] { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid #e5e7eb; }
+    footer-note { display: block; margin-top: 2rem; font-size: 0.75rem; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 0.75rem; }
+  </style>
+</head>
+<body>
+` + body.innerHTML + `
+<footer-note>Printed from LawfulStay.com — verify regulations at official government sources before making decisions.</footer-note>
+</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(function() { win.print(); win.close(); }, 400);
+}
+
+
+function esc(s) {
+  return (s ?? "").toString().replace(/[&<>"]/g, (c) =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function linkify(s) {
+  if (!s && s !== 0) return "—";
+  const t = s.toString().trim();
+  if (!t || t === "—") return "—";
+
+  // Split on semicolons to handle multiple sources
+  const parts = t.split(/\s*;\s*/);
+  const rendered = parts.map(part => {
+    part = part.trim();
+    if (!part) return null;
+
+    // If the whole segment is a URL, render as a clean linked icon+domain
+    if (/^https?:\/\/\S+/i.test(part)) {
+      try {
+        const url = new URL(part);
+        const label = url.hostname.replace(/^www\./, "");
+        return `<a href="${esc(part)}" target="_blank" rel="noopener noreferrer" class="src-link">${esc(label)} <i class="fa-solid fa-up-right-from-square" style="font-size:0.72rem"></i></a>`;
+      } catch(e) { /* fall through */ }
+    }
+
+    // If segment contains a URL embedded in text, linkify just the URL
+    const urlMatch = part.match(/https?:\/\/\S+/i);
+    if (urlMatch) {
+      const url = urlMatch[0];
+      const before = esc(part.slice(0, urlMatch.index));
+      try {
+        const u = new URL(url);
+        const label = u.hostname.replace(/^www\./, "");
+        const after = esc(part.slice(urlMatch.index + url.length));
+        return `${before}<a href="${esc(url)}" target="_blank" rel="noopener noreferrer" class="src-link">${esc(label)} <i class="fa-solid fa-up-right-from-square" style="font-size:0.72rem"></i></a>${after}`;
+      } catch(e) { /* fall through */ }
+    }
+
+    // Plain text segment
+    return esc(part);
+  }).filter(Boolean);
+
+  return rendered.length ? rendered.join(" &nbsp;·&nbsp; ") : esc(t);
+}
+
+// Autocomplete suggestions for search input
+function showAutocomplete(query) {
+  const suggestBox = $("city-search-autocomplete");
+  if (!suggestBox) return;
+
+  const matches = ALL.filter(j => 
+    (j.city && j.city.toLowerCase().includes(query)) ||
+    j.country.toLowerCase().includes(query) ||
+    (j.state && j.state.toLowerCase().includes(query))
+  ).slice(0, 5);
+
+  if (matches.length === 0) {
+    suggestBox.style.display = "none";
+    return;
+  }
+
+  suggestBox.innerHTML = "";
+  matches.forEach(j => {
+    const item = document.createElement("div");
+    item.className = "autocomplete-item";
+    const disp = displayName(j);
+    item.innerHTML = `
+      <span class="autocomplete-item-name">${esc(disp.name)}</span>
+      <span class="autocomplete-item-meta">${esc(disp.sub)}</span>
+    `;
+    item.addEventListener("click", () => {
+      $("search").value = disp.name;
+      suggestBox.style.display = "none";
+      $("clear-search").style.display = "block";
+      render();
+    });
+    suggestBox.appendChild(item);
+  });
+
+  suggestBox.style.display = "block";
+}
+
+// Setup Compliance Assistant Wizard
+function setupWizard() {
+  const citySelect = $("assistant-city-select");
+  const next1 = $("wizard-next-1");
+  const next2 = $("wizard-next-2");
+  const submit = $("wizard-submit");
+  const restart = $("wizard-restart");
+  
+  if (!citySelect) return;
+
+  const cityInput = $("assistant-city-input");
+  const cityClear = $("assistant-city-clear");
+  const cityAutocomplete = $("assistant-autocomplete");
+
+  const validCities = ALL.filter(j => j.city && !/^(state level|state|nationwide|national|eu-wide)$/i.test(j.city))
+                        .sort((a, b) => (a.city || "").localeCompare(b.city || ""));
+
+  function filterCitySuggestions() {
+    const query = cityInput.value.toLowerCase().trim();
+    cityAutocomplete.innerHTML = "";
+    
+    // Invalidate selection on input change until a recommendation is clicked
+    citySelect.value = "";
+    next1.disabled = true;
+    cityClear.style.display = "none";
+    
+    if (!query) {
+      cityAutocomplete.style.display = "none";
+      return;
+    }
+    
+    const matches = validCities.filter(j => 
+      (j.city && j.city.toLowerCase().includes(query)) || 
+      (j.state && j.state.toLowerCase().includes(query)) ||
+      j.country.toLowerCase().includes(query)
+    );
+    
+    if (matches.length === 0) {
+      const emptyItem = document.createElement("div");
+      emptyItem.className = "autocomplete-item";
+      emptyItem.style.cursor = "default";
+      emptyItem.innerHTML = `<span class="autocomplete-item-name">No cities found</span>` +
+        `<span class="autocomplete-item-meta"><a href="#" style="color: var(--brand); font-weight: 600;" onclick="openRequestDialog(); return false;">Request to add location</a></span>`;
+      cityAutocomplete.appendChild(emptyItem);
+    } else {
+      matches.slice(0, 8).forEach(j => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        
+        const name = esc(j.city);
+        const meta = esc(`${j.state ? j.state + ', ' : ''}${j.country}`);
+        
+        item.innerHTML = `<span class="autocomplete-item-name">${name}</span>` +
+                         `<span class="autocomplete-item-meta">${meta}</span>`;
+                         
+        item.addEventListener("click", () => {
+          selectCity(j);
+        });
+        cityAutocomplete.appendChild(item);
+      });
+    }
+    cityAutocomplete.style.display = "block";
+  }
+
+  function selectCity(j) {
+    citySelect.value = j.id;
+    cityInput.value = `${j.city}, ${j.state ? j.state + ', ' : ''}${j.country}`;
+    cityAutocomplete.style.display = "none";
+    cityClear.style.display = "inline-flex";
+    next1.disabled = false;
+  }
+
+  function clearCitySelection() {
+    citySelect.value = "";
+    cityInput.value = "";
+    cityClear.style.display = "none";
+    cityAutocomplete.style.display = "none";
+    next1.disabled = true;
+  }
+
+  cityInput.addEventListener("input", filterCitySuggestions);
+  
+  cityInput.addEventListener("focus", () => {
+    if (cityInput.value && !citySelect.value) {
+      filterCitySuggestions();
+    }
+  });
+
+  cityClear.addEventListener("click", clearCitySelection);
+
+  // Close autocomplete on click outside
+  document.addEventListener("click", (e) => {
+    if (!cityInput.contains(e.target) && !cityAutocomplete.contains(e.target)) {
+      cityAutocomplete.style.display = "none";
+    }
+  });
+
+  const hostedRadios = document.getElementsByName("wizard-hosted");
+  hostedRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      next2.disabled = false;
+    });
+  });
+
+  const residenceRadios = document.getElementsByName("wizard-residence");
+  residenceRadios.forEach(radio => {
+    radio.addEventListener("change", () => {
+      submit.disabled = false;
+    });
+  });
+
+  next1.addEventListener("click", () => {
+    $("wizard-step-1").style.display = "none";
+    $("wizard-step-2").style.display = "block";
+    updateWizardProgress(2);
+  });
+
+  $("wizard-prev-2").addEventListener("click", () => {
+    $("wizard-step-2").style.display = "none";
+    $("wizard-step-1").style.display = "block";
+    updateWizardProgress(1);
+  });
+
+  next2.addEventListener("click", () => {
+    $("wizard-step-2").style.display = "none";
+    $("wizard-step-3").style.display = "block";
+    updateWizardProgress(3);
+  });
+
+  $("wizard-prev-3").addEventListener("click", () => {
+    $("wizard-step-3").style.display = "none";
+    $("wizard-step-2").style.display = "block";
+    updateWizardProgress(2);
+  });
+
+  submit.addEventListener("click", runAnalysis);
+  restart.addEventListener("click", resetWizard);
+}
+
+function runAnalysis() {
+  const cityId = $("assistant-city-select").value;
+  const j = BY_ID[cityId];
+  if (!j) return;
+
+  const isHosted = document.querySelector('input[name="wizard-hosted"]:checked').value === "yes";
+  const isPrimary = document.querySelector('input[name="wizard-residence"]:checked').value === "primary";
+
+  $("wizard-step-3").style.display = "none";
+  $("wizard-result").style.display = "block";
+  updateWizardProgress("result");
+
+  $("result-city-name").textContent = j.city;
+  $("result-badge-container").innerHTML = `<span class="badge ${esc(j.status)}">${esc(j.status)}</span>`;
+
+  let verdictText = "";
+  let violations = "None";
+  let statusClass = "success";
+  let iconHTML = '<i class="fa-solid fa-circle-check"></i>';
+
+  const hasLicense = (j.license_required || "").toLowerCase();
+  const needsLicense = hasLicense && !hasLicense.includes("no") && !hasLicense.includes("unknown");
+  
+  const hasPrimaryReq = (j.primary_residence_required || "").toLowerCase();
+  const needsPrimary = hasPrimaryReq && !hasPrimaryReq.includes("no") && !hasPrimaryReq.includes("varies");
+
+  // Specific city evaluation override templates
+  if (j.id.includes("new-york-city") || j.city === "New York City") {
+    if (!isHosted) {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = "Unhosted short-term rentals under 30 days are strictly illegal in NYC. You cannot rent out the entire apartment.";
+      violations = "Unhosted stay restriction violated.";
+    } else if (!isPrimary) {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = "NYC only allows home-sharing inside your primary home. Investment/secondary home hosting is prohibited.";
+      violations = "Primary residency rule violated.";
+    } else {
+      statusClass = "warning";
+      iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+      verdictText = "Allowed but highly regulated. You must reside in the unit during stays, register with the Office of Special Enforcement (OSE), and host a max of 2 guests.";
+    }
+  } else if (j.id.includes("barcelona") || j.city === "Barcelona") {
+    if (isHosted) {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = "Barcelona has banned renting out private rooms (hosted stays) for short stays.";
+      violations = "Hosted private room rentals banned.";
+    } else {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = "Tourist apartments require a HUT license. However, Barcelona has frozen all new licenses and plans to phase them all out by 2028.";
+      violations = "No new licenses are being issued.";
+    }
+  } else if (j.id.includes("los-angeles") || j.city === "Los Angeles") {
+    if (!isPrimary) {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = "LA's Home-Sharing Ordinance bans hosting in second homes or investment properties. It must be your primary residence.";
+      violations = "Primary residency rule violated.";
+    } else {
+      statusClass = "warning";
+      iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+      verdictText = "Allowed up to 120 nights per year. You must obtain a Home-Sharing permit and display it on your listing.";
+    }
+  } else {
+    // Dynamic fallback evaluations
+    if (j.status === "Banned") {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = `Short-term rentals are banned or highly restricted in this jurisdiction: ${j.compliance_notes || j.key_notes || "prohibited"}`;
+      violations = "STR prohibited status.";
+    } else if (needsPrimary && !isPrimary) {
+      statusClass = "danger";
+      iconHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+      verdictText = `This jurisdiction limits short-term renting to primary residences only. Since you selected a secondary property, this listing strategy is illegal.`;
+      violations = "Primary residence ordinance violated.";
+    } else if (j.status === "Restricted") {
+      statusClass = "warning";
+      iconHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+      verdictText = `Allowed with restrictions: ${j.compliance_notes || j.key_notes || "permit & operational rules apply."}`;
+      if (needsLicense) violations = "License & permit registration required.";
+    } else {
+      statusClass = "success";
+      verdictText = `Highly feasible! This city has a flexible stance on short-term rentals. Review local permits and tax registrations.`;
+    }
+  }
+
+  // Populate Result Card
+  const verdictBox = $("result-verdict-box");
+  verdictBox.className = `verdict-box ${statusClass}`;
+  
+  const iconBox = $("result-status-icon");
+  iconBox.className = `status-icon-box ${statusClass}`;
+  iconBox.innerHTML = iconHTML;
+
+  $("result-verdict-text").textContent = verdictText;
+  $("result-violations").textContent = violations;
+  
+  $("result-permit-status").textContent = j.license_required || "Not Required";
+  $("result-cap-status").textContent = j.rental_day_cap || "No Cap";
+
+  const portalBtn = $("result-portal-link");
+  if (j.source && j.source.startsWith("http")) {
+    portalBtn.setAttribute("href", j.source);
+    portalBtn.style.display = "inline-flex";
+  } else {
+    portalBtn.setAttribute("href", "#");
+    portalBtn.style.display = "none";
+  }
+}
+
+function resetWizard() {
+  $("assistant-city-select").value = "";
+  if ($("assistant-city-input")) $("assistant-city-input").value = "";
+  if ($("assistant-city-clear")) $("assistant-city-clear").style.display = "none";
+  
+  const hostedRadios = document.getElementsByName("wizard-hosted");
+  hostedRadios.forEach(radio => radio.checked = false);
+  
+  const residenceRadios = document.getElementsByName("wizard-residence");
+  residenceRadios.forEach(radio => radio.checked = false);
+  
+  $("wizard-next-1").disabled = true;
+  $("wizard-next-2").disabled = true;
+  $("wizard-submit").disabled = true;
+  
+  $("wizard-result").style.display = "none";
+  $("wizard-step-2").style.display = "none";
+  $("wizard-step-3").style.display = "none";
+  $("wizard-step-1").style.display = "block";
+  updateWizardProgress(1);
+}
+
+function setupSubscribeDialog() {
+  const dialogInput = $("subscribe-search-input");
+  const dialogSuggestions = $("subscribe-suggestions");
+  const dialogClear = $("subscribe-search-clear");
+  const dialogSelectedId = $("subscribe-selected-id");
+  const dialogSelectedLabel = $("subscribe-selected-label");
+  const submitBtn = $("subscribe-dialog-submit");
+
+  if (!dialogInput) return;
+
+  function filterSuggestions() {
+    const query = dialogInput.value.toLowerCase().trim();
+    dialogSuggestions.innerHTML = "";
+    
+    // Invalidate selection on input change
+    dialogSelectedId.value = "";
+    dialogSelectedLabel.value = "";
+    submitBtn.disabled = true;
+    dialogClear.style.display = "none";
+    
+    if (!query) {
+      dialogSuggestions.style.display = "none";
+      return;
+    }
+    
+    const matches = ALL.filter(j => 
+      (j.city && j.city.toLowerCase().includes(query)) || 
+      (j.state && j.state.toLowerCase().includes(query)) ||
+      j.country.toLowerCase().includes(query)
+    );
+    
+    if (matches.length === 0) {
+      const emptyItem = document.createElement("div");
+      emptyItem.className = "autocomplete-item";
+      emptyItem.style.cursor = "default";
+      emptyItem.innerHTML = `<span class="autocomplete-item-name">No locations found</span>` +
+        `<span class="autocomplete-item-meta"><a href="#" style="color: var(--brand); font-weight: 600;" onclick="closeSubscribeDialog(); openRequestDialog(); return false;">Request to add location</a></span>`;
+      dialogSuggestions.appendChild(emptyItem);
+    } else {
+      matches.slice(0, 8).forEach(j => {
+        const item = document.createElement("div");
+        item.className = "autocomplete-item";
+        
+        const disp = displayName(j);
+        const name = esc(disp.name);
+        const meta = esc(disp.sub);
+        
+        item.innerHTML = `<span class="autocomplete-item-name">${name}</span>` +
+                         `<span class="autocomplete-item-meta">${meta}</span>`;
+                         
+        item.addEventListener("click", () => {
+          selectJurisdiction(j);
+        });
+        dialogSuggestions.appendChild(item);
+      });
+    }
+    dialogSuggestions.style.display = "block";
+  }
+
+  function selectJurisdiction(j) {
+    const disp = displayName(j);
+    dialogSelectedId.value = j.id;
+    dialogSelectedLabel.value = `${disp.name}, ${j.country}`;
+    dialogInput.value = `${disp.name}, ${j.state ? j.state + ', ' : ''}${j.country}`;
+    dialogSuggestions.style.display = "none";
+    dialogClear.style.display = "inline-flex";
+    submitBtn.disabled = false;
+  }
+
+  function clearSelection() {
+    dialogSelectedId.value = "";
+    dialogSelectedLabel.value = "";
+    dialogInput.value = "";
+    dialogClear.style.display = "none";
+    dialogSuggestions.style.display = "none";
+    submitBtn.disabled = true;
+  }
+
+  dialogInput.addEventListener("input", filterSuggestions);
+  
+  dialogInput.addEventListener("focus", () => {
+    if (dialogInput.value && !dialogSelectedId.value) {
+      filterSuggestions();
+    }
+  });
+
+  dialogClear.addEventListener("click", clearSelection);
+
+  // Close suggestions if clicked outside
+  document.addEventListener("click", (e) => {
+    if (!dialogInput.contains(e.target) && !dialogSuggestions.contains(e.target)) {
+      dialogSuggestions.style.display = "none";
+    }
+  });
+}
+
+function openSubscribeDialog() {
+  const dialog = document.getElementById("subscribe-dialog");
+  if (dialog) {
+    document.getElementById("subscribe-dialog-form").reset();
+    document.getElementById("subscribe-selected-id").value = "";
+    document.getElementById("subscribe-selected-label").value = "";
+    document.getElementById("subscribe-search-clear").style.display = "none";
+    document.getElementById("subscribe-suggestions").style.display = "none";
+    document.querySelector("#subscribe-dialog .dialog-success-msg").style.display = "none";
+    document.querySelector("#subscribe-dialog .dialog-error-msg").style.display = "none";
+    const submitBtn = document.getElementById("subscribe-dialog-submit");
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Subscribe";
+    dialog.hidden = false;
+  }
+}
+
+function closeSubscribeDialog() {
+  const dialog = document.getElementById("subscribe-dialog");
+  if (dialog) dialog.hidden = true;
+}
+
+async function handleDialogSubscribe(event) {
+  event.preventDefault();
+  const form = event.target;
+  const emailInput = form.email;
+  const jIdInput = form.jurisdiction_id;
+  const jLabelInput = form.jurisdiction_label;
+  const submitBtn = document.getElementById("subscribe-dialog-submit");
+  const successMsg = form.querySelector(".dialog-success-msg");
+  const errorMsg = form.querySelector(".dialog-error-msg");
+
+  successMsg.style.display = "none";
+  errorMsg.style.display = "none";
+
+  if (!jIdInput.value || !jLabelInput.value) {
+    errorMsg.textContent = "Please select a valid location from the suggestions list.";
+    errorMsg.style.display = "block";
+    return;
+  }
+
+  const payload = {
+    jurisdiction_id: jIdInput.value,
+    jurisdiction_label: jLabelInput.value,
+    email: emailInput.value,
+    website: form.website.value
+  };
+
+  submitBtn.disabled = true;
+  const originalText = submitBtn.textContent;
+  submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+  try {
+    const res = await fetch("/api/subscribe-alerts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if (res.ok && result.ok) {
+      successMsg.textContent = result.message || "Successfully subscribed to alerts!";
+      successMsg.style.display = "block";
+      form.reset();
+      document.getElementById("subscribe-search-clear").style.display = "none";
+      setTimeout(() => {
+        closeSubscribeDialog();
+      }, 2500);
+    } else {
+      errorMsg.textContent = result.error || "An error occurred. Please try again.";
+      errorMsg.style.display = "block";
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  } catch (err) {
+    errorMsg.textContent = "Unable to connect to server. Please try again later.";
+    errorMsg.style.display = "block";
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+}
+
+window.openSubscribeDialog = openSubscribeDialog;
+window.closeSubscribeDialog = closeSubscribeDialog;
+window.handleDialogSubscribe = handleDialogSubscribe;
+
+function wire() {
+  $("continent").addEventListener("input", () => {
+    updateCountrySelect();
+    render();
+  });
+  
+  ["search", "status", "country"].forEach((id) =>
+    $(id).addEventListener("input", render));
+  
+  $("kpi-tracked").addEventListener("click", () => {
+    ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
+    $("clear-search").style.display = "none";
+    updateCountrySelect();
+    render();
+  });
+
+  $("kpi-monitored").addEventListener("click", () => {
+    ["search", "continent", "status", "country"].forEach((id) => ($(id).value = ""));
+    $("clear-search").style.display = "none";
+    updateCountrySelect();
+    render();
+  });
+
+  document.querySelectorAll(".kpi-info-trigger").forEach((trigger) => {
+    trigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const message = trigger.getAttribute("title") || "";
+      if (message) {
+        showToast(message);
+      }
+    });
+  });
+
+  $("kpi-bans").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Banned" ? "" : "Banned";
+    render();
+  });
+
+  $("kpi-caps").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Restricted" ? "" : "Restricted";
+    render();
+  });
+
+  $("kpi-allowed").addEventListener("click", () => {
+    const s = $("status");
+    s.value = s.value === "Active" ? "" : "Active";
+    render();
+  });
+  
+  $("reset").addEventListener("click", () => {
+    // Clear all filter inputs
+    ["search", "continent", "status", "country"].forEach((id) => {
+      const el = $(id);
+      if (el) el.value = "";
+    });
+    const clearBtn = $("clear-search");
+    if (clearBtn) clearBtn.style.display = "none";
+    updateCountrySelect();
+
+    // Close filter drawer if open
+    const filterDrawer = $("filter-drawer");
+    const filterBtn = $("filter-toggle-btn");
+    if (filterDrawer) {
+      filterDrawer.style.maxHeight = "0";
+      if (filterBtn) filterBtn.classList.remove("active");
+    }
+
+    // Reset map zoom
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    updateMapTransform();
+
+    // Switch back to list view and re-render all rows
+    setView("list");
+    render();
+  });
+
+  // Toggle filter drawer
+  const filterBtn = $("filter-toggle-btn");
+  const filterDrawer = $("filter-drawer");
+  if (filterBtn && filterDrawer) {
+    filterBtn.addEventListener("click", () => {
+      const isCollapsed = filterDrawer.style.maxHeight === "0px" || !filterDrawer.style.maxHeight || filterDrawer.style.maxHeight === "0";
+      if (isCollapsed) {
+        filterDrawer.style.maxHeight = "150px";
+        filterBtn.classList.add("active");
+      } else {
+        filterDrawer.style.maxHeight = "0";
+        filterBtn.classList.remove("active");
+      }
+    });
+  }
+
+  
+  // Custom search clear button
+  const searchInput = $("search");
+  const clearBtn = $("clear-search");
+  
+  if (searchInput && clearBtn) {
+    searchInput.addEventListener("input", () => {
+      const val = searchInput.value.trim();
+      clearBtn.style.display = val.length > 0 ? "block" : "none";
+      if (val.length > 0) {
+        showAutocomplete(val.toLowerCase());
+      } else {
+        $("city-search-autocomplete").style.display = "none";
+      }
+    });
+
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      clearBtn.style.display = "none";
+      $("city-search-autocomplete").style.display = "none";
+      render();
+      searchInput.focus();
+    });
+
+    // Close autocomplete when clicking outside
+    document.addEventListener("click", (e) => {
+      const suggestBox = $("city-search-autocomplete");
+      if (suggestBox && !searchInput.contains(e.target) && !suggestBox.contains(e.target)) {
+        suggestBox.style.display = "none";
+      }
+    });
+  }
+
+  document.querySelectorAll("th[data-key]").forEach((th) =>
+    th.addEventListener("click", () => {
+      const k = th.dataset.key;
+      sortDir = sortKey === k ? -sortDir : 1;
+      sortKey = k;
+      render();
+    }));
+  
+  $("view-list").addEventListener("click", () => setView("list"));
+  $("view-tree").addEventListener("click", () => setView("tree"));
+  $("view-map").addEventListener("click", () => setView("map"));
+  $("modal-close").addEventListener("click", () => ($("modal").hidden = true));
+  
+  $("modal").addEventListener("click", (e) => {
+    if (e.target.id === "modal") $("modal").hidden = true;
+  });
+  
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") $("modal").hidden = true;
+  });
+
+  // Global window listeners for drag panning bounds handling
+  window.addEventListener("mousemove", (e) => {
+    if (!isPanning) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > dragThreshold || Math.abs(dy) > dragThreshold) {
+      dragMoved = true;
+    }
+    offsetX = lastMouseX + dx;
+    offsetY = lastMouseY + dy;
+    constrainOffsets();
+    updateMapTransform();
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (!isPanning) return;
+    isPanning = false;
+    const svg = $("map-svg").querySelector("svg");
+    if (svg) svg.style.cursor = "";
+  });
+
+  // Bind map zoom controls UI elements
+  const zoomInBtn = $("map-zoom-in");
+  const zoomOutBtn = $("map-zoom-out");
+  const zoomResetBtn = $("map-zoom-reset");
+  
+  if (zoomInBtn) {
+    zoomInBtn.addEventListener("click", () => {
+      zoomAt(1.5, 500, 210);
+    });
+  }
+  if (zoomOutBtn) {
+    zoomOutBtn.addEventListener("click", () => {
+      zoomAt(1 / 1.5, 500, 210);
+    });
+  }
+  if (zoomResetBtn) {
+    zoomResetBtn.addEventListener("click", () => {
+      scale = 1;
+      offsetX = 0;
+      offsetY = 0;
+      updateMapTransform();
+    });
+  }
+}
+
+(async function init() {
+  // Clear any stale localStorage cache from previous versions
+  try { localStorage.clear(); } catch(_) {}
+  const t = Date.now();
+  const data = await fetchJson([`/jurisdictions.json?t=${t}`, `jurisdictions.json?t=${t}`]);
+  if (!data) {
+    $("rows").innerHTML = `<tr><td colspan="7">Failed to load data.</td></tr>`;
+    return;
+  }
+  ALL = data.jurisdictions || [];
+  BY_ID = Object.fromEntries(ALL.map((j) => [j.id, j]));
+  fillSelect($("continent"),
+    CONTINENT_ORDER.filter((c) => ALL.some((j) => j.continent === c)));
+  fillSelect($("status"), ["Banned", "Restricted", "Active", "Pending", "None"]
+    .filter((s) => ALL.some((j) => j.status === s)));
+  updateCountrySelect();
+  $("meta-line").textContent =
+    `${ALL.length} jurisdictions · last refresh ${data.meta?.last_full_refresh || "—"} · ` +
+    `updates checked daily`;
+  
+  const trackedKpiNum = document.querySelector("#kpi-tracked .kpi-num");
+  if (trackedKpiNum) {
+    trackedKpiNum.textContent = ALL.length;
+  }
+  
+  const monitoredKpiNum = document.querySelector("#kpi-monitored .kpi-num");
+  if (monitoredKpiNum) {
+    const totalListings = ALL.reduce((sum, j) => sum + (j.active_listings || 0), 0);
+    monitoredKpiNum.textContent = totalListings.toLocaleString();
+  }
+  
+  wire();
+  setupWizard();
+  setupSubscribeDialog();
+  render();
+
+  // Deep-linking URL check
+  const params = new URLSearchParams(window.location.search);
+  const cityId = params.get("id");
+  if (cityId) {
+    const matched = ALL.find((j) => j.id === cityId);
+    if (matched) {
+      setTimeout(() => openModal(matched), 200);
+    }
+  }
+  
+  // Dynamic path routing for pretty URLs
+  const pathname = window.location.pathname.toLowerCase().replace(/\/$/, "");
+  let activeTab = null;
+  
+  if (pathname === "/regulationsdb" || pathname === "/regulations-db" || pathname === "/database") {
+    activeTab = "database";
+  } else if (pathname === "/compliancewizard" || pathname === "/compliance-wizard" || pathname === "/wizard") {
+    activeTab = "assistant";
+  } else if (pathname === "/marketupdates" || pathname === "/market-updates" || pathname === "/updates") {
+    activeTab = "market-updates";
+  } else if (pathname === "/monitorlistings" || pathname === "/monitor-listings" || pathname === "/monitoring") {
+    activeTab = "monitoring";
+  } else if (pathname === "/aboutfaq" || pathname === "/about-faq" || pathname === "/about") {
+    activeTab = "about";
+  }
+  
+  if (activeTab) {
+    if (typeof switchTab === "function") {
+      switchTab(activeTab);
+    } else if (typeof window.switchTab === "function") {
+      window.switchTab(activeTab);
+    }
+  } else {
+    const tabName = params.get("tab");
+    if (tabName) {
+      if (["database", "assistant", "market-updates", "monitoring", "about"].includes(tabName)) {
+        if (typeof switchTab === "function") {
+          switchTab(tabName);
+        } else if (typeof window.switchTab === "function") {
+          window.switchTab(tabName);
+        }
+      }
+    }
+  }
+
+  const changelog = { entries: data.timeline || [] };
+  renderLatest(changelog);
+  setupRecentlyAddedPills(changelog);
+
+  // Direct pill wiring — runs after BY_ID is fully populated.
+  // This is the authoritative handler; setupRecentlyAddedPills also tries but this is the safety net.
+  document.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
+    // Remove any previous listeners by cloning the node
+    const fresh = btn.cloneNode(true);
+    btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener("click", () => {
+      const j = BY_ID[fresh.dataset.id];
+      if (j) openJurisdiction(j);
+    });
+  });
+
+  // Wire click handlers for statically pre-rendered timeline links → open modal
+  document.querySelectorAll(".timeline-list a.where[data-id]").forEach(a => {
+    a.addEventListener("click", ev => {
+      ev.preventDefault();
+      openJurisdiction(BY_ID[a.dataset.id]);
+    });
+  });
+
+  window.searchForLocation = function(name) {
+    const searchInput = $("search");
+    const clearBtn = $("clear-search");
+    const suggestBox = $("city-search-autocomplete");
+    
+    if (searchInput) {
+      searchInput.value = name;
+      if (clearBtn) clearBtn.style.display = "block";
+      if (suggestBox) suggestBox.style.display = "none";
+      
+      // Clear other dropdowns to make sure the selected location is not filtered out
+      ["continent", "status", "country"].forEach(id => {
+        const el = $(id);
+        if (el) el.value = "";
+      });
+      
+      setView("list");
+    }
+  };
+
+  function setupRecentlyAddedPills(changelog) {
+    const container = document.getElementById("recently-added-pills");
+    if (!container) return;
+
+    // Build dynamic pills from changelog
+    const uniqueIds = new Set();
+    const recentJurs = [];
+    if (changelog && changelog.entries) {
+      for (const entry of changelog.entries) {
+        const jId = entry.jurisdiction_id;
+        if (!jId || uniqueIds.has(jId)) continue;
+        const jur = ALL.find(j => j.id === jId);
+        if (jur) {
+          uniqueIds.add(jId);
+          recentJurs.push(jur);
+          if (recentJurs.length >= 8) break;
+        }
+      }
+    }
+
+    // Only replace static pills if we have dynamic ones — otherwise keep the baked-in HTML
+    if (recentJurs.length === 0) {
+      // Wire click handlers on the existing static pills (data-id attr)
+      container.querySelectorAll(".rt-pill[data-id]").forEach(btn => {
+        btn.addEventListener("click", () => openJurisdiction(BY_ID[btn.dataset.id]));
+      });
+      return;
+    }
+
+    // Replace with fresh dynamic pills
+    const STATE_ABBR = {
+      "Alabama":"AL","Alaska":"AK","Arizona":"AZ","Arkansas":"AR","California":"CA",
+      "Colorado":"CO","Connecticut":"CT","Delaware":"DE","Florida":"FL","Georgia":"GA",
+      "Hawaii":"HI","Idaho":"ID","Illinois":"IL","Indiana":"IN","Iowa":"IA","Kansas":"KS",
+      "Kentucky":"KY","Louisiana":"LA","Maine":"ME","Maryland":"MD","Massachusetts":"MA",
+      "Michigan":"MI","Minnesota":"MN","Mississippi":"MS","Missouri":"MO","Montana":"MT",
+      "Nebraska":"NE","Nevada":"NV","New Hampshire":"NH","New Jersey":"NJ","New Mexico":"NM",
+      "New York":"NY","North Carolina":"NC","North Dakota":"ND","Ohio":"OH","Oklahoma":"OK",
+      "Oregon":"OR","Pennsylvania":"PA","Rhode Island":"RI","South Carolina":"SC",
+      "South Dakota":"SD","Tennessee":"TN","Texas":"TX","Utah":"UT","Vermont":"VT",
+      "Virginia":"VA","Washington":"WA","West Virginia":"WV","Wisconsin":"WI","Wyoming":"WY",
+      "District of Columbia":"DC","Puerto Rico":"PR",
+      "Alberta":"AB","British Columbia":"BC","Manitoba":"MB","New Brunswick":"NB",
+      "Newfoundland and Labrador":"NL","Nova Scotia":"NS","Ontario":"ON",
+      "Prince Edward Island":"PE","Quebec":"QC","Saskatchewan":"SK",
+    };
+    container.innerHTML = "";
+    recentJurs.forEach(j => {
+      const btn = document.createElement("button");
+      btn.className = "rt-pill";
+      btn.type = "button";
+      btn.dataset.id = j.id;
+
+      let name = j.city;
+      if (!name) name = j.state || j.country;
+      let label = name;
+      // For US/Canada: show "City, ST"
+      if (j.city && j.state && (j.country === "United States" || j.country === "Canada")) {
+        const stateAbbr = STATE_ABBR[j.state] || (() => {
+          const words = j.state.split(/\s+/).filter(w => !["of","the","and","in"].includes(w.toLowerCase()));
+          return words.length > 1 ? words.map(w => w[0]).join("").toUpperCase() : j.state.slice(0,2).toUpperCase();
+        })();
+        label = `${j.city}, ${stateAbbr}`;
+      }
+      // For international entries: if city is generic ("Nationwide", "National", etc.) show country instead
+      else if (j.country && j.country !== "United States" && j.country !== "Canada") {
+        const genericCities = ["nationwide", "national", "countrywide", "all"];
+        if (!j.city || genericCities.includes(j.city.toLowerCase())) {
+          label = j.country;
+        } else {
+          label = j.city;
+        }
+      }
+
+      btn.textContent = label;
+      btn.addEventListener("click", () => openJurisdiction(j));
+      container.appendChild(btn);
+    });
+  }
+
+
+  // DevTools deterrents: disable right-click and open shortcuts
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) ||
+      (e.metaKey && e.altKey && (e.key === 'i' || e.key === 'I' || e.key === 'j' || e.key === 'J'))
+    ) {
+      e.preventDefault();
+    }
+  });
+})();
+function updateKpiCardActiveStates() {
+  const statusSelect = $("status");
+  if (!statusSelect) return;
+  const status = statusSelect.value;
+  
+  $("kpi-bans").classList.toggle("active", status === "Banned");
+  $("kpi-caps").classList.toggle("active", status === "Restricted");
+  $("kpi-allowed").classList.toggle("active", status === "Active");
+  $("kpi-tracked").classList.toggle("active", !status);
+  $("kpi-monitored").classList.toggle("active", !status);
+}
+
+function showToast(message) {
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    document.body.appendChild(container);
+  }
+  
+  // Clear any existing toasts to avoid spamming
+  container.innerHTML = "";
+  
+  const toast = document.createElement("div");
+  toast.className = "toast-message";
+  toast.innerHTML = `
+    <div class="toast-body">
+      <i class="fa-solid fa-circle-info toast-icon"></i>
+      <span class="toast-text">${message}</span>
+    </div>
+  `;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add("show");
+  }, 10);
+  
+  setTimeout(() => {
+    toast.classList.remove("show");
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+  }, 4000);
+}
+

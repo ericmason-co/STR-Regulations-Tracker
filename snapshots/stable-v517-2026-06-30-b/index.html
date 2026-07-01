@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>LawfulStay &mdash; Global STR Regulation Tracker</title>
+  <meta name="description" content="LawfulStay tracks short-term rental regulations across jurisdictions worldwide — searchable, current, and sourced." />
+  <meta name="theme-color" content="#030712" />
+  
+  <!-- Open Graph / Facebook Sharing Meta Tags -->
+  <meta property="og:title" content="LawfulStay — Global STR Regulation Tracker" />
+  <meta property="og:description" content="Search and compare global short-term rental ordinances, municipal zoning, permit compliance, fees, and penalties." />
+  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.png" />
+  <meta property="og:url" content="https://lawfulstay.com/" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Twitter Card Sharing Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LawfulStay — Global STR Regulation Tracker" />
+  <meta name="twitter:description" content="Search and compare global short-term rental ordinances, municipal zoning, permit compliance, fees, and penalties." />
+  <meta name="twitter:image" content="https://lawfulstay.com/og_preview_card.png" />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Google Fonts & FontAwesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <link rel="stylesheet" href="styles.css?v=145" />
+
+  <!-- Google AdSense -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+
+  <!-- JSON-LD Structured Data for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LawfulStay",
+    "url": "https://lawfulstay.com",
+    "description": "Comprehensive global database for short-term rental compliance, local zoning laws, and licensing regulations."
+  }
+  </script>
+</head>
+<body class="light-theme">
+  <!-- Interactive Glowing Background Orbs -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+  <!-- App Shell Layout -->
+  <div class="app-shell">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <a href="#" onclick="switchTab('database'); return false;" class="logo-group">
+          <div class="logo-icon-box">
+            <i class="fa-solid fa-scale-balanced logo-icon"></i>
+          </div>
+          <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
+        </a>
+        <p class="sidebar-tagline">The authoritative database for global short-term rental ordinances, municipal zoning, and permit compliance.</p>
+      </div>
+      
+      <nav class="sidebar-menu">
+        <button class="nav-item active" data-tab="database" aria-label="Regulations Database">
+          <i class="fa-solid fa-database"></i>
+          <span>Regulations DB</span>
+        </button>
+        <button class="nav-item" data-tab="assistant" aria-label="Compliance Assistant">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Compliance Wizard</span>
+        </button>
+        <button class="nav-item" data-tab="market-updates" aria-label="Market Updates">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          <span>Market Updates</span>
+        </button>
+        <button class="nav-item" data-tab="monitoring" aria-label="Monitor Listings">
+          <i class="fa-solid fa-house-laptop"></i>
+          <span>Monitor Listings</span>
+          <span style="font-size: 0.65rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: auto; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid rgba(56, 189, 248, 0.3);">Soon</span>
+        </button>
+        <button class="nav-item" data-tab="about" aria-label="About & FAQ">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>About & FAQ</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Ad Slot -->
+      <div class="ad-sidebar-container">
+        <div class="ad-label"><i class="fa-solid fa-rectangle-ad"></i> Sponsored</div>
+        <div class="ad-slot sidebar-ad">
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+               data-ad-slot="YYYYYYYYYY"
+               data-ad-format="vertical"
+               data-full-width-responsive="true"></ins>
+          <script>
+               (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+          <!-- Fallback Placeholder (Mock Ad: CraftedStays) -->
+          <div class="ad-placeholder mock-ad-vertical">
+            <div class="mock-ad-badge">Partner</div>
+            <div class="mock-ad-brand">
+              <img src="https://craftedstays.co/wp-content/uploads/2023/09/CraftedStay_Logo_Horiz.png" alt="CraftedStays" class="mock-ad-logo-img-vertical">
+            </div>
+            <h4>Direct Bookings,<br>Made Simple</h4>
+            <p>Build a professional, high-converting direct booking website for your vacation rentals. Fully syncs with your PMS.</p>
+            <a href="https://craftedstays.com/" target="_blank" rel="noopener" class="btn btn-primary btn-sm ad-cta">Learn More</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div class="partner-badge">
+          <i class="fa-solid fa-users-gear"></i>
+          <span>LawfulStay Research Group</span>
+        </div>
+        <div class="sidebar-social">
+          <a href="https://www.facebook.com/profile.php?id=61591167639402" target="_blank" rel="noopener" aria-label="Follow LawfulStay on Facebook"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://www.linkedin.com/company/109654182" target="_blank" rel="noopener" aria-label="Follow LawfulStay on LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+        </div>
+        <div class="sidebar-links">
+          <a href="#" onclick="switchTab('about'); return false;">About Us</a> &middot;
+          <a href="#" onclick="switchTab('about'); return false;">FAQ</a> &middot;
+          <a href="#" onclick="openFeedbackDialog('', ''); return false;">Report Correction</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-content">
+      
+      <!-- Top Bar Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-pretitle">Short-Term Rental Regulations</span>
+          <h2 id="topbar-title" class="topbar-title">Regulations Database</h2>
+        </div>
+        <div class="topbar-right">
+          <button class="btn btn-secondary btn-sm" onclick="openSubscribeDialog()">
+            <i class="fa-solid fa-bell"></i> Subscribe to Alerts
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
+            <i class="fa-solid fa-circle-plus"></i> Request Location
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openShareDialog()">
+            <i class="fa-solid fa-share-nodes"></i> Share
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="switchTab('assistant')">
+            <i class="fa-solid fa-square-check"></i> Check Compliance
+          </button>
+        </div>
+      </header>
+
+      <!-- Panel 1: Regulations Database (Default Tab) -->
+      <div id="panel-database" class="panel active">
+        
+        <!-- KPI Dashboard Metric Cards -->
+        <section class="stats-grid">
+          <div class="kpi-card" id="kpi-tracked">
+            <div class="kpi-card-glow"></div>
+            <div class="kpi-icon-wrapper"><i class="fa-solid fa-earth-americas"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">440</span>
+              <span class="kpi-label">Tracked Cities</span>
+            </div>
+          </div>
+          <div class="kpi-card" id="kpi-monitored">
+            <div class="kpi-card-glow"></div>
+            <div class="kpi-icon-wrapper"><i class="fa-solid fa-house-laptop"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">3,611,528</span>
+              <span class="kpi-label">Rentals Monitored</span>
+            </div>
+            <span class="kpi-info-trigger" title="Estimated active listings sourced from municipal registries and AirDNA market data.">
+              <i class="fa-solid fa-circle-info"></i>
+            </span>
+          </div>
+          <div class="kpi-card" id="kpi-bans">
+            <div class="kpi-card-glow red"></div>
+            <div class="kpi-icon-wrapper banned"><i class="fa-solid fa-ban"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">Strict</span>
+              <span class="kpi-label">Active City Bans</span>
+            </div>
+          </div>
+          <div class="kpi-card" id="kpi-caps">
+            <div class="kpi-card-glow orange"></div>
+            <div class="kpi-icon-wrapper restricted"><i class="fa-solid fa-file-signature"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">Active</span>
+              <span class="kpi-label">Permit Cap Zones</span>
+            </div>
+          </div>
+          <div class="kpi-card" id="kpi-allowed">
+            <div class="kpi-card-glow emerald"></div>
+            <div class="kpi-icon-wrapper active-kpi"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="kpi-content">
+              <span class="kpi-num">Allowed</span>
+              <span class="kpi-label">Permitted STR Zones</span>
+        </section>
+
+        <!-- Search Filters Card -->
+        <section id="database-section" class="controls-section">
+          <div class="controls-card glass">
+            <div class="search-controls-row" style="display: flex; gap: 0.75rem; align-items: center; width: 100%;">
+              <div class="search-outer" style="flex: 1; margin-bottom: 0;">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input id="search" type="search" placeholder="Search city, state, country, or keyword..." autocomplete="off" />
+                  <button id="clear-search" class="clear-btn" aria-label="Clear search" style="display: none;"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="city-search-autocomplete" class="autocomplete-suggestions"></div>
+              </div>
+              
+              <button class="btn btn-secondary filter-toggle-btn" id="filter-toggle-btn" type="button" style="display: flex; align-items: center; gap: 0.5rem; white-space: nowrap; height: 46px; border-radius: var(--border-radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer;">
+                <i class="fa-solid fa-filter"></i> Filters <span class="filter-badge" id="filter-badge" style="display: none; background: var(--active); color: white; padding: 0.05rem 0.35rem; border-radius: 50%; font-size: 0.75rem; font-weight: bold; margin-left: 0.25rem; line-height: 1;">0</span>
+              </button>
+              
+              <button id="reset" class="btn btn-secondary" type="button" style="display: flex; align-items: center; gap: 0.5rem; height: 46px; border-radius: var(--border-radius-sm); font-size: 0.9rem; font-weight: 500; white-space: nowrap; cursor: pointer;"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
+            </div>
+            
+            <div class="filter-drawer" id="filter-drawer" style="max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;">
+              <div class="filters-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding-top: 1.25rem; margin-top: 1rem; border-top: 1px solid var(--border);">
+                <div class="select-wrapper">
+                  <select id="continent" aria-label="Filter by Region">
+                    <option value="">All Regions</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <select id="country" aria-label="Filter by Country">
+                    <option value="">All Countries</option>
+                  </select>
+                </div>
+                <div class="select-wrapper">
+                  <select id="status" aria-label="Filter by Status">
+                    <option value="">All Statuses</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Active View Results Statistics -->
+        <section class="stats-bar-wrapper">
+          <div id="stats" class="stats-chips"></div>
+        </section>
+
+        <!-- Recently Tracked Locations -->
+        <section class="recently-tracked-wrapper">
+          <div class="recently-tracked-container">
+            <span class="rt-label"><i class="fa-solid fa-sparkles"></i> Recently Added:</span>
+            <div class="rt-pills" id="recently-added-pills">
+              <button class="rt-pill" type="button" data-id="us-california-nevada-city">Nevada City, CA</button>
+              <button class="rt-pill" type="button" data-id="us-indiana-indiana">Indiana, IN</button>
+              <button class="rt-pill" type="button" data-id="us-idaho-idaho">Idaho, ID</button>
+              <button class="rt-pill" type="button" data-id="us-illinois-chicago">Chicago, IL</button>
+              <button class="rt-pill" type="button" data-id="us-az-scottsdale">Scottsdale, AZ</button>
+              <button class="rt-pill" type="button" data-id="us-colorado-littleton">Littleton, CO</button>
+              <button class="rt-pill" type="button" data-id="us-california-the-sea-ranch">The Sea Ranch, CA</button>
+              <button class="rt-pill" type="button" data-id="intl-spain-malaga">Malaga</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- View Navigation & Legend -->
+        <section class="view-legend-section">
+          <div class="viewbar">
+            <span class="viewbar-label">View Mode</span>
+            <div class="seg">
+              <button id="view-list" class="vbtn active" type="button" aria-label="List View"><i class="fa-solid fa-table-list"></i> List</button>
+              <button id="view-tree" class="vbtn" type="button" aria-label="Tree View"><i class="fa-solid fa-network-wired"></i> Region Tree</button>
+              <button id="view-map" class="vbtn" type="button" aria-label="Map View"><i class="fa-solid fa-map-location-dot"></i> World Map</button>
+            </div>
+            <span id="tree-hint" class="viewbar-hint" hidden><i class="fa-solid fa-circle-info"></i> Click to expand country &rsaquo; state nodes</span>
+            <span id="map-hint" class="viewbar-hint" hidden><i class="fa-solid fa-circle-info"></i> Click shaded countries to drill into regulations</span>
+          </div>
+
+          <div class="legend" aria-label="Regulatory status legend">
+            <span class="lg"><span class="badge Active">Active</span> Rules in force</span>
+            <span class="lg"><span class="badge Restricted">Restricted</span> Major limitations</span>
+            <span class="lg"><span class="badge Banned">Banned</span> STR Prohibited</span>
+            <span class="lg"><span class="badge Pending">Pending</span> Draft / Proposed</span>
+            <span class="lg"><span class="recent-tag-legend">Updated</span> Changed recently</span>
+          </div>
+        </section>
+
+        <!-- Regulations Database Content Views -->
+        <section class="views-wrapper">
+          <!-- 1. Map View -->
+          <div id="map" hidden>
+            <div class="map-container-card glass">
+              <div class="map-header-row">
+                <div id="map-info" class="map-info">Hover a country &mdash; click to drill in</div>
+                <div class="map-zoom-controls">
+                  <button id="map-zoom-in" class="zoom-btn" type="button" title="Zoom In"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                  <button id="map-zoom-out" class="zoom-btn" type="button" title="Zoom Out"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                  <button id="map-zoom-reset" class="zoom-btn" type="button" title="Reset Zoom"><i class="fa-solid fa-arrows-rotate"></i></button>
+                </div>
+              </div>
+              <div id="map-svg" class="map-svg-container"></div>
+              <div class="map-note">
+                <i class="fa-solid fa-circle-info"></i> Shading represents the <b>national</b>/<b>federal</b> framework. <span class="swatch"></span> = no federal law (delegated to local/city ordinances).
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Tree View -->
+          <div id="tree" class="tree-container glass" hidden></div>
+
+          <!-- 3. List Table View -->
+          <div class="table-responsive glass" id="table-container">
+            <table id="table">
+              <thead>
+                <tr>
+                  <th data-key="city">Jurisdiction <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="continent">Region <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="status">Status <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="license_required">License <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="rental_day_cap">Day Cap <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="tax_rate">Tax <i class="fa-solid fa-sort sort-indicator"></i></th>
+                  <th data-key="last_changed" class="col-updated">Updated <i class="fa-solid fa-sort sort-indicator"></i></th>
+                </tr>
+              </thead>
+              <tbody id="rows"></tbody>
+            </table>
+          </div>
+          
+          <div id="empty" class="empty glass" hidden>
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <p>No jurisdictions match your current filters. Clear search or reset option filters.</p>
+            <button class="btn btn-primary btn-sm" style="margin-top: 1rem;" onclick="openRequestDialog()">
+              <i class="fa-solid fa-circle-plus"></i> Request a Location
+            </button>
+          </div>
+        </section>
+
+        <!-- Horizontal Ad Banner Slot -->
+        <div class="ad-banner-container">
+          <div class="ad-label"><i class="fa-solid fa-rectangle-ad"></i> Sponsored</div>
+          <div class="ad-slot horizontal-ad">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="ZZZZZZZZZZ"
+                 data-ad-format="horizontal"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            <!-- Fallback Placeholder (Mock Ad: HowToGoSocial) -->
+            <div class="ad-placeholder mock-ad-horizontal">
+              <div class="mock-ad-badge">Sponsored Partner</div>
+              <div class="mock-ad-left">
+                <div class="mock-ad-brand">
+                  <i class="fa-solid fa-circle-nodes logo-icon-ad"></i>
+                  <span class="logo-text-ad">HowToGoSocial</span>
+                </div>
+                <div class="mock-ad-text">
+                  <h4>Social Growth, Optimized for AI Search</h4>
+                  <p>Complete organic channel management, creator co-citations, and copywriting optimized for ChatGPT, Perplexity, and Gemini Search citations.</p>
+                </div>
+              </div>
+              <a href="https://howtogosocial.com/" target="_blank" rel="noopener" class="btn btn-primary btn-sm ad-cta">Learn More</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Panel 2: Compliance Assistant Tab -->
+      <div id="panel-assistant" class="panel">
+        <section id="assistant-section" class="assistant-section">
+          <div class="assistant-card glass">
+            <div class="assistant-card-header">
+              <div class="assistant-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> Strategy Check</div>
+              <h3>Compliance Assistant Wizard</h3>
+              <p>Verify compliance feasibility against local zoning codes and rental licensing requirements.</p>
+            </div>
+            
+            <!-- Progress Tracker Timeline -->
+            <div class="wizard-progress-tracker">
+              <div class="progress-step active" id="prog-step-1">
+                <span class="step-num">1</span>
+                <span class="step-label">Market</span>
+              </div>
+              <div class="progress-connector"></div>
+              <div class="progress-step" id="prog-step-2">
+                <span class="step-num">2</span>
+                <span class="step-label">Hosted</span>
+              </div>
+              <div class="progress-connector"></div>
+              <div class="progress-step" id="prog-step-3">
+                <span class="step-num">3</span>
+                <span class="step-label">Residence</span>
+              </div>
+              <div class="progress-connector"></div>
+              <div class="progress-step" id="prog-step-result">
+                <span class="step-num"><i class="fa-solid fa-check"></i></span>
+                <span class="step-label">Result</span>
+              </div>
+            </div>
+            
+            <!-- Step 1: Select City -->
+            <div id="wizard-step-1" class="wizard-step active">
+              <h4 class="step-title">1. Select target market city</h4>
+              <p class="step-desc">Search and select the city where your property is located.</p>
+              <div class="form-group" style="position: relative;">
+                <div class="search-box">
+                  <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                  <input type="text" id="assistant-city-input" placeholder="Type to search your city (e.g. Kyoto, Stowe, Nuuk...)" autocomplete="off" class="form-input" style="background: transparent; border: none; padding: 0;" />
+                  <button id="assistant-city-clear" class="clear-btn" style="display: none;" type="button" aria-label="Clear selection"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <input type="hidden" id="assistant-city-select" value="" />
+                <div id="assistant-autocomplete" class="autocomplete-suggestions"></div>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-next-1" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 2: Hosted vs Unhosted -->
+            <div id="wizard-step-2" class="wizard-step" style="display: none;">
+              <h4 class="step-title">2. Will you live on-site during reservations?</h4>
+              <p class="step-desc">Different zoning ordinances apply to primary shared host structures.</p>
+              <div class="radio-cards">
+                <label class="radio-card">
+                  <input type="radio" name="wizard-hosted" value="yes">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-people-roof card-icon"></i>
+                    <span class="card-label">Hosted Stay</span>
+                    <span class="card-hint">Host occupies a bedroom during guest stay.</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="wizard-hosted" value="no">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-key card-icon"></i>
+                    <span class="card-label">Unhosted Stay (Entire Home)</span>
+                    <span class="card-hint">Guests occupy entire dwelling privately.</span>
+                  </div>
+                </label>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-prev-2" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button id="wizard-next-2" class="btn btn-primary" disabled>Next Step <i class="fa-solid fa-arrow-right"></i></button>
+              </div>
+            </div>
+
+            <!-- Step 3: Primary Residence vs Secondary -->
+            <div id="wizard-step-3" class="wizard-step" style="display: none;">
+              <h4 class="step-title">3. Is this property your primary residence?</h4>
+              <p class="step-desc">Many cities enforce owner-occupancy requirements on short-term leasing.</p>
+              <div class="radio-cards">
+                <label class="radio-card">
+                  <input type="radio" name="wizard-residence" value="primary">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-house-user card-icon"></i>
+                    <span class="card-label">Primary Residence</span>
+                    <span class="card-hint">Your legal main home where you live most of the year.</span>
+                  </div>
+                </label>
+                <label class="radio-card">
+                  <input type="radio" name="wizard-residence" value="secondary">
+                  <div class="radio-card-content">
+                    <i class="fa-solid fa-hotel card-icon"></i>
+                    <span class="card-label">Investment / Second Home</span>
+                    <span class="card-hint">Dedicated rental unit, secondary home, or vacation property.</span>
+                  </div>
+                </label>
+              </div>
+              <div class="wizard-actions">
+                <button id="wizard-prev-3" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <button id="wizard-submit" class="btn btn-primary" disabled>Analyze Compliance <i class="fa-solid fa-wand-magic-sparkles"></i></button>
+              </div>
+            </div>
+
+            <!-- Wizard Results -->
+            <div id="wizard-result" class="wizard-step" style="display: none;">
+              <div class="result-header">
+                <div id="result-status-icon" class="status-icon-box">
+                  <!-- Dynamic Icon -->
+                </div>
+                <div>
+                  <h3 id="result-city-name" class="result-city-title">New York City</h3>
+                  <div id="result-badge-container"></div>
+                </div>
+              </div>
+
+              <div class="verdict-box" id="result-verdict-box">
+                <h4 class="verdict-title"><i class="fa-solid fa-gavel"></i> Regulatory Summary</h4>
+                <p id="result-verdict-text" class="verdict-text"></p>
+              </div>
+
+              <div class="result-breakdown">
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-circle-exclamation text-slate-400"></i> Local Bans:</span>
+                  <span id="result-violations" class="breakdown-value">None</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-id-card text-slate-400"></i> Permit / License:</span>
+                  <span id="result-permit-status" class="breakdown-value">Yes</span>
+                </div>
+                <div class="breakdown-item">
+                  <span class="breakdown-label"><i class="fa-solid fa-calendar-days text-slate-400"></i> Nightly Cap:</span>
+                  <span id="result-cap-status" class="breakdown-value">N/A</span>
+                </div>
+              </div>
+
+              <div class="wizard-actions">
+                <button id="wizard-restart" class="btn btn-secondary"><i class="fa-solid fa-arrow-rotate-left"></i> Start Over</button>
+                <a id="result-portal-link" href="#" target="_blank" class="btn btn-primary">Visit Official Portal <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Panel 3: Market Updates Tab -->
+      <div id="panel-market-updates" class="panel">
+        <section class="timeline-container container" id="timeline-section">
+          <div class="timeline-card glass">
+            <div class="latest-header">
+              <h2><i class="fa-solid fa-bullhorn timeline-icon"></i> Timeline of Recent Policy Changes</h2>
+              <p>Keep track of licensing guidelines, enforcement deadlines, and legal shifts globally.</p>
+            </div>
+            <ul id="timeline-list-container" class="timeline-list">
+              <!-- Populated dynamically by renderLatest() in app.js -->
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- Panel 4: About & FAQ Tab -->
+      <div id="panel-about" class="panel">
+        <div class="about-container container">
+          <div class="about-card glass">
+            <h2><i class="fa-solid fa-scale-balanced logo-icon"></i> About LawfulStay</h2>
+            <p>LawfulStay was founded by a coalition of real estate investors, short-term rental hosts, and data analysts who experienced firsthand the difficulty of navigating fragmented municipal codes. We built this platform to bring clarity, transparency, and structure to the complex web of local laws.</p>
+            <p>Our research team tracks council meetings, draft ordinances, and zoning adjustments daily. We verify every registry source, platform mandate, and penalty schedule so that stakeholders can identify risk, evaluate markets, and run compliance checks with confidence.</p>
+            <p><strong>Our Data Promise:</strong> 100% Sourced, verified, and community-enriched. When local laws shift, we update our records to ensure you always have the most current compliance outlook.</p>
+          </div>
+
+          <div class="about-card glass">
+            <h2><i class="fa-solid fa-circle-question logo-icon"></i> Frequently Asked Questions</h2>
+            <div class="faq-list">
+              <details class="faq-item" open>
+                <summary class="faq-question">How often is the regulations database updated?</summary>
+                <div class="faq-answer">
+                  <p>We perform automated checks and manual reviews daily. Major regulatory updates, permit changes, and ordinance bans are updated within 48 hours of municipal publication.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">Can I get notified when regulations change in my city?</summary>
+                <div class="faq-answer">
+                  <p>Yes! Click the <strong>"Subscribe to Alerts"</strong> button in the header, search for your location, and enter your email address to receive immediate updates when rules change.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">How do I suggest a city that isn't currently tracked?</summary>
+                <div class="faq-answer">
+                  <p>Click <strong>"Request Location"</strong> in the header to suggest a city, town, or county. Our research group will investigate the local laws and catalog it within 72 hours.</p>
+                </div>
+              </details>
+              
+              <details class="faq-item">
+                <summary class="faq-question">Is this considered formal legal counsel?</summary>
+                <div class="faq-answer">
+                  <p>No. LawfulStay provides data for general informational purposes only. Local zoning codes can shift rapidly. We recommend checking with local planning boards or legal counsel before signing leases or purchasing investment property.</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Panel 5: Monitor Listings Tab (Coming Soon Wireframe) -->
+      <div id="panel-monitoring" class="panel">
+        <div class="assistant-section container" style="max-width: 650px; margin: 0 auto; padding-top: 1.5rem;">
+          <div class="assistant-card glass">
+            <div class="assistant-card-header">
+              <div class="coming-soon-badge" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; padding: 0.25rem 0.5rem; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; border: 1px solid rgba(56, 189, 248, 0.3);"><i class="fa-solid fa-hourglass-start"></i> Coming Soon</div>
+              <h3>Monitor My Listings</h3>
+              <p>Connect your active Airbnb or VRBO properties to track local regulations automatically. If zoning laws, caps, or tax rules in your city change, we will alert you immediately.</p>
+            </div>
+            
+            <form id="monitor-listings-form" onsubmit="handleMonitorSubmit(event)">
+              <div class="form-group">
+                <label for="monitor-airbnb-input"><i class="fa-brands fa-airbnb" style="color: #FF5A5F; margin-right: 0.25rem;"></i> Airbnb Listing ID or URL</label>
+                <input type="text" id="monitor-airbnb-input" name="airbnb_id" placeholder="e.g. 10987654 or https://www.airbnb.com/rooms/10987654" class="form-input" />
+              </div>
+              
+              <div class="form-group">
+                <label for="monitor-vrbo-input"><i class="fa-solid fa-house-chimney" style="color: #002F6C; margin-right: 0.25rem;"></i> VRBO Listing ID or URL</label>
+                <input type="text" id="monitor-vrbo-input" name="vrbo_id" placeholder="e.g. 9876543 or https://www.vrbo.com/9876543" class="form-input" />
+              </div>
+              
+              <div class="form-group">
+                <label for="monitor-email-input"><i class="fa-solid fa-envelope" style="margin-right: 0.25rem;"></i> Email Address <span style="color: var(--banned);">*</span></label>
+                <input type="email" id="monitor-email-input" name="email" required placeholder="e.g. host@example.com" class="form-input" />
+              </div>
+
+              <div class="form-group checkbox-group" style="display: flex; flex-direction: row; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 1.25rem;">
+                <input type="checkbox" id="monitor-alert-checkbox" name="subscribe" checked style="margin-top: 0.2rem; cursor: pointer;" />
+                <label for="monitor-alert-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; line-height: 1.4; font-weight: normal;">
+                  Enable instant email notifications when regulation updates are detected for my property location.
+                </label>
+              </div>
+              
+              <div id="monitor-error-msg" style="color: var(--banned); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+              <div id="monitor-success-msg" style="color: var(--active); font-size: 0.85rem; margin-bottom: 1rem; display: none;"></div>
+
+              <button type="submit" class="btn btn-primary" id="monitor-submit-btn" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-bell"></i> Secure My Alerts
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Info -->
+      <footer class="footer">
+        <div class="footer-content">
+          <span id="meta-line"></span>
+          <p class="legal-disclaimer"><i class="fa-solid fa-triangle-exclamation"></i> Disclaimer: LawfulStay provides data for general informational purposes only. Sourced listings are maintained daily, but local zoning codes can shift rapidly. Consult local municipal offices or legal counsel prior to committing to real estate leasing or operations.</p>
+          <p class="copyright">&copy; 2026 LawfulStay. Maintained by the LawfulStay Research Group.</p>
+        </div>
+      </footer>
+
+    </main>
+
+    <!-- Detail Slide Drawer (Replaces modal dialog) -->
+    <div id="modal" class="modal-drawer" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeDrawer()"></div>
+      <div class="modal-card">
+        <button id="modal-close" class="modal-close" aria-label="Close Drawer"><i class="fa-solid fa-xmark"></i></button>
+        <div id="modal-body" class="modal-drawer-body">
+          <!-- Injected by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Subscribe to Alerts centered modal overlay -->
+    <div id="subscribe-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeSubscribeDialog()"></div>
+      <div class="dialog-card">
+        <button class="dialog-close" onclick="closeSubscribeDialog()" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
+        <h3><i class="fa-solid fa-bell"></i> Subscribe to Regulation Alerts</h3>
+        <p>Get notified when regulations shift in your selected jurisdiction.</p>
+        <form id="subscribe-dialog-form" onsubmit="handleDialogSubscribe(event)">
+          <div style="display: none;" aria-hidden="true">
+            <label for="dialog-subscribe-website">Website</label>
+            <input type="text" id="dialog-subscribe-website" name="website" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="subscribe-email-input">Email Address <span class="required">*</span></label>
+            <input type="email" id="subscribe-email-input" name="email" required placeholder="Enter your email address" class="form-input" />
+          </div>
+          <div class="form-group" style="position: relative;">
+            <label for="subscribe-search-input">Select Jurisdiction <span class="required">*</span></label>
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" id="subscribe-search-input" placeholder="Type to search your city (e.g. Kyoto, Stowe, Nuuk...)" autocomplete="off" class="form-input" style="background: transparent; border: none; padding: 0;" />
+              <button id="subscribe-search-clear" class="clear-btn" style="display: none;" type="button" aria-label="Clear selection"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <input type="hidden" id="subscribe-selected-id" name="jurisdiction_id" />
+            <input type="hidden" id="subscribe-selected-label" name="jurisdiction_label" />
+            <div id="subscribe-suggestions" class="autocomplete-suggestions"></div>
+          </div>
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="closeSubscribeDialog()">Cancel</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="subscribe-dialog-submit" disabled>Subscribe</button>
+          </div>
+          <div class="dialog-success-msg" style="display: none; color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
+          <div class="dialog-error-msg" style="display: none; color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 6. Request Location centered modal overlay -->
+    <div id="request-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeRequestDialog()"></div>
+      <div class="dialog-card">
+        <button onclick="closeRequestDialog()" class="modal-close" aria-label="Close Dialog"><i class="fa-solid fa-xmark"></i></button>
+        <div class="dialog-header">
+          <h3 class="dialog-title">Request a Location</h3>
+          <p class="dialog-desc">Let us know which city or region you're interested in. Our research team reviews requests daily to prioritize database expansion.</p>
+        </div>
+        <form id="request-location-form" onsubmit="handleRequestSubmit(event)">
+          <div class="form-group" style="display: none;" aria-hidden="true">
+            <label for="request-website">Website</label>
+            <input type="text" id="request-website" name="website" autocomplete="off" />
+          </div>
+          
+          <div class="form-group">
+            <label for="request-location-input">Location <span style="color: var(--banned);">*</span></label>
+            <input type="text" id="request-location-input" name="location" required placeholder="e.g. Kyoto, Japan or Denver, CO" class="form-input" />
+          </div>
+          
+          <div class="form-group">
+            <label for="request-email-input">Email Address <span class="optional">(optional)</span></label>
+            <input type="email" id="request-email-input" name="email" placeholder="e.g. you@example.com" class="form-input" />
+            <span style="font-size: 0.75rem; color: var(--muted); line-height: 1.3;">If provided, we will notify you as soon as this location is added.</span>
+            
+            <div class="form-group checkbox-group" style="display: flex; flex-direction: row; align-items: flex-start; gap: 0.5rem; margin-top: 0.5rem; margin-bottom: 0;">
+              <input type="checkbox" id="request-subscribe-checkbox" name="subscribe" checked style="margin-top: 0.2rem; cursor: pointer;" />
+              <label for="request-subscribe-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; line-height: 1.4; font-weight: normal;">
+                Subscribe me to compliance alerts for this location once it is added.
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="request-notes-input">Notes / Specific Questions <span class="optional">(optional)</span></label>
+            <textarea id="request-notes-input" name="notes" placeholder="e.g. Interested in zoning rules or tax details..." class="form-textarea" rows="3" style="resize: vertical;"></textarea>
+          </div>
+          
+          <div id="request-error-msg" style="color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+          <div id="request-success-msg" style="color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeRequestDialog()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="request-submit-btn">Submit Request</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 7. Report Correction centered modal overlay -->
+    <div id="feedback-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeFeedbackDialog()"></div>
+      <div class="dialog-card">
+        <button onclick="closeFeedbackDialog()" class="modal-close" aria-label="Close Dialog"><i class="fa-solid fa-xmark"></i></button>
+        <div class="dialog-header">
+          <h3 class="dialog-title"><i class="fa-solid fa-pen-to-square"></i> Report a Correction</h3>
+          <p class="dialog-desc">Help us maintain 100% database accuracy. Let us know what is missing, outdated, or incorrect in our tracked regulations.</p>
+        </div>
+        <form id="feedback-form" onsubmit="handleFeedbackSubmit(event)">
+          <div class="form-group" style="display: none;" aria-hidden="true">
+            <label for="feedback-website">Website</label>
+            <input type="text" id="feedback-website" name="website" autocomplete="off" />
+          </div>
+          
+          <input type="hidden" id="feedback-id-input" name="jurisdiction_id" />
+          
+          <div class="form-group">
+            <label for="feedback-location-input">Location / Jurisdiction</label>
+            <input type="text" id="feedback-location-input" name="location" placeholder="e.g. General Feedback or specific city name" class="form-input" />
+          </div>
+          
+          <div class="form-group">
+            <label for="feedback-email-input">Email Address <span class="optional">(optional)</span></label>
+            <input type="email" id="feedback-email-input" name="email" placeholder="e.g. you@example.com" class="form-input" />
+            <span style="font-size: 0.75rem; color: var(--muted); line-height: 1.3;">Providing an email helps our research team follow up if we need clarification.</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="feedback-notes-input">What did we get wrong? <span style="color: var(--banned);">*</span></label>
+            <textarea id="feedback-notes-input" name="notes" required placeholder="Describe what is incorrect, missing, or needs updating (e.g. 'The permit fee for Stowe was updated to $150 on June 1st...')" class="form-textarea" rows="4" style="resize: vertical;"></textarea>
+          </div>
+          
+          <div id="feedback-error-msg" style="color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+          <div id="feedback-success-msg" style="color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; display: none;"></div>
+ 
+          <div class="dialog-actions">
+            <button type="button" class="btn btn-secondary" onclick="closeFeedbackDialog()">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="feedback-submit-btn">Submit Correction</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 8. Share centered modal overlay -->
+    <div id="share-dialog" class="dialog-overlay" hidden>
+      <div class="modal-backdrop-trigger" onclick="closeShareDialog()"></div>
+      <div class="dialog-card" style="max-width: 420px; text-align: center; padding: 2rem;">
+        <button onclick="closeShareDialog()" class="modal-close" aria-label="Close Dialog"><i class="fa-solid fa-xmark"></i></button>
+        <div class="dialog-header" style="margin-bottom: 1.5rem; text-align: center;">
+          <div style="background: var(--brand-light); color: var(--brand); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.75rem; margin: 0 auto 1rem auto;"><i class="fa-solid fa-share-nodes"></i></div>
+          <h3 class="dialog-title" id="share-dialog-title" style="margin-bottom: 0.25rem;">Share LawfulStay</h3>
+          <p class="dialog-desc" id="share-dialog-subtitle" style="margin: 0 auto; max-width: 100%;">Spread the word about short-term rental compliance.</p>
+        </div>
+        
+        <div class="share-options-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
+          <!-- Copy Link -->
+          <button onclick="handleShareAction('copy')" class="share-option-btn" type="button" style="background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-copy" style="font-size: 1.25rem; color: var(--text);"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Copy Link</span>
+          </button>
+          <!-- Text / SMS -->
+          <a id="share-link-sms" href="#" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-comment-sms" style="font-size: 1.25rem; color: #25D366;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Text (SMS)</span>
+          </a>
+          <!-- Email -->
+          <a id="share-link-email" href="#" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-solid fa-envelope" style="font-size: 1.25rem; color: #EA4335;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Email</span>
+          </a>
+          <!-- Twitter / X -->
+          <a id="share-link-twitter" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-x-twitter" style="font-size: 1.25rem; color: var(--text);"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">X / Twitter</span>
+          </a>
+          <!-- Facebook -->
+          <a id="share-link-facebook" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-facebook" style="font-size: 1.25rem; color: #1877f2;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">Facebook</span>
+          </a>
+          <!-- LinkedIn -->
+          <a id="share-link-linkedin" href="#" target="_blank" rel="noopener" class="share-option-btn" style="text-decoration: none; background: var(--panel-2); border: 1px solid var(--border); border-radius: var(--border-radius-sm); padding: 0.75rem; display: flex; flex-direction: column; align-items: center; gap: 0.4rem; cursor: pointer; transition: var(--transition-fast);">
+            <i class="fa-brands fa-linkedin" style="font-size: 1.25rem; color: #0077b5;"></i>
+            <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">LinkedIn</span>
+          </a>
+        </div>
+        
+        <div class="share-copy-input-container" style="display: flex; gap: 0.5rem; background: var(--panel); border: 1px solid var(--border); padding: 0.4rem 0.6rem; border-radius: var(--border-radius-sm); align-items: center; margin-top: 1rem;">
+          <input type="text" id="share-copy-input" readonly value="https://lawfulstay.com" style="background: transparent; border: none; outline: none; font-size: 0.8rem; color: var(--text-muted); flex: 1; min-width: 0;" />
+          <button onclick="handleShareAction('copy')" class="btn btn-secondary btn-sm" id="share-copy-btn" type="button" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; white-space: nowrap; cursor: pointer;">Copy</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Tab Switching and Request Handlers script (Runs before app.js init) -->
+  <script>
+    function openRequestDialog() {
+      const dialog = document.getElementById("request-dialog");
+      if (dialog) {
+        // Reset form
+        document.getElementById("request-location-form").reset();
+        document.getElementById("request-error-msg").style.display = "none";
+        document.getElementById("request-success-msg").style.display = "none";
+        const submitBtn = document.getElementById("request-submit-btn");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Request";
+        dialog.hidden = false;
+      }
+    }
+    
+    function closeRequestDialog() {
+      const dialog = document.getElementById("request-dialog");
+      if (dialog) dialog.hidden = true;
+    }
+    
+    async function handleRequestSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const errorMsg = document.getElementById("request-error-msg");
+      const successMsg = document.getElementById("request-success-msg");
+      const submitBtn = document.getElementById("request-submit-btn");
+      
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+      
+      const payload = {
+        location: form.location.value,
+        email: form.email.value,
+        notes: form.notes.value,
+        website: form.website.value,
+        subscribe: form.subscribe.checked
+      };
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+      
+      try {
+        const res = await fetch("/api/request-location", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await res.json();
+        
+        if (res.ok && result.ok) {
+          successMsg.textContent = result.message || "Thank you! Your request has been recorded.";
+          successMsg.style.display = "block";
+          form.reset();
+          setTimeout(() => {
+            closeRequestDialog();
+          }, 2000);
+        } else {
+          errorMsg.textContent = result.error || "An error occurred. Please try again.";
+          errorMsg.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Submit Request";
+        }
+      } catch (err) {
+        errorMsg.textContent = "Unable to connect to the server. Please try again later.";
+        errorMsg.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Request";
+      }
+    }
+    function switchTab(tabName) {
+      // Find the sidebar nav button matching tabName
+      const items = document.querySelectorAll(".nav-item");
+      const targetItem = Array.from(items).find(item => item.dataset.tab === tabName);
+      if (!targetItem) return;
+      
+      // Update active nav button
+      items.forEach(nav => nav.classList.remove("active"));
+      targetItem.classList.add("active");
+      
+      // Update active panel view
+      document.querySelectorAll(".panel").forEach(panel => panel.classList.remove("active"));
+      const targetPanel = document.getElementById(`panel-${tabName}`);
+      if (targetPanel) targetPanel.classList.add("active");
+      
+      // Update topbar title text
+      const titleEl = document.getElementById("topbar-title");
+      if (titleEl) {
+        if (tabName === "database") titleEl.textContent = "Regulations Database";
+        else if (tabName === "assistant") titleEl.textContent = "Compliance Wizard";
+        else if (tabName === "market-updates") titleEl.textContent = "Market Updates";
+        else if (tabName === "about") titleEl.textContent = "About & FAQ";
+        else if (tabName === "monitoring") titleEl.textContent = "Monitor Listings";
+      }
+      
+      // Close details drawer if tab shifts
+      closeDrawer();
+      
+      // Scroll main content to top on tab change
+      const mainContent = document.querySelector(".main-content");
+      if (mainContent) mainContent.scrollTop = 0;
+    }
+    // Expose globally so app.js async init can call it for URL-based routing
+    window.switchTab = switchTab;
+    
+    async function handleMonitorSubmit(event) {
+      event.preventDefault();
+      const form = event.target;
+      const errorMsg = document.getElementById("monitor-error-msg");
+      const successMsg = document.getElementById("monitor-success-msg");
+      const submitBtn = document.getElementById("monitor-submit-btn");
+      
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+      
+      const payload = {
+        airbnb_id: form.airbnb_id.value,
+        vrbo_id: form.vrbo_id.value,
+        email: form.email.value
+      };
+      
+      if (!payload.email) {
+        errorMsg.textContent = "Please enter your email address.";
+        errorMsg.style.display = "block";
+        return;
+      }
+      if (!payload.airbnb_id && !payload.vrbo_id) {
+        errorMsg.textContent = "Please enter at least one Airbnb or VRBO Listing ID.";
+        errorMsg.style.display = "block";
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Registering...';
+      
+      try {
+        const res = await fetch("/api/monitor-listing", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await res.json();
+        
+        if (res.ok && result.ok) {
+          successMsg.textContent = result.message || "Successfully registered for listing monitoring!";
+          successMsg.style.display = "block";
+          form.reset();
+        } else {
+          errorMsg.textContent = result.error || "An error occurred. Please check your inputs and try again.";
+          errorMsg.style.display = "block";
+        }
+      } catch (err) {
+        errorMsg.textContent = "Unable to connect to the server. Please try again later.";
+        errorMsg.style.display = "block";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+      }
+    }
+    
+    function closeDrawer() {
+      const modal = document.getElementById("modal");
+      if (modal) modal.hidden = true;
+    }
+    
+    let currentShareUrl = "https://lawfulstay.com";
+    let currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
+    let currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
+
+    function openShareDialog(id, name) {
+      const dialog = document.getElementById("share-dialog");
+      const titleEl = document.getElementById("share-dialog-title");
+      const subtitleEl = document.getElementById("share-dialog-subtitle");
+      const copyInput = document.getElementById("share-copy-input");
+      
+      if (id && name) {
+        currentShareUrl = `https://lawfulstay.com/?id=${id}`;
+        currentShareTitle = `STR Regulations for ${name} — LawfulStay`;
+        currentShareText = `Check out short-term rental rules and zoning laws for ${name} on LawfulStay:`;
+        if (titleEl) titleEl.textContent = `Share ${name}`;
+        if (subtitleEl) subtitleEl.textContent = `Share specific short-term rental rules for this location.`;
+      } else {
+        let activeTab = "database";
+        const activeNav = document.querySelector(".nav-item.active");
+        if (activeNav && activeNav.dataset.tab) {
+          activeTab = activeNav.dataset.tab;
+        }
+        
+        if (activeTab && activeTab !== "database") {
+          let prettyPath = "/";
+          if (activeTab === "database") prettyPath = "/RegulationsDB";
+          else if (activeTab === "assistant") prettyPath = "/ComplianceWizard";
+          else if (activeTab === "market-updates") prettyPath = "/MarketUpdates";
+          else if (activeTab === "monitoring") prettyPath = "/MonitorListings";
+          else if (activeTab === "about") prettyPath = "/AboutFAQ";
+          
+          currentShareUrl = `https://lawfulstay.com${prettyPath}`;
+          const tabLabel = activeNav ? activeNav.querySelector("span").textContent : activeTab;
+          currentShareTitle = `LawfulStay: ${tabLabel}`;
+          currentShareText = `Check out the ${tabLabel} view on LawfulStay:`;
+          if (titleEl) titleEl.textContent = `Share ${tabLabel}`;
+          if (subtitleEl) subtitleEl.textContent = `Share this view directly with your network.`;
+        } else {
+          currentShareUrl = "https://lawfulstay.com/RegulationsDB";
+          currentShareTitle = "LawfulStay: Short-Term Rental Regulations Database";
+          currentShareText = "Check out LawfulStay for STR zoning laws & regulations:";
+          if (titleEl) titleEl.textContent = "Share LawfulStay";
+          if (subtitleEl) subtitleEl.textContent = "Spread the word about short-term rental compliance.";
+        }
+      }
+      
+      if (copyInput) copyInput.value = currentShareUrl;
+      
+      const smsLink = document.getElementById("share-link-sms");
+      const emailLink = document.getElementById("share-link-email");
+      const twitterLink = document.getElementById("share-link-twitter");
+      const facebookLink = document.getElementById("share-link-facebook");
+      const linkedinLink = document.getElementById("share-link-linkedin");
+      
+      const smsBody = `${currentShareText} ${currentShareUrl}`;
+      const emailSubject = currentShareTitle;
+      const emailBody = `Hey,\n\nI thought you'd find this useful. Here are the short-term rental regulations and permit rules:\n\n${currentShareUrl}\n\nBest,`;
+      
+      if (smsLink) smsLink.href = `sms:?&body=${encodeURIComponent(smsBody)}`;
+      if (emailLink) emailLink.href = `mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      if (twitterLink) twitterLink.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareText)}&url=${encodeURIComponent(currentShareUrl)}`;
+      if (facebookLink) facebookLink.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(currentShareUrl)}`;
+      if (linkedinLink) linkedinLink.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(currentShareUrl)}`;
+      
+      if (dialog) dialog.hidden = false;
+    }
+
+    function closeShareDialog() {
+      const dialog = document.getElementById("share-dialog");
+      if (dialog) dialog.hidden = true;
+    }
+
+    function handleShareAction(action) {
+      if (action === 'copy') {
+        const copyInput = document.getElementById("share-copy-input");
+        const copyBtn = document.getElementById("share-copy-btn");
+        if (copyInput) {
+          copyInput.select();
+          copyInput.setSelectionRange(0, 99999);
+          navigator.clipboard.writeText(copyInput.value).then(() => {
+            if (copyBtn) {
+              const originalText = copyBtn.textContent;
+              copyBtn.textContent = "Copied!";
+              copyBtn.style.background = "var(--active)";
+              copyBtn.style.color = "white";
+              setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.background = "";
+                copyBtn.style.color = "";
+              }, 2000);
+            }
+          });
+        }
+      }
+    }
+    
+    function openFeedbackDialog(jId, jName) {
+      const dialog = document.getElementById("feedback-dialog");
+      if (dialog) {
+        document.getElementById("feedback-form").reset();
+        document.getElementById("feedback-error-msg").style.display = "none";
+        document.getElementById("feedback-success-msg").style.display = "none";
+        
+        const locInput = document.getElementById("feedback-location-input");
+        const idInput = document.getElementById("feedback-id-input");
+        if (jName) {
+          locInput.value = jName;
+          locInput.readOnly = true;
+          locInput.style.backgroundColor = "var(--panel-2)";
+          idInput.value = jId;
+        } else {
+          locInput.value = "";
+          locInput.readOnly = false;
+          locInput.style.backgroundColor = "transparent";
+          idInput.value = "";
+        }
+        
+        const submitBtn = document.getElementById("feedback-submit-btn");
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Correction";
+        dialog.hidden = false;
+      }
+    }
+    
+    function closeFeedbackDialog() {
+      const dialog = document.getElementById("feedback-dialog");
+      if (dialog) dialog.hidden = true;
+    }
+    
+    async function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const submitBtn = document.getElementById("feedback-submit-btn");
+      const errorMsg = document.getElementById("feedback-error-msg");
+      const successMsg = document.getElementById("feedback-success-msg");
+      
+      errorMsg.style.display = "none";
+      successMsg.style.display = "none";
+      
+      const payload = {
+        jurisdiction_id: form.jurisdiction_id.value,
+        jurisdiction_label: form.location.value,
+        email: form.email.value,
+        notes: form.notes.value,
+        website: form.website.value
+      };
+      
+      submitBtn.disabled = true;
+      const originalText = submitBtn.textContent;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+      
+      try {
+        const res = await fetch("/api/submit-feedback", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        const result = await res.json();
+        
+        if (res.ok && result.ok) {
+          successMsg.textContent = result.message || "Thank you! Your feedback has been recorded.";
+          successMsg.style.display = "block";
+          form.reset();
+          setTimeout(() => {
+            closeFeedbackDialog();
+          }, 2500);
+        } else {
+          errorMsg.textContent = result.error || "An error occurred. Please try again.";
+          errorMsg.style.display = "block";
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalText;
+        }
+      } catch (err) {
+        errorMsg.textContent = "Unable to connect to the server. Please try again later.";
+        errorMsg.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+    }
+
+    // Bind click events on sidebar items
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const tab = item.dataset.tab;
+          switchTab(tab);
+          
+          let prettyPath = "/";
+          if (tab === "database") prettyPath = "/RegulationsDB";
+          else if (tab === "assistant") prettyPath = "/ComplianceWizard";
+          else if (tab === "market-updates") prettyPath = "/MarketUpdates";
+          else if (tab === "monitoring") prettyPath = "/MonitorListings";
+          else if (tab === "about") prettyPath = "/AboutFAQ";
+          
+          history.pushState(null, "", prettyPath);
+        });
+      });
+    });
+  </script>
+
+  <script src="app.js?v=145"></script>
+<div style="position:fixed;bottom:0;left:0;right:0;background:#f59e0b;color:#000;text-align:center;padding:6px 0;font-weight:700;font-size:0.85rem;z-index:99999;letter-spacing:0.05em;">⚠️ DEV ENVIRONMENT — Not Production</div></body>
+</html>
