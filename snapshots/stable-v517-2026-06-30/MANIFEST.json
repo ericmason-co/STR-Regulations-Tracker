@@ -1,0 +1,8 @@
+{
+  "snapshot": "stable-v517-2026-06-30",
+  "date": "2026-06-30",
+  "jurisdictions": 517,
+  "rentals_monitored": 4115008,
+  "git_commit": "693fc25",
+  "notes": "Post bulk-add: 62 new jurisdictions added Jun 30 2026. US, Europe, APAC, Americas, Africa."
+}
