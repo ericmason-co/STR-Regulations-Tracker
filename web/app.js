@@ -574,16 +574,25 @@ function renderLatest(changelog) {
     return;
   }
 
-  // Show entries from the last 30 days, capped at 50 most recent.
+  // Show entries from the last 30 days.
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 30);
   const cutoffStr = cutoff.toISOString().slice(0, 10);
 
+  // Filter, then deduplicate by jurisdiction_id — only the most recent entry
+  // per city is shown so the same city never appears twice in the feed.
+  const seen = new Set();
   const entries = changelog.entries
     .filter((e) => {
       if (!e.summary || !e.date) return false;
       if (ADMIN_ENTRY.test(e.jurisdiction_id || "")) return false;
       return e.date >= cutoffStr;
+    })
+    .filter((e) => {
+      const key = e.jurisdiction_id || e.jurisdiction_label || "";
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     })
     .slice(0, 50);
 
@@ -605,6 +614,7 @@ function renderLatest(changelog) {
       if (j) openModal(j);
     }));
 }
+
 
 function updateWizardProgress(step) {
   const stepsList = [1, 2, 3, "result"];
