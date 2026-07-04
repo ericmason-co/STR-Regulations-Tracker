@@ -3,11 +3,11 @@
     "name": "Global STR Regulation Tracker",
     "owner": "LawfulStay Research Group",
     "schema_version": "1.0",
-    "last_full_refresh": "2026-07-02",
+    "last_full_refresh": "2026-07-04",
     "source_of_truth": "data/jurisdictions.json",
     "field_count": 21,
     "notes": "Seeded from Global_STR_Regulations_Comprehensive_Database.xlsx and CONTEXT.md. Each record carries last_checked (when the monitor agent last verified it) and last_changed (when its data last materially changed).",
-    "total_jurisdictions": 549
+    "total_jurisdictions": 548
   },
   "jurisdictions": [
     {
@@ -11205,36 +11205,6 @@
       "active_listings": 1800
     },
     {
-      "id": "intl-spain-sansebastian",
-      "region": "International",
-      "country": "Spain",
-      "state": "Basque Country",
-      "city": "San Sebasti\u00e1n",
-      "status": "Restricted",
-      "license_required": "Yes (Mandatory registry number + municipal authorization)",
-      "tax_registration_required": "Yes",
-      "fees": "Free registration",
-      "primary_residence_required": "No",
-      "rental_day_cap": "None",
-      "occupancy_limit": "Strict occupancy caps based on square meters",
-      "tax_rate": "Standard rental income tax (IRPF) + regional tourist tax",
-      "zoning_restrictions": "Yes (Banned in saturated Old Town zone; first-floor limits in other zones)",
-      "min_stay": "None",
-      "density_rules": "Yes (Maximum of 1 tourist flat per building in Zone A; caps by building height in others)",
-      "insurance_required": "Yes",
-      "platform_obligations": "Must display registry number",
-      "compliance_notes": "Parte Vieja (Old Town) is a saturated zone with a complete ban on new licenses. Other zones restrict rentals to the first floor.",
-      "effective_date": "2026-06-24",
-      "key_notes": "Total ban in Old Town + first-floor restriction in other districts.",
-      "penalties": "Fines up to \u20ac90,000 for unlicensed activity under Basque tourism law.",
-      "additional_context": "Strict occupancy caps based on property size.",
-      "source": "Ayuntamiento de San Sebasti\u00e1n / Gobierno Vasco",
-      "last_checked": "2026-06-24",
-      "last_changed": "2026-06-24",
-      "continent": "Europe",
-      "active_listings": 1800
-    },
-    {
       "id": "intl-spain-canaryislands",
       "region": "International",
       "country": "Spain",
@@ -12920,8 +12890,8 @@
       "continent": "Europe",
       "country": "Spain",
       "state": "Basque Country",
-      "city": "San Sebastian",
-      "last_checked": "2026-06-27",
+      "city": "San Sebasti\u00e1n",
+      "last_checked": "2026-07-04",
       "last_changed": "2026-06-27",
       "status": "Restricted",
       "license_required": "Yes \u2014 Basque Country registry license and Spanish National registration number (NRUA) required.",
@@ -16590,6 +16560,19 @@
     }
   ],
   "timeline": [
+    {
+      "date": "2026-07-04",
+      "jurisdiction_id": "intl-spain-san-sebastian",
+      "jurisdiction_label": "San Sebasti\u00e1n, Basque Country",
+      "change_type": "data_cleanup",
+      "field": "id",
+      "summary": "Merged duplicate entry (intl-spain-sansebastian removed; intl-spain-san-sebastian retained with accented city name).",
+      "old_value": "Two entries",
+      "new_value": "One entry",
+      "effective_date": "2026-07-04",
+      "source_url": "Basque Country Government; City of Donostia-San Sebastian; Paton & Mayr; AirDNA",
+      "confidence": "high"
+    },
     {
       "date": "2026-07-02",
       "jurisdiction_id": "us-nj-seaside-heights",
