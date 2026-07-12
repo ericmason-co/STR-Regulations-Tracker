@@ -3,11 +3,11 @@
     "name": "Global STR Regulation Tracker",
     "owner": "LawfulStay Research Group",
     "schema_version": "1.0",
-    "last_full_refresh": "2026-07-11",
+    "last_full_refresh": "2026-07-12",
     "source_of_truth": "data/jurisdictions.json",
     "field_count": 21,
     "notes": "Seeded from Global_STR_Regulations_Comprehensive_Database.xlsx and CONTEXT.md. Each record carries last_checked (when the monitor agent last verified it) and last_changed (when its data last materially changed).",
-    "total_jurisdictions": 548
+    "total_jurisdictions": 592
   },
   "jurisdictions": [
     {
@@ -17579,7 +17579,7 @@
       "active_listings": 1800
     },
     {
-      "id": "international-bogota-colombia",
+      "id": "intl-bogota-colombia",
       "region": "International",
       "continent": "South America",
       "country": "Colombia",
@@ -17668,37 +17668,6 @@
       "additional_context": "Lewisboro is a small residential town in northern Westchester County, NY, known for its lakes (Twin Lakes, Lake Oscaleta, Waccabuc), which creates septic-system sensitivity concerns that featured prominently in the STR ordinance debate. Community members cited concerns about housing stock conversion, school enrollment impacts, and neighborhood character. An Airbnb 'superhost' with 500+ rentals and no complaints testified against the proposed regulations. The Housing Committee originally recommended stricter day limits than the draft ordinance proposed. Westchester County's status regarding the optional Article 12-D county registry (opt-in or opt-out) was not confirmed in available sources as of the research date.",
       "source": "Halston Media / Katonah-Lewisboro Times (April 7, 2026): https://news.halstonmedia.com/stories/lewisboro-residents-debate-proposed-short-term-rental-ordinance,74951 | Lewisboro Town Board Meeting Minutes March 23, 2026: https://www.lewisborony.gov/media/38056 | NY Tax Department STR guidance: https://www.tax.ny.gov/pubs_and_bulls/publications/sales/short-term-rental.htm | NYSAC STR Implementation: https://www.nysac.org/issues/short-term-rentals/ | Awning NY STR Laws 2026: https://awning.com/post/new-york-short-term-rental-laws | Minut NY STR Laws 2026: https://www.minut.com/blog/new-york-short-term-rental-laws",
       "active_listings": 1800
-    },
-    {
-      "id": "international-japan-nationwide",
-      "region": "International",
-      "continent": "Asia",
-      "country": "Japan",
-      "state": "Nationwide",
-      "city": "Japan",
-      "last_checked": "2026-07-08",
-      "last_changed": "2026-07-08",
-      "status": "Pending",
-      "license_required": "Yes \u2014 Minpaku Law (Act No. 65 of 2017) requires national registration for all STRs. Maximum 180 nights/year nationally. Local governments gaining new authority to effectively ban STRs in residential areas.",
-      "tax_registration_required": "Yes",
-      "fees": "Registration fee varies by municipality",
-      "primary_residence_required": "No nationally but some municipalities restrict to primary residence",
-      "rental_day_cap": "180 nights/year nationally under Minpaku Law; local governments can impose stricter caps",
-      "occupancy_limit": "Unknown",
-      "tax_rate": "Accommodation tax varies by municipality; consumption tax 10% may apply",
-      "zoning_restrictions": "Local governments now permitted to effectively ban STRs in residential zones following surge in complaints \u2014 July 2026 policy change",
-      "min_stay": "None nationally",
-      "density_rules": "Local government discretion",
-      "insurance_required": "Unknown",
-      "platform_obligations": "Yes \u2014 platforms must verify registration numbers",
-      "compliance_notes": "Japan rethinking STR framework as of July 2026 to allow local governments to ban Airbnb-style rentals in residential areas. Surge in complaints from residents about noise, waste, and loss of community character driving policy shift. Tokyo ward-level restrictions already in effect in some areas.",
-      "effective_date": "Minpaku Law 2018; new local ban authority July 2026",
-      "key_notes": "Major policy shift \u2014 local governments will be allowed to effectively ban STRs in residential areas, a significant tightening of the 2018 national framework. Japan Forward reporting July 8 2026.",
-      "penalties": "Fines for operating without registration; potential delisting",
-      "additional_context": "Japan had approximately 900,000 STR listings before Minpaku Law reduced them significantly. New local ban authority could further reduce supply in residential neighborhoods.",
-      "source": "Japan Forward (July 8, 2026); Minpaku Law Act No. 65 of 2017",
-      "active_listings": 50000,
-      "official_licenses": "https://www.mlit.go.jp/kankocho/minpaku/"
     },
     {
       "id": "us-wa-lewis-county",
