@@ -1278,25 +1278,25 @@
     /* ── Browse by Location Panel ───────────────────────────────────── */
     .browse-section { padding: 1.5rem 0; }
     .browse-header { margin-bottom: 1.5rem; }
-    .browse-header h2 { font-size: 1.4rem; font-weight: 700; color: var(--text-primary, #f1f5f9); margin-bottom: 0.35rem; }
-    .browse-header p { color: var(--text-muted, #94a3b8); font-size: 0.9rem; }
-    .browse-toggle { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--card-bg, rgba(255,255,255,0.04)); border: 1px solid var(--border, rgba(255,255,255,0.08)); border-radius: 10px; padding: 0.3rem; width: fit-content; }
-    .btog-btn { background: transparent; border: none; color: var(--text-muted, #94a3b8); font-size: 0.88rem; font-weight: 600; padding: 0.5rem 1.1rem; border-radius: 7px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.15s; }
+    .browse-header h2 { font-size: 1.4rem; font-weight: 700; color: var(--text-primary, #0f172a); margin-bottom: 0.35rem; }
+    .browse-header p { color: var(--text-muted, #64748b); font-size: 0.9rem; }
+    .browse-toggle { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--glass-bg, #f1f5f9); border: 1px solid var(--border, #e2e8f0); border-radius: 10px; padding: 0.3rem; width: fit-content; }
+    .btog-btn { background: transparent; border: none; color: var(--text-muted, #64748b); font-size: 0.88rem; font-weight: 600; padding: 0.5rem 1.1rem; border-radius: 7px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.15s; }
     .btog-btn.active { background: var(--accent, #2DD4BF); color: #0B1426; }
-    .btog-btn:not(.active):hover { background: rgba(255,255,255,0.06); color: var(--text-primary, #f1f5f9); }
+    .btog-btn:not(.active):hover { background: rgba(0,0,0,0.05); color: var(--text-primary, #0f172a); }
     .browse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
-    .browse-card { background: var(--card-bg, rgba(255,255,255,0.04)); border: 1px solid var(--border, rgba(255,255,255,0.08)); border-radius: 12px; padding: 1rem 1.1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
-    .browse-card:hover { border-color: var(--accent, #2DD4BF); box-shadow: 0 4px 16px rgba(45,212,191,0.12); transform: translateY(-1px); }
-    .browse-card-name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary, #f1f5f9); }
-    .browse-card-count { font-size: 0.75rem; color: var(--text-muted, #94a3b8); }
-    .browse-card-bars { display: flex; gap: 2px; margin-top: 0.4rem; height: 4px; border-radius: 4px; overflow: hidden; }
+    .browse-card { background: var(--card-solid-bg, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 12px; padding: 1rem 1.1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.07); }
+    .browse-card:hover { border-color: var(--accent, #2DD4BF); box-shadow: 0 4px 16px rgba(45,212,191,0.15); transform: translateY(-1px); }
+    .browse-card-name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary, #0f172a); }
+    .browse-card-count { font-size: 0.75rem; color: var(--text-muted, #64748b); font-weight: 500; }
+    .browse-card-bars { display: flex; gap: 2px; margin-top: 0.5rem; height: 5px; border-radius: 4px; overflow: hidden; }
     .bcb-active { background: #16a34a; }
     .bcb-restricted { background: #d97706; }
     .bcb-banned { background: #dc2626; }
     .bcb-pending { background: #7c3aed; }
-    .bcb-none { background: #4b5563; }
-    .browse-card-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; margin-top: 0.35rem; }
-    .bcl-item { font-size: 0.7rem; color: var(--text-muted, #94a3b8); display: flex; align-items: center; gap: 0.25rem; }
+    .bcb-none { background: #cbd5e1; }
+    .browse-card-legend { display: flex; flex-wrap: wrap; gap: 0.3rem 0.6rem; margin-top: 0.4rem; }
+    .bcl-item { font-size: 0.7rem; color: var(--text-muted, #64748b); display: flex; align-items: center; gap: 0.25rem; }
     .bcl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     @media (max-width: 700px) { .browse-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
   </style>
