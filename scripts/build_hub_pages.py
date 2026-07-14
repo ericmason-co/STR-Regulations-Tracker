@@ -195,16 +195,16 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
     /* ── Top bar ── */
-    .topbar {{ background: #0B1426; padding: .85rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
-    .logo-group {{ display: flex; align-items: center; gap: .65rem; text-decoration: none; color: #fff; }}
+    .topbar {{ background: #fff; padding: .85rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; }}
+    .logo-group {{ display: flex; align-items: center; gap: .65rem; text-decoration: none; color: #0f172a; }}
     .logo-icon-box {{ width: 32px; height: 32px; border-radius: 7px;
                       background: rgba(37,99,235,.08); border: 1px solid #2563eb;
                       box-shadow: 0 0 10px rgba(37,99,235,.2);
                       display: flex; align-items: center; justify-content: center; }}
     .logo-icon {{ color: #2563eb; font-size: 1rem; }}
-    .logo-text {{ font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #fff; }}
+    .logo-text {{ font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #0f172a; }}
     .logo-text .brand-accent {{ color: #2563eb; }}
-    .topbar-link {{ color: #94a3b8; font-size: .85rem; text-decoration: none; transition: color .15s; }}
+    .topbar-link {{ color: #64748b; font-size: .85rem; text-decoration: none; transition: color .15s; }}
     .topbar-link:hover {{ color: #2563eb; }}
     /* ── Layout ── */
     .wrap {{ max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; display: grid; grid-template-columns: 1fr 240px; gap: 2rem; align-items: start; }}
