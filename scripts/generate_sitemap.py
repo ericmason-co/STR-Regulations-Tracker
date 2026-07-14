@@ -1,9 +1,11 @@
 """
 generate_sitemap.py — LawfulStay XML sitemap generator
-Reads jurisdictions.json and emits sitemap.xml containing:
+Reads jurisdictions.json and hub_pages.json, emits sitemap.xml containing:
   - Homepage (priority 1.0)
-  - All /regulations/{id}/ pages (priority 0.8, lastmod from last_changed)
-Called by monitor.py after build_static_pages.py.
+  - State hub pages  /regulations/state/{slug}/    (priority 0.9)
+  - Country hub pages /regulations/country/{slug}/ (priority 0.9)
+  - All /regulations/{id}/ city pages              (priority 0.8)
+Called by monitor.py after build_static_pages.py and build_hub_pages.py.
 """
 import json
 import xml.etree.ElementTree as ET
@@ -13,6 +15,7 @@ from datetime import date
 ROOT = Path("/opt/str-tracker")
 WEB  = ROOT / "web"
 DATA = ROOT / "data" / "jurisdictions.json"
+HUB_META = ROOT / "data" / "hub_pages.json"
 
 data = json.load(open(DATA))
 jurisdictions = data["jurisdictions"]
@@ -20,7 +23,6 @@ today = date.today().isoformat()
 
 SITE = "https://lawfulstay.com"
 
-# Build XML
 urlset = ET.Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
 
 def add_url(loc, lastmod, priority, changefreq="weekly"):
@@ -33,7 +35,15 @@ def add_url(loc, lastmod, priority, changefreq="weekly"):
 # Homepage
 add_url(f"{SITE}/", today, 1.0, "daily")
 
-# All regulation pages — use last_changed as lastmod
+# Hub pages (state + country) — higher priority than city pages
+if HUB_META.exists():
+    hub = json.load(open(HUB_META))
+    for slug, last_mod in hub.get("state_pages", []):
+        add_url(f"{SITE}/regulations/state/{slug}/", last_mod or today, 0.9)
+    for slug, last_mod in hub.get("country_pages", []):
+        add_url(f"{SITE}/regulations/country/{slug}/", last_mod or today, 0.9)
+
+# City regulation pages
 for j in jurisdictions:
     jid = j.get("id", "")
     if not jid:
@@ -41,7 +51,6 @@ for j in jurisdictions:
     lastmod = j.get("last_changed") or today
     add_url(f"{SITE}/regulations/{jid}/", lastmod, 0.8)
 
-# Write with XML declaration
 tree = ET.ElementTree(urlset)
 ET.indent(tree, space="  ")
 out = WEB / "sitemap.xml"
