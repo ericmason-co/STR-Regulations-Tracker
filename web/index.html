@@ -1373,17 +1373,17 @@
       </a>`;
     }
 
-    // US States — sort by count desc
+    // US States — sort alphabetically A–Z
     const usEl = document.getElementById('browse-us');
     if (usEl) {
-      const states = Object.entries(byState).sort((a,b) => b[1].total - a[1].total);
+      const states = Object.entries(byState).sort((a,b) => a[0].localeCompare(b[0]));
       usEl.innerHTML = states.map(([name, data]) => makeCard(name, data, 'state')).join('');
     }
 
-    // Countries — sort by count desc
+    // Countries — sort alphabetically A–Z
     const intlEl = document.getElementById('browse-intl');
     if (intlEl) {
-      const countries = Object.entries(byCountry).sort((a,b) => b[1].total - a[1].total);
+      const countries = Object.entries(byCountry).sort((a,b) => a[0].localeCompare(b[0]));
       intlEl.innerHTML = countries.map(([name, data]) => makeCard(name, data, 'country')).join('');
     }
   }
