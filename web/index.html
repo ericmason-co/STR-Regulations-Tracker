@@ -1277,17 +1277,8 @@
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".nav-item").forEach(item => {
         item.addEventListener("click", () => {
-          const tab = item.dataset.tab;
-          switchTab(tab);
-          
-          let prettyPath = "/";
-          if (tab === "database") prettyPath = "/RegulationsDB";
-          else if (tab === "assistant") prettyPath = "/ComplianceWizard";
-          else if (tab === "market-updates") prettyPath = "/MarketUpdates";
-          else if (tab === "monitoring") prettyPath = "/MonitorListings";
-          else if (tab === "about") prettyPath = "/AboutFAQ";
-          
-          history.pushState(null, "", prettyPath);
+          switchTab(item.dataset.tab);
+          // URL update is handled inside switchTab() via history.pushState
         });
       });
     });
