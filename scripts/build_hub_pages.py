@@ -72,22 +72,22 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
 
     # Title / description
     if scope_type == "state":
-        title = f"{scope_name} Short-Term Rental Laws {YEAR} — All Cities | LawfulStay"
-        desc  = (f"Complete guide to short-term rental regulations in {scope_name} {YEAR}. "
-                 f"LawfulStay tracks STR laws for {count} {scope_name} cities and jurisdictions — "
-                 f"permits, taxes, night caps, and compliance requirements.")
+        title = f"{scope_name} Short-Term Rental Laws {YEAR} — Vacation Rental & Holiday Let Rules | LawfulStay"
+        desc  = (f"Complete guide to short-term rental, vacation rental & holiday let regulations in {scope_name} {YEAR}. "
+                 f"LawfulStay tracks STR, Airbnb, VRBO, guest house & cottage rental laws for {count} {scope_name} "
+                 f"cities — permits, taxes, night caps, and compliance requirements.")
         h1    = f"{scope_name} Short-Term Rental Laws {YEAR}"
-        intro = (f"LawfulStay tracks short-term rental (STR / Airbnb / Vrbo) regulations for "
+        intro = (f"LawfulStay tracks short-term rental (STR / Airbnb / Vrbo / holiday let / vacation rental) regulations for "
                  f"<strong>{count} jurisdictions</strong> across {scope_name}. "
                  f"Select a city below for current permit requirements, tax rates, and compliance details.")
         bc_label = scope_name
     else:
-        title = f"{scope_name} Short-Term Rental Regulations {YEAR} — All Cities | LawfulStay"
-        desc  = (f"Short-term rental laws in {scope_name} {YEAR}. "
-                 f"LawfulStay tracks STR regulations for {count} {scope_name} cities and regions — "
-                 f"Airbnb rules, permits, tourist taxes, and compliance requirements.")
+        title = f"{scope_name} Short-Term Rental Regulations {YEAR} — Vacation Rental & Holiday Let Rules | LawfulStay"
+        desc  = (f"Short-term rental, vacation rental & holiday let laws in {scope_name} {YEAR}. "
+                 f"LawfulStay tracks STR, Airbnb, VRBO, guest house & villa rental regulations for {count} "
+                 f"{scope_name} cities — permits, tourist taxes, and compliance requirements.")
         h1    = f"{scope_name} Short-Term Rental Regulations {YEAR}"
-        intro = (f"LawfulStay tracks short-term rental (STR / Airbnb / Vrbo) regulations for "
+        intro = (f"LawfulStay tracks short-term rental (STR / Airbnb / Vrbo / holiday let / vacation rental) regulations for "
                  f"<strong>{count} cities and regions</strong> in {scope_name}. "
                  f"Select a location below for current permit requirements, tax obligations, and compliance details.")
         bc_label = scope_name
@@ -188,6 +188,7 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="keywords" content="{esc(scope_name)} short-term rental regulations, {esc(scope_name)} vacation rental rules, {esc(scope_name)} Airbnb rules, {esc(scope_name)} holiday let, {esc(scope_name)} holiday rental, {esc(scope_name)} VRBO rules, {esc(scope_name)} guest house regulations, {esc(scope_name)} cottage rental, {esc(scope_name)} villa rental, {esc(scope_name)} holiday letting, {esc(scope_name)} STR laws" />
   <script type="application/ld+json">
   {jsonld}
   </script>

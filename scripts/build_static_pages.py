@@ -111,9 +111,10 @@ def build_desc(j, city, loc_str, status, year):
     else:
         desc = f"{city} short-term rental regulations {year}: Status {status}."
 
-    suffix = f" Find Airbnb rules, permits & tax info on LawfulStay — the global STR compliance database."
+    suffix = (f" LawfulStay covers vacation rentals, Airbnb, VRBO, holiday lets, "
+              f"guest houses, cottages & villa rentals — the global STR compliance database.")
     full = desc + suffix
-    return full[:300]
+    return full[:320]
 
 def build_glance(j, status, city):
     """Build the At a Glance answer-first summary box with Speakable markup."""
@@ -272,17 +273,17 @@ def build_jsonld(j, jid, city, state, country, loc_str, status, title, desc,
         })
     if license_r and license_r.lower() not in ("unknown", "none", "n/a"):
         faq_pairs.append({
-            "q": f"Do you need a permit or license to operate an Airbnb in {city}?",
+            "q": f"Do you need a permit or license to operate an Airbnb, vacation rental, or holiday let in {city}?",
             "a": license_r[:300],
         })
     if tax_rate and tax_rate.lower() not in ("unknown", "none", "n/a"):
         faq_pairs.append({
-            "q": f"What taxes apply to short-term rentals in {city}?",
+            "q": f"What taxes apply to short-term rentals and holiday lets in {city}?",
             "a": tax_rate[:300],
         })
     if key_notes:
         faq_pairs.append({
-            "q": f"What are the most important STR compliance points in {city}?",
+            "q": f"What are the key rules for Airbnb, VRBO, and vacation rentals in {city}?",
             "a": key_notes[:400],
         })
 
@@ -321,6 +322,20 @@ def build_jsonld(j, jid, city, state, country, loc_str, status, title, desc,
                 },
             },
             "breadcrumb": {"@id": f"{url}#breadcrumb"},
+            "keywords": (
+                f"{esc_json(city)} short-term rental regulations, "
+                f"{esc_json(city)} vacation rental rules, "
+                f"{esc_json(city)} Airbnb rules, "
+                f"{esc_json(city)} holiday let regulations, "
+                f"{esc_json(city)} holiday rental, "
+                f"{esc_json(city)} VRBO rules, "
+                f"{esc_json(city)} guest house regulations, "
+                f"{esc_json(city)} cottage rental rules, "
+                f"{esc_json(city)} villa rental regulations, "
+                f"{esc_json(city)} holiday letting, "
+                f"{esc_json(city)} serviced apartment rules, "
+                f"{esc_json(city)} STR permit"
+            ),
         },
         {
             "@type": "BreadcrumbList",
@@ -486,6 +501,7 @@ def build_page(j):
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="keywords" content="{esc(city)} short-term rental, {esc(city)} vacation rental, {esc(city)} Airbnb rules, {esc(city)} holiday let, {esc(city)} holiday rental, {esc(city)} VRBO, {esc(city)} guest house, {esc(city)} cottage rental, {esc(city)} villa rental, {esc(city)} holiday letting, {esc(city)} home sharing, {esc(city)} STR regulations, {esc(city)} vacation home rules" />
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
