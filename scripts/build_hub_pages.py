@@ -211,12 +211,12 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     .intro {{ color: #475569; font-size: .95rem; margin-bottom: 1.25rem; line-height: 1.65; }}
     /* ── Status summary pills ── */
     .sbar {{ display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }}
-    .sb {{ font-size: .72rem; font-weight: 700; padding: .25rem .75rem; border-radius: 999px; border: 1px solid transparent; display: inline-flex; align-items: center; gap: .3rem; }}
-    .sb-active     {{ background: #dcfce7; color: #16a34a; border-color: #16a34a40; }}
-    .sb-restricted {{ background: #fef3c7; color: #d97706; border-color: #d9770640; }}
-    .sb-banned     {{ background: #fee2e2; color: #dc2626; border-color: #dc262640; }}
-    .sb-pending    {{ background: #ede9fe; color: #7c3aed; border-color: #7c3aed40; }}
-    .sb-none       {{ background: #f1f5f9; color: #64748b; border-color: #64748b30; }}
+    .sb {{ font-size: .72rem; font-weight: 700; padding: .25rem .75rem; border-radius: 999px; display: inline-flex; align-items: center; color: #fff; }}
+    .sb-active     {{ background: #10b981; }}
+    .sb-restricted {{ background: #f59e0b; }}
+    .sb-banned     {{ background: #ef4444; }}
+    .sb-pending    {{ background: #eab308; color: #1c1917; }}
+    .sb-none       {{ background: #475569; }}
     /* ── Jurisdiction rows ── */
     .jrow {{ display: flex; align-items: center; justify-content: space-between; gap: 1rem;
              background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
@@ -230,12 +230,12 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     .jrow-summ {{ font-size: .82rem; color: #64748b; margin-top: .2rem;
                   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }}
     .jrow-badge {{ flex-shrink: 0; font-size: .75rem; font-weight: 700; padding: .3rem .85rem;
-                   border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }}
-    .badge-active     {{ background: #dcfce7; color: #16a34a; border-color: #16a34a40; }}
-    .badge-restricted {{ background: #fef3c7; color: #d97706; border-color: #d9770640; }}
-    .badge-banned     {{ background: #fee2e2; color: #dc2626; border-color: #dc262640; }}
-    .badge-pending    {{ background: #ede9fe; color: #7c3aed; border-color: #7c3aed40; }}
-    .badge-none       {{ background: #f1f5f9; color: #64748b; border-color: #64748b30; }}
+                   border-radius: 999px; white-space: nowrap; color: #fff; }}
+    .badge-active     {{ background: #10b981; }}
+    .badge-restricted {{ background: #f59e0b; }}
+    .badge-banned     {{ background: #ef4444; }}
+    .badge-pending    {{ background: #eab308; color: #1c1917; }}
+    .badge-none       {{ background: #475569; }}
     /* ── Sidebar ── */
     .sidebar-card {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;
                      margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }}
