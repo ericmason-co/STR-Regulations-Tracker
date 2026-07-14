@@ -624,14 +624,21 @@ def build_page(j):
     }}
     </script>
     <div class="cta">
-      <h3>Search {total_count:,}+ STR Jurisdictions</h3>
-      <p>LawfulStay tracks STR regulations across {total_count:,}+ cities & countries on 6 continents, updated daily.</p>
+      <h3>Search <span class="js-juris-count">{total_count:,}</span>+ STR Jurisdictions</h3>
+      <p>LawfulStay tracks STR regulations across <span class="js-juris-count">{total_count:,}</span>+ cities &amp; countries on 6 continents, updated daily.</p>
       <a href="https://lawfulstay.com/?id={jid}" class="cta-btn">View in Full Database &rarr;</a>
     </div>
     <div class="footer">
       <p>Data sourced from official government sources and verified research. Last verified {esc(last_checked)}.</p>
-      <p style="margin-top:0.5rem;"><a href="https://lawfulstay.com/">LawfulStay.com</a> &mdash; The authoritative global STR regulations database. <a href="https://lawfulstay.com/">Browse all {total_count:,} jurisdictions &rarr;</a></p>
+      <p style="margin-top:0.5rem;"><a href="https://lawfulstay.com/">LawfulStay.com</a> &mdash; The authoritative global STR regulations database. <a href="https://lawfulstay.com/">Browse all <span class="js-juris-count">{total_count:,}</span> jurisdictions &rarr;</a></p>
     </div>
+    <script>
+    fetch('/jurisdictions.json').then(r=>r.json()).then(d=>{{
+      const n=(d.jurisdictions||[]).length;
+      if(!n) return;
+      document.querySelectorAll('.js-juris-count').forEach(el=>{{el.textContent=n.toLocaleString();}});
+    }}).catch(()=>{{}});
+    </script>
   </div>
 </body>
 </html>'''
