@@ -49,13 +49,13 @@ def esc_json(s):
     return str(s).replace("\\","\\\\").replace('"','\\"').replace("\n"," ")
 
 def status_bar(juris_list):
-    """Tiny ASCII-style breakdown of statuses."""
+    """Clean status breakdown pills — no emojis, CSS class styled."""
     from collections import Counter
     c = Counter(j.get("status","None") for j in juris_list)
     parts = []
     for status in ("Active","Restricted","Banned","Pending","None"):
         if c[status]:
-            parts.append(f'<span class="sb sb-{status.lower()}">{STATUS_EMOJI.get(status,"")} {c[status]} {status}</span>')
+            parts.append(f'<span class="sb sb-{status.lower()}">{c[status]} {status}</span>')
     return " ".join(parts)
 
 def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scopes):
