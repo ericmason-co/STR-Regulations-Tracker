@@ -35,6 +35,9 @@ def add_url(loc, lastmod, priority, changefreq="weekly"):
 # Homepage
 add_url(f"{SITE}/", today, 1.0, "daily")
 
+# Methodology / E-E-A-T page
+add_url(f"{SITE}/methodology/", today, 0.9, "monthly")
+
 # Hub pages (state + country) — higher priority than city pages
 if HUB_META.exists():
     hub = json.load(open(HUB_META))

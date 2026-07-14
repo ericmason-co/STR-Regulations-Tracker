@@ -16,6 +16,7 @@ MDT) by a research system that monitors government sources, legislative activity
 **Total jurisdictions tracked:** 592  
 **US jurisdictions:** 194 (across 41 states)  
 **International jurisdictions:** 398 (across 125+ countries)  
+**Data methodology:** https://lawfulstay.com/methodology/
 
 ## Database Coverage
 
