@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="LawfulStay" />
   <meta property="og:title" content="LawfulStay — Global STR Regulations Database" />
   <meta property="og:description" content="592+ jurisdictions. Search short-term rental laws, Airbnb permit rules, occupancy taxes, and compliance requirements for cities and countries worldwide." />
-  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.png" />
+  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.jpg" />
   <meta property="og:url" content="https://lawfulstay.com/" />
   <meta property="og:type" content="website" />
 
@@ -21,7 +21,7 @@
   <meta name="twitter:site" content="@LawfulStay" />
   <meta name="twitter:title" content="LawfulStay — Global STR Regulations Database" />
   <meta name="twitter:description" content="592+ jurisdictions. Search short-term rental laws, Airbnb permit rules, occupancy taxes, and compliance requirements worldwide." />
-  <meta name="twitter:image" content="https://lawfulstay.com/og_preview_card.png" />
+  <meta name="twitter:image" content="https://lawfulstay.com/og_preview_card.jpg" />
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
 
@@ -115,6 +115,10 @@
         <button class="nav-item" data-tab="market-updates" aria-label="Market Updates">
           <i class="fa-solid fa-clock-rotate-left"></i>
           <span>Market Updates</span>
+        </button>
+        <button class="nav-item" data-tab="browse" aria-label="Browse by Location">
+          <i class="fa-solid fa-map"></i>
+          <span>Browse by Location</span>
         </button>
         <button class="nav-item" data-tab="monitoring" aria-label="Monitor Listings">
           <i class="fa-solid fa-house-laptop"></i>
@@ -557,6 +561,32 @@
               </div>
             </div>
           </div>
+        </section>
+      </div>
+
+      <!-- Panel: Browse by Location -->
+      <div id="panel-browse" class="panel">
+        <section class="container browse-section">
+          <div class="browse-header">
+            <h2><i class="fa-solid fa-map-location-dot"></i> Browse STR Regulations by Location</h2>
+            <p>Navigate to any US state or country to see all tracked jurisdictions and their current regulatory status.</p>
+          </div>
+
+          <!-- Toggle -->
+          <div class="browse-toggle" id="browse-toggle">
+            <button class="btog-btn active" id="btog-us" onclick="showBrowseTab('us')">
+              <i class="fa-solid fa-flag-usa"></i> US States
+            </button>
+            <button class="btog-btn" id="btog-intl" onclick="showBrowseTab('intl')">
+              <i class="fa-solid fa-earth-americas"></i> Countries
+            </button>
+          </div>
+
+          <!-- US States Grid -->
+          <div id="browse-us" class="browse-grid"></div>
+
+          <!-- Countries Grid -->
+          <div id="browse-intl" class="browse-grid" style="display:none"></div>
         </section>
       </div>
 
@@ -1244,6 +1274,116 @@
     });
   </script>
 
-  <script src="app.js?v=148"></script>
+  <style>
+    /* ── Browse by Location Panel ───────────────────────────────────── */
+    .browse-section { padding: 1.5rem 0; }
+    .browse-header { margin-bottom: 1.5rem; }
+    .browse-header h2 { font-size: 1.4rem; font-weight: 700; color: var(--text-primary, #f1f5f9); margin-bottom: 0.35rem; }
+    .browse-header p { color: var(--text-muted, #94a3b8); font-size: 0.9rem; }
+    .browse-toggle { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; background: var(--card-bg, rgba(255,255,255,0.04)); border: 1px solid var(--border, rgba(255,255,255,0.08)); border-radius: 10px; padding: 0.3rem; width: fit-content; }
+    .btog-btn { background: transparent; border: none; color: var(--text-muted, #94a3b8); font-size: 0.88rem; font-weight: 600; padding: 0.5rem 1.1rem; border-radius: 7px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.15s; }
+    .btog-btn.active { background: var(--accent, #2DD4BF); color: #0B1426; }
+    .btog-btn:not(.active):hover { background: rgba(255,255,255,0.06); color: var(--text-primary, #f1f5f9); }
+    .browse-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0.75rem; }
+    .browse-card { background: var(--card-bg, rgba(255,255,255,0.04)); border: 1px solid var(--border, rgba(255,255,255,0.08)); border-radius: 12px; padding: 1rem 1.1rem; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 0.35rem; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+    .browse-card:hover { border-color: var(--accent, #2DD4BF); box-shadow: 0 4px 16px rgba(45,212,191,0.12); transform: translateY(-1px); }
+    .browse-card-name { font-size: 0.95rem; font-weight: 700; color: var(--text-primary, #f1f5f9); }
+    .browse-card-count { font-size: 0.75rem; color: var(--text-muted, #94a3b8); }
+    .browse-card-bars { display: flex; gap: 2px; margin-top: 0.4rem; height: 4px; border-radius: 4px; overflow: hidden; }
+    .bcb-active { background: #16a34a; }
+    .bcb-restricted { background: #d97706; }
+    .bcb-banned { background: #dc2626; }
+    .bcb-pending { background: #7c3aed; }
+    .bcb-none { background: #4b5563; }
+    .browse-card-legend { display: flex; flex-wrap: wrap; gap: 0.35rem 0.75rem; margin-top: 0.35rem; }
+    .bcl-item { font-size: 0.7rem; color: var(--text-muted, #94a3b8); display: flex; align-items: center; gap: 0.25rem; }
+    .bcl-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    @media (max-width: 700px) { .browse-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); } }
+  </style>
+
+  <script>
+  // ── Browse by Location panel ────────────────────────────────────────────
+  function slugify(s) {
+    return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  function renderBrowsePanel(jurisdictions) {
+    const STATUS_ORDER = ['Active','Restricted','Banned','Pending','None'];
+    const STATUS_CLASS = { Active:'active', Restricted:'restricted', Banned:'banned', Pending:'pending', None:'none' };
+    const STATUS_LABEL = { Active:'Active', Restricted:'Restricted', Banned:'Banned', Pending:'Pending', None:'Other' };
+
+    // Group US jurisdictions by state
+    const byState = {};
+    const byCountry = {};
+    jurisdictions.forEach(j => {
+      const status = j.status || 'None';
+      if (j.region === 'US' && j.state) {
+        if (!byState[j.state]) byState[j.state] = { counts: {}, total: 0 };
+        byState[j.state].counts[status] = (byState[j.state].counts[status] || 0) + 1;
+        byState[j.state].total++;
+      }
+      const country = j.country;
+      if (country && country !== 'United States') {
+        if (!byCountry[country]) byCountry[country] = { counts: {}, total: 0 };
+        byCountry[country].counts[status] = (byCountry[country].counts[status] || 0) + 1;
+        byCountry[country].total++;
+      }
+    });
+
+    function makeCard(name, data, type) {
+      const slug = slugify(name);
+      const url = `/regulations/${type}/${slug}/`;
+      const total = data.total;
+
+      // Proportional status bar
+      const bars = STATUS_ORDER.map(s => {
+        const n = data.counts[s] || 0;
+        if (!n) return '';
+        const pct = (n / total * 100).toFixed(1);
+        return `<div class="bcb-${STATUS_CLASS[s]}" style="flex:${pct}"></div>`;
+      }).join('');
+
+      // Legend (only statuses present)
+      const legend = STATUS_ORDER.filter(s => data.counts[s])
+        .map(s => `<span class="bcl-item"><span class="bcl-dot" style="background:var(--bcl-${STATUS_CLASS[s]}, ${{'active':'#16a34a','restricted':'#d97706','banned':'#dc2626','pending':'#7c3aed','none':'#4b5563'}[STATUS_CLASS[s]]})"></span>${data.counts[s]} ${STATUS_LABEL[s]}</span>`)
+        .join('');
+
+      return `<a href="${url}" class="browse-card" target="_blank" rel="noopener">
+        <div class="browse-card-name">${name}</div>
+        <div class="browse-card-count">${total} jurisdiction${total !== 1 ? 's' : ''}</div>
+        <div class="browse-card-bars">${bars}</div>
+        <div class="browse-card-legend">${legend}</div>
+      </a>`;
+    }
+
+    // US States — sort by count desc
+    const usEl = document.getElementById('browse-us');
+    if (usEl) {
+      const states = Object.entries(byState).sort((a,b) => b[1].total - a[1].total);
+      usEl.innerHTML = states.map(([name, data]) => makeCard(name, data, 'state')).join('');
+    }
+
+    // Countries — sort by count desc
+    const intlEl = document.getElementById('browse-intl');
+    if (intlEl) {
+      const countries = Object.entries(byCountry).sort((a,b) => b[1].total - a[1].total);
+      intlEl.innerHTML = countries.map(([name, data]) => makeCard(name, data, 'country')).join('');
+    }
+  }
+
+  function showBrowseTab(tab) {
+    document.getElementById('browse-us').style.display   = tab === 'us'   ? '' : 'none';
+    document.getElementById('browse-intl').style.display = tab === 'intl' ? '' : 'none';
+    document.getElementById('btog-us').classList.toggle('active',   tab === 'us');
+    document.getElementById('btog-intl').classList.toggle('active', tab === 'intl');
+  }
+
+  // Hook into existing data load — call once jurisdictions are available
+  document.addEventListener('jurisdictionsLoaded', function(e) {
+    renderBrowsePanel(e.detail || []);
+  });
+  </script>
+
+  <script src="app.js?v=149"></script>
 </body>
 </html>

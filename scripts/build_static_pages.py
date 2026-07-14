@@ -1,7 +1,8 @@
 """
 build_static_pages.py — LawfulStay static regulation page generator
-Phase 1 SEO/AEO/GEO: BreadcrumbList, FAQPage, WebPage JSON-LD, At a Glance,
-answer-first titles, 3-level breadcrumbs, related cities, sitemap generation.
+Phase 2.5 SEO/AEO/GEO: H2 headings, visible FAQ accordions, Speakable schema,
+BreadcrumbList + FAQPage + WebPage JSON-LD, At a Glance, answer-first titles,
+3-level breadcrumbs, related cities.
 """
 import json
 import re
@@ -114,12 +115,11 @@ def build_desc(j, city, loc_str, status, year):
     full = desc + suffix
     return full[:300]
 
-def build_glance(j, status):
-    """Build the At a Glance answer-first summary box."""
+def build_glance(j, status, city):
+    """Build the At a Glance answer-first summary box with Speakable markup."""
     items = []
     emoji = STATUS_EMOJI.get(status, "ℹ️")
 
-    # Status line
     status_labels = {
         "Active":     "STRs are <strong>permitted</strong> with registration.",
         "Restricted": "STRs are <strong>restricted</strong> — rules apply.",
@@ -156,13 +156,54 @@ def build_glance(j, status):
     if not items:
         return ""
 
+    # Speakable CSS selector targets this section id for Google Assistant / voice
     return f'''
-    <div class="glance-box">
-      <div class="glance-title">⚡ At a Glance</div>
-      <ul class="glance-list">
-        {"".join(items)}
-      </ul>
-    </div>'''
+    <section id="glance" aria-label="{esc(city)} STR rules at a glance">
+      <h2 class="section-h2">At a Glance &mdash; {esc(city)} STR Rules</h2>
+      <div class="glance-box">
+        <div class="glance-title">⚡ Quick Facts</div>
+        <ul class="glance-list">
+          {"".join(items)}
+        </ul>
+      </div>
+    </section>'''
+
+def build_faq_html(j, city):
+    """Build visible FAQ accordions in HTML body — critical for AI engine extraction."""
+    pairs = []
+    compliance = (j.get("compliance_notes") or "").strip()
+    license_r  = (j.get("license_required")  or "").strip()
+    tax_rate   = (j.get("tax_rate")          or "").strip()
+    key_notes  = (j.get("key_notes")         or "").strip()
+    penalties  = (j.get("penalties")         or "").strip()
+
+    if compliance:
+        pairs.append((f"What are the short-term rental rules in {city}?", compliance[:600]))
+    if license_r and license_r.lower() not in ("unknown", "none", "n/a"):
+        pairs.append((f"Do I need a permit or license to rent on Airbnb in {city}?", license_r[:400]))
+    if tax_rate and tax_rate.lower() not in ("unknown", "none", "n/a"):
+        pairs.append((f"What taxes apply to short-term rentals in {city}?", tax_rate[:400]))
+    if key_notes:
+        pairs.append((f"What are the most important STR compliance points in {city}?", key_notes[:500]))
+    if penalties and penalties.lower() not in ("not specified", "unknown", "none", "n/a"):
+        pairs.append((f"What are the penalties for illegal STR operation in {city}?", penalties[:300]))
+
+    if not pairs:
+        return ""
+
+    items = "".join(
+        f'''<details class="faq-item">
+          <summary class="faq-q">{esc(q)}</summary>
+          <div class="faq-a">{esc(a)}</div>
+        </details>'''
+        for q, a in pairs
+    )
+    return f'''
+    <section id="faq" aria-label="Frequently asked questions about {esc(city)} STR regulations">
+      <h2 class="section-h2">Frequently Asked Questions</h2>
+      <div class="faq-list">{items}</div>
+    </section>'''
+
 
 def build_related(j, jid):
     """Build a related-cities section for same state or country."""
@@ -179,7 +220,6 @@ def build_related(j, jid):
     if not pool:
         return ""
 
-    # Sample up to 5 peers; prefer recently-changed ones
     pool_sorted = sorted(pool, key=lambda x: x.get("last_changed", ""), reverse=True)
     sample = pool_sorted[:5]
 
@@ -190,10 +230,12 @@ def build_related(j, jid):
         for x in sample
     )
     return f'''
-    <div class="card related-card">
-      <div class="card-title">Other STR Jurisdictions {esc(scope)}</div>
-      <ul class="related-list">{items}</ul>
-    </div>'''
+    <section aria-label="Related jurisdictions">
+      <div class="card related-card">
+        <h2 class="card-title" style="font-size:0.7rem">Other STR Jurisdictions {esc(scope)}</h2>
+        <ul class="related-list">{items}</ul>
+      </div>
+    </section>'''
 
 def build_jsonld(j, jid, city, state, country, loc_str, status, title, desc,
                  last_changed, last_checked, official_url):
@@ -294,6 +336,12 @@ def build_jsonld(j, jid, city, state, country, loc_str, status, title, desc,
             "mainEntity": faq_entities,
         })
 
+    # Speakable — marks the At a Glance section for Google Assistant / voice search
+    graph[0]["speakable"] = {
+        "@type": "SpeakableSpecification",
+        "cssSelector": ["#glance", "h1.city-name"],
+    }
+
     return json.dumps({"@context": "https://schema.org", "@graph": graph},
                       ensure_ascii=False, indent=2)
 
@@ -330,8 +378,11 @@ def build_page(j):
     jsonld = build_jsonld(j, jid, city, state, country, loc_str, status,
                           title, desc, last_changed, last_checked, official_url)
 
-    # At a Glance
-    glance_html = build_glance(j, status)
+    # At a Glance (with Speakable section wrapper + H2)
+    glance_html = build_glance(j, status, city)
+
+    # Visible FAQ accordions
+    faq_html = build_faq_html(j, city)
 
     # Fields card
     fields  = field_row("Regulatory Status",        status)
@@ -387,15 +438,26 @@ def build_page(j):
     # Related cities
     related_html = build_related(j, jid)
 
-    # Breadcrumb HTML (visual, 3-level)
+    import re as _re2
+    def _slug(s):
+        return _re2.sub(r'[^a-z0-9]+', '-', s.lower()).strip('-')
+
+    # Breadcrumb HTML (visual, 3-level) — state/country names link to hub pages
     if state and state != city:
+        state_slug = _slug(state)
         breadcrumb_html = f'''<a href="https://lawfulstay.com/">LawfulStay</a> &rsaquo;
       <a href="https://lawfulstay.com/">Regulations Database</a> &rsaquo;
-      <span>{esc(state)}</span> &rsaquo;
+      <a href="https://lawfulstay.com/regulations/state/{state_slug}/">{esc(state)}</a> &rsaquo;
       {esc(city)}'''
     else:
+        country_slug = _slug(country) if country else ""
+        country_link = (
+            f'<a href="https://lawfulstay.com/regulations/country/{country_slug}/">{esc(country)}</a>'
+            if country_slug else esc(country)
+        )
         breadcrumb_html = f'''<a href="https://lawfulstay.com/">LawfulStay</a> &rsaquo;
       <a href="https://lawfulstay.com/">Regulations Database</a> &rsaquo;
+      {country_link} &rsaquo;
       {esc(city)}'''
 
     html = f'''<!DOCTYPE html>
@@ -412,7 +474,7 @@ def build_page(j):
   <meta property="og:description" content="{esc(desc)}" />
   <meta property="og:url" content="https://lawfulstay.com/regulations/{jid}/" />
   <meta property="og:type" content="article" />
-  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.png" />
+  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@LawfulStay" />
   <meta name="twitter:title" content="{esc(title)}" />
@@ -437,11 +499,22 @@ def build_page(j):
     .location {{ font-size: 1rem; color: #64748b; margin-bottom: 1rem; }}
     .status-badge {{ display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.03em; background: {status_bg}; color: {status_color}; border: 1px solid {status_color}40; margin-bottom: 1rem; }}
     .meta {{ font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; }}
+    /* Section H2s */
+    .section-h2 {{ font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.01em; }}
     /* At a Glance */
-    .glance-box {{ background: #fff; border: 2px solid #2DD4BF40; border-left: 4px solid #2DD4BF; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
+    .glance-box {{ background: #fff; border: 2px solid #2DD4BF40; border-left: 4px solid #2DD4BF; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
     .glance-title {{ font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2DD4BF; margin-bottom: 0.75rem; }}
     .glance-list {{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.45rem; }}
     .glance-list li {{ font-size: 0.92rem; color: #1e293b; padding-left: 0.5rem; border-left: 2px solid #e2e8f0; }}
+    section {{ margin-bottom: 1.5rem; }}
+    /* FAQ accordions */
+    .faq-list {{ display: flex; flex-direction: column; gap: 0.5rem; }}
+    .faq-item {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
+    .faq-q {{ font-size: 0.92rem; font-weight: 600; color: #0f172a; padding: 0.9rem 1.1rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }}
+    .faq-q::-webkit-details-marker {{ display: none; }}
+    .faq-q::after {{ content: "+"; font-size: 1.1rem; color: #2DD4BF; font-weight: 700; flex-shrink: 0; margin-left: 0.75rem; }}
+    details[open] .faq-q::after {{ content: "\2212"; }}
+    .faq-a {{ font-size: 0.88rem; color: #475569; padding: 0 1.1rem 0.9rem; line-height: 1.65; }}
     /* Cards */
     .card {{ background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
     .card-title {{ font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #2DD4BF; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; }}
@@ -499,12 +572,15 @@ def build_page(j):
       <div class="meta">Last updated: {esc(last_changed)} &nbsp;·&nbsp; Last verified: {esc(last_checked)} &nbsp;·&nbsp; Region: {esc(region)}</div>
     </div>
     {glance_html}
-    <div class="card">
-      <div class="card-title">Full Regulatory Details</div>
-      {fields}
-      {source_html}
-    </div>
+    <section aria-label="Full regulatory details">
+      <div class="card">
+        <h2 class="section-h2">Full Regulatory Details</h2>
+        {fields}
+        {source_html}
+      </div>
+    </section>
     {official_btn}
+    {faq_html}
     {related_html}
     <div class="feedback-box">
       <div class="feedback-title">&#x270F; Spot an error or broken link?</div>
@@ -571,3 +647,20 @@ for j in jurisdictions:
 
 print(f"Generated {count} static pages ({errors} errors)")
 print(f"Output: {REGS_DIR}")
+
+# ── Compress OG image with Pillow ─────────────────────────────────────
+try:
+    from PIL import Image
+    import os
+    og_orig = WEB / "og_preview_card_original.png"
+    og_jpg  = WEB / "og_preview_card.jpg"
+    # Use original source if available, else backup
+    src = og_orig if og_orig.exists() else WEB / "og_preview_card_backup.png"
+    if src.exists() and (not og_jpg.exists() or og_jpg.stat().st_size > 150_000):
+        img = Image.open(src).convert('RGB')
+        img.save(str(og_jpg), 'JPEG', quality=82, optimize=True, progressive=True)
+        print(f"OG image (JPEG): {og_jpg.stat().st_size//1024}KB")
+    elif og_jpg.exists():
+        print(f"OG image already optimized ({og_jpg.stat().st_size//1024}KB)")
+except Exception as e:
+    print(f"OG image compression skipped: {e}")

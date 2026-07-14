@@ -1629,6 +1629,9 @@ function wire() {
   setupSubscribeDialog();
   render();
 
+  // Notify browse panel (and any other listeners) that jurisdictions are ready
+  document.dispatchEvent(new CustomEvent('jurisdictionsLoaded', { detail: ALL }));
+
   // Deep-linking URL check
   const params = new URLSearchParams(window.location.search);
   const cityId = params.get("id");
