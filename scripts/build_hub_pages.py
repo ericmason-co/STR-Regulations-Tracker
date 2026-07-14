@@ -116,7 +116,7 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
           <div class="jrow-city">{esc(city)}{loc_sub}</div>
           <div class="jrow-summ">{esc(summ)}</div>
         </div>
-        <span class="jrow-badge" style="background:{sb};color:{sc};border:1px solid {sc}40">{emoji} {esc(status)}</span>
+        <span class="jrow-badge badge-{status.lower()}">{esc(status)}</span>
       </a>''')
 
     rows_html = "\n".join(rows)
@@ -178,71 +178,94 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
   <meta property="og:description" content="{esc(desc)}" />
   <meta property="og:url" content="{url}" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.png" />
+  <meta property="og:image" content="https://lawfulstay.com/og_preview_card.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@LawfulStay" />
   <meta name="twitter:title" content="{esc(title)}" />
   <meta name="twitter:description" content="{esc(desc)}" />
+  <meta name="twitter:image" content="https://lawfulstay.com/og_preview_card.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   {jsonld}
   </script>
   <style>
-    *{{box-sizing:border-box;margin:0;padding:0}}
-    body{{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f8fafc;color:#0f172a;line-height:1.6}}
-    .topbar{{background:#0B1426;padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between}}
-    .logo{{color:#fff;font-size:1.3rem;font-weight:800;text-decoration:none}}
-    .logo span{{color:#2DD4BF}}
-    .topbar-link{{color:#94a3b8;font-size:.85rem;text-decoration:none}}
-    .topbar-link:hover{{color:#2DD4BF}}
-    .wrap{{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;display:grid;grid-template-columns:1fr 240px;gap:2rem;align-items:start}}
-    .main{{min-width:0}}
-    .breadcrumb{{font-size:.8rem;color:#64748b;margin-bottom:1.5rem}}
-    .breadcrumb a{{color:#2563eb;text-decoration:none}}
-    h1{{font-size:2rem;font-weight:800;color:#0f172a;letter-spacing:-.03em;margin-bottom:.5rem}}
-    .intro{{color:#475569;font-size:.95rem;margin-bottom:1.25rem}}
-    .sbar{{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:1.5rem}}
-    .sb{{font-size:.72rem;font-weight:700;padding:.2rem .7rem;border-radius:999px}}
-    .sb-active{{background:#dcfce7;color:#16a34a}}
-    .sb-restricted{{background:#fef3c7;color:#d97706}}
-    .sb-banned{{background:#fee2e2;color:#dc2626}}
-    .sb-pending{{background:#ede9fe;color:#7c3aed}}
-    .sb-none{{background:#f3f4f6;color:#6b7280}}
-    .jrow{{display:flex;align-items:center;justify-content:space-between;gap:1rem;
-           background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:1rem 1.25rem;
-           margin-bottom:.625rem;text-decoration:none;color:inherit;
-           box-shadow:0 1px 3px rgba(0,0,0,.05);transition:box-shadow .15s,border-color .15s}}
-    .jrow:hover{{box-shadow:0 4px 12px rgba(0,0,0,.1);border-color:#2DD4BF60}}
-    .jrow-left{{flex:1;min-width:0}}
-    .jrow-city{{font-size:1rem;font-weight:700;color:#0f172a;display:flex;align-items:baseline;gap:.5rem}}
-    .row-sub{{font-size:.78rem;font-weight:400;color:#94a3b8}}
-    .jrow-summ{{font-size:.82rem;color:#64748b;margin-top:.2rem;
-                display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}}
-    .jrow-badge{{flex-shrink:0;font-size:.75rem;font-weight:700;padding:.25rem .75rem;
-                 border-radius:999px;white-space:nowrap}}
-    .sidebar-card{{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:1.25rem;
-                   margin-bottom:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,.05)}}
-    .sidebar-title{{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
-                    color:#2DD4BF;margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid #f1f5f9}}
-    .rel-list{{list-style:none;padding:0;margin:0}}
-    .rel-list li{{display:flex;justify-content:space-between;align-items:center;
-                  padding:.35rem 0;border-bottom:1px solid #f1f5f9;font-size:.87rem}}
-    .rel-list li:last-child{{border:none}}
-    .rel-list a{{color:#2563eb;text-decoration:none}}
-    .rel-list a:hover{{text-decoration:underline}}
-    .rel-count{{font-size:.72rem;color:#94a3b8;font-weight:600}}
-    .cta{{background:linear-gradient(135deg,#0B1426,#0F1F3D);border-radius:12px;padding:1.5rem;
-          text-align:center;color:#fff;margin-top:1.5rem}}
-    .cta h3{{font-size:1.1rem;font-weight:700;margin-bottom:.4rem}}
-    .cta p{{color:#94a3b8;font-size:.88rem;margin-bottom:1rem}}
-    .cta-btn{{display:inline-block;background:#2DD4BF;color:#0B1426;font-weight:700;
-              padding:.65rem 1.5rem;border-radius:8px;text-decoration:none;font-size:.9rem}}
-    .cta-btn:hover{{background:#22c5b0}}
-    .footer{{text-align:center;font-size:.78rem;color:#94a3b8;padding:2rem 0;
-             border-top:1px solid #e2e8f0;margin-top:2rem}}
-    .footer a{{color:#2563eb;text-decoration:none}}
-    @media(max-width:700px){{
-      .wrap{{grid-template-columns:1fr;padding:1rem}}
-      h1{{font-size:1.5rem}}
-      .sidebar{{display:none}}
+    *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+    body {{ font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
+    /* ── Top bar ── */
+    .topbar {{ background: #0B1426; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
+    .logo {{ color: #fff; font-family: "Outfit", sans-serif; font-size: 1.3rem; font-weight: 800; text-decoration: none; letter-spacing: -0.02em; }}
+    .logo span {{ color: #2DD4BF; }}
+    .topbar-link {{ color: #94a3b8; font-size: .85rem; text-decoration: none; transition: color .15s; }}
+    .topbar-link:hover {{ color: #2DD4BF; }}
+    /* ── Layout ── */
+    .wrap {{ max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; display: grid; grid-template-columns: 1fr 240px; gap: 2rem; align-items: start; }}
+    .main {{ min-width: 0; }}
+    /* ── Breadcrumb ── */
+    .breadcrumb {{ font-size: .8rem; color: #64748b; margin-bottom: 1.5rem; }}
+    .breadcrumb a {{ color: #2563eb; text-decoration: none; }}
+    .breadcrumb a:hover {{ text-decoration: underline; }}
+    /* ── Header ── */
+    h1 {{ font-family: "Outfit", sans-serif; font-size: 2rem; font-weight: 800; color: #0f172a; letter-spacing: -.03em; margin-bottom: .5rem; }}
+    .intro {{ color: #475569; font-size: .95rem; margin-bottom: 1.25rem; line-height: 1.65; }}
+    /* ── Status summary pills ── */
+    .sbar {{ display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem; }}
+    .sb {{ font-size: .72rem; font-weight: 700; padding: .25rem .75rem; border-radius: 999px; border: 1px solid transparent; display: inline-flex; align-items: center; gap: .3rem; }}
+    .sb-active     {{ background: #dcfce7; color: #16a34a; border-color: #16a34a40; }}
+    .sb-restricted {{ background: #fef3c7; color: #d97706; border-color: #d9770640; }}
+    .sb-banned     {{ background: #fee2e2; color: #dc2626; border-color: #dc262640; }}
+    .sb-pending    {{ background: #ede9fe; color: #7c3aed; border-color: #7c3aed40; }}
+    .sb-none       {{ background: #f1f5f9; color: #64748b; border-color: #64748b30; }}
+    /* ── Jurisdiction rows ── */
+    .jrow {{ display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+             background: #fff; border: 1px solid #e2e8f0; border-radius: 12px;
+             padding: 1rem 1.25rem; margin-bottom: .625rem; text-decoration: none;
+             color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.05);
+             transition: box-shadow .15s, border-color .15s, transform .1s; }}
+    .jrow:hover {{ box-shadow: 0 4px 16px rgba(45,212,191,.12); border-color: #2DD4BF; transform: translateY(-1px); }}
+    .jrow-left {{ flex: 1; min-width: 0; }}
+    .jrow-city {{ font-size: 1rem; font-weight: 700; color: #0f172a; display: flex; align-items: baseline; gap: .5rem; }}
+    .row-sub {{ font-size: .78rem; font-weight: 400; color: #94a3b8; }}
+    .jrow-summ {{ font-size: .82rem; color: #64748b; margin-top: .2rem;
+                  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }}
+    .jrow-badge {{ flex-shrink: 0; font-size: .75rem; font-weight: 700; padding: .3rem .85rem;
+                   border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }}
+    .badge-active     {{ background: #dcfce7; color: #16a34a; border-color: #16a34a40; }}
+    .badge-restricted {{ background: #fef3c7; color: #d97706; border-color: #d9770640; }}
+    .badge-banned     {{ background: #fee2e2; color: #dc2626; border-color: #dc262640; }}
+    .badge-pending    {{ background: #ede9fe; color: #7c3aed; border-color: #7c3aed40; }}
+    .badge-none       {{ background: #f1f5f9; color: #64748b; border-color: #64748b30; }}
+    /* ── Sidebar ── */
+    .sidebar-card {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;
+                     margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }}
+    .sidebar-title {{ font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+                      color: #2DD4BF; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid #f1f5f9; }}
+    .rel-list {{ list-style: none; padding: 0; margin: 0; }}
+    .rel-list li {{ display: flex; justify-content: space-between; align-items: center;
+                    padding: .35rem 0; border-bottom: 1px solid #f1f5f9; font-size: .87rem; }}
+    .rel-list li:last-child {{ border: none; }}
+    .rel-list a {{ color: #2563eb; text-decoration: none; font-weight: 500; }}
+    .rel-list a:hover {{ color: #2DD4BF; }}
+    .rel-count {{ font-size: .72rem; color: #94a3b8; font-weight: 600;
+                  background: #f1f5f9; padding: .1rem .4rem; border-radius: 4px; }}
+    /* ── CTA ── */
+    .cta {{ background: linear-gradient(135deg, #0B1426, #0F1F3D); border-radius: 12px; padding: 1.5rem;
+            text-align: center; color: #fff; margin-top: 1.5rem; }}
+    .cta h3 {{ font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }}
+    .cta p {{ color: #94a3b8; font-size: .88rem; margin-bottom: 1rem; }}
+    .cta-btn {{ display: inline-block; background: #2DD4BF; color: #0B1426; font-weight: 700;
+                padding: .65rem 1.5rem; border-radius: 8px; text-decoration: none; font-size: .9rem; }}
+    .cta-btn:hover {{ background: #22c5b0; }}
+    /* ── Footer ── */
+    .footer {{ text-align: center; font-size: .78rem; color: #94a3b8; padding: 2rem;
+               border-top: 1px solid #e2e8f0; margin-top: 2rem; }}
+    .footer a {{ color: #2563eb; text-decoration: none; }}
+    .footer a:hover {{ text-decoration: underline; }}
+    @media (max-width: 700px) {{
+      .wrap {{ grid-template-columns: 1fr; padding: 1rem; }}
+      h1 {{ font-size: 1.5rem; }}
+      .sidebar {{ display: none; }}
     }}
   </style>
 </head>
@@ -273,9 +296,10 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     </aside>
   </div>
   <div class="footer">
-    <p>Data updated daily from official government sources. &nbsp;·&nbsp;
+    <p>Data updated daily from official government sources. &nbsp;&middot;&nbsp;
        <a href="https://lawfulstay.com/">LawfulStay.com</a> &mdash;
-       The authoritative global STR regulations database.</p>
+       The authoritative global STR regulations database. &nbsp;&middot;&nbsp;
+       <a href="https://lawfulstay.com/methodology/">Data Methodology</a></p>
   </div>
 </body>
 </html>'''
