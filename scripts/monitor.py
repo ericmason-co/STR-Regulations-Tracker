@@ -120,9 +120,25 @@ def today() -> str:
 
 
 def build_prompt(region: str, existing: list[dict], recent: list[dict] | None = None) -> str:
+    # Only include a representative subset of jurisdictions to keep prompt size manageable.
+    # Prioritise those relevant to the day's region focus, then sample others.
+    region_lower = region.lower()
+    def is_relevant(j):
+        state = (j.get("state") or "").lower()
+        country = (j.get("country") or "").lower()
+        city = (j.get("city") or "").lower()
+        return (region_lower in state or region_lower in country or
+                region_lower in city or
+                any(w in region_lower for w in [state, country]) and state)
+    relevant = [j for j in existing if is_relevant(j)]
+    # If we have fewer than 60 relevant, pad with a random sample of others
+    import random
+    others = [j for j in existing if not is_relevant(j)]
+    random.shuffle(others)
+    sample = relevant + others[:max(0, 80 - len(relevant))]
     labels = ", ".join(
-        f"{j['city']} ({j.get('state') or j.get('country')})" for j in existing
-    )
+        f"{j['city']} ({j.get('state') or j.get('country')})" for j in sample[:80]
+    ) + (f" ... and {len(existing) - 80} more tracked globally" if len(existing) > 80 else "")
     field_list = ", ".join(FIELD_KEYS)
     recent = recent or []
     recent_block = "\n".join(
@@ -142,15 +158,36 @@ world, at any level (country, state/province, county, region, city, town, or vil
 limit yourself to a fixed set of sites — cast a wide net to find the news, then cite the \
 primary/official source for each item. Ignore marketing and listing-spam pages.
 
-STRICT RECENCY WINDOW — report an item ONLY if it meets at least one of these, relative to today \
-({today()}):
-  (a) the regulatory ACTION (a vote, signing, adoption, proposal, ruling, announcement, or \
-      enforcement action) occurred within the PAST 24 HOURS; OR
+RECENCY WINDOW (mirror a Google-News "past 24 hours" search) — report an item ONLY if it meets at \
+least one of these, relative to today ({today()}):
+  (a) it was ANNOUNCED, REPORTED, or PUBLISHED in credible news within the PAST 24 HOURS — a new \
+      regulatory announcement, vote, signing, adoption, proposal, ruling, enforcement action, or a \
+      fresh news story/press release about a short-term / vacation-rental regulation; OR
   (b) the regulation/rule TAKES EFFECT within the NEXT 48 HOURS.
-Reject anything whose action is older than 24 hours UNLESS it takes effect within the next 48 \
-hours. State each item's date in the "summary", and reject any item you cannot date.
+Capture recent announcements and new stories, exactly like a 24-hour news search. \
+DATE DISCIPLINE IS CRITICAL: for each candidate, find and verify the date of the NEWEST source. \
+If you cannot find coverage dated within the last 24 hours (and it is not effective within 48h), \
+DROP the item — no matter how relevant. Do NOT include an item based on a months-old article. \
+Put the verified publication/action date at the start of each "summary".
 
 Also specifically scan today's focus region for qualifying items: {region}.
+
+RUN A COMPREHENSIVE NEWS SWEEP — emulate a Google-News "past 24 hours" search for this topic. \
+Run SEVERAL distinct web searches (aim for 8-12) with varied wording and languages so nothing is \
+missed, for example:
+  - short-term rental regulation / ban / ordinance / license / cap / moratorium
+  - vacation rental law / rules / crackdown / ruling / fine
+  - "holiday let" / "holiday rental" / "short-term let" regulation (UK, Ireland, Australia, NZ)
+  - Airbnb regulation / ban / crackdown / delisting / court ruling
+  - Vrbo / Booking.com short-term rental rules
+  - tourist accommodation / tourist rental registration or licensing (Europe)
+  - visitor levy / tourist tax / occupancy tax on short-term rentals
+  - STR registration scheme / primary-residence rule / night cap / zoning change
+  - local-language terms where relevant: "meuble de tourisme" (France), "minpaku" (Japan), \
+    "vivienda de uso turistico" / "VUT" (Spain), "alojamento local" (Portugal), "affitti brevi" (Italy)
+Prioritize NEWS results (press releases, council/legislature agendas, local newspapers, industry \
+news wires) published in the last 24 hours, and pull EVERY qualifying item you find — not just the \
+first few.
 
 SOURCE AUTHORITY & NO DUPLICATES — the same regulatory action will often appear across several \
 outlets. Report each distinct action exactly ONCE, and cite the SINGLE most authoritative source, \
@@ -170,7 +207,8 @@ surface something genuinely NEW or a further development beyond what is listed h
 
 We already track these jurisdictions (avoid duplicating unless there is a genuine change): {labels}
 
-Limit the "changes" array to a maximum of 5 of the most significant changes found.
+Report ALL qualifying changes you find (up to 12). Do not stop at a handful — if the news sweep \
+surfaces 8-10 distinct qualifying items, include them all.
 
 CRITICAL — for EVERY change you report, you MUST populate these fields in the "fields" object:
 - "compliance_notes": 2-4 sentence plain-English summary of what the current rules require and what hosts must do to stay compliant. Rewrite this fully whenever any part of the regulation changes — do not leave it as the old text.
@@ -231,8 +269,21 @@ def call_anthropic(prompt: str, api_key: str, max_searches: int = 8,
             "content-type": "application/json",
         },
     )
-    with urllib.request.urlopen(req, timeout=300) as resp:
-        data = json.load(resp)
+    # Retry up to 2 times on timeout; use a 480-second ceiling (8 min)
+    last_exc = None
+    for _attempt in range(2):
+        try:
+            with urllib.request.urlopen(req, timeout=480) as resp:
+                data = json.load(resp)
+            last_exc = None
+            break
+        except TimeoutError as exc:
+            last_exc = exc
+            print(f"Anthropic API timeout (attempt {_attempt+1}/2), retrying...", flush=True)
+        except Exception as exc:
+            raise
+    if last_exc is not None:
+        raise last_exc
     # Concatenate all text blocks from the final assistant message.
     return "".join(
         b.get("text", "") for b in data.get("content", []) if b.get("type") == "text"
@@ -462,6 +513,78 @@ def send_email(subject: str, body_md: str) -> str:
     return f"Emailed digest to {msg['To']}."
 
 
+
+def notify_subscribers(entries: list[dict]) -> None:
+    """Send targeted alert emails to subscribers whose jurisdiction changed."""
+    if not entries:
+        return
+    db = Path('/opt/str-tracker/data/users.db')
+    if not db.exists():
+        print('No users.db found — skipping subscriber notifications.')
+        return
+    host = os.environ.get('SMTP_HOST')
+    if not host:
+        print('SMTP not configured — skipping subscriber notifications.')
+        return
+
+    import sqlite3
+    conn = sqlite3.connect(db)
+    c = conn.cursor()
+    notified = 0
+
+    for entry in entries:
+        jid = entry.get('jurisdiction_id', '')
+        jlabel = entry.get('jurisdiction_label', '')
+        summary = entry.get('summary', '')
+        change_type = entry.get('change_type', 'update')
+        source_url = entry.get('source_url', '')
+        new_value = entry.get('new_value', '')
+
+        # Find subscribers by jurisdiction_id or label match
+        c.execute(
+            "SELECT DISTINCT u.email FROM alert_subscriptions a "
+            "JOIN users u ON u.id = a.user_id "
+            "WHERE a.jurisdiction_id = ? OR LOWER(a.jurisdiction_label) = LOWER(?)",
+            (jid, jlabel)
+        )
+        subscribers = [row[0] for row in c.fetchall()]
+        if not subscribers:
+            continue
+
+        print(f'Notifying {len(subscribers)} subscriber(s) for {jlabel}...')
+        for email in subscribers:
+            try:
+                msg = EmailMessage()
+                msg['Subject'] = f'LawfulStay Alert: {jlabel} STR regulations changed'
+                msg['From'] = os.environ.get('MAIL_FROM', os.environ.get('SMTP_USER', ''))
+                msg['To'] = email
+                body = (
+                    'A regulation change has been detected for ' + jlabel + '.\n\n'
+                    + 'Change type: ' + change_type + '\n'
+                    + 'Summary: ' + summary + '\n'
+                )
+                if new_value:
+                    body += 'New value: ' + new_value + '\n'
+                if source_url:
+                    body += 'Source: ' + source_url + '\n'
+                body += (
+                    'View the full details at: https://lawfulstay.com\n\n'
+                    + 'You are receiving this because you subscribed to alerts for ' + jlabel + ' on LawfulStay.com.\n'
+                    + 'To unsubscribe, reply to this email.'
+                )
+                msg.set_content(body)
+                port = int(os.environ.get('SMTP_PORT', '587'))
+                with smtplib.SMTP(host, port, timeout=30) as s:
+                    s.starttls()
+                    s.login(os.environ['SMTP_USER'], os.environ['SMTP_PASS'])
+                    s.send_message(msg)
+                notified += 1
+            except Exception as e:
+                print(f'Failed to notify {email}: {e}', flush=True)
+
+    conn.close()
+    print(f'Subscriber notifications sent: {notified}')
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="search + print, do not write data")
@@ -478,7 +601,8 @@ def main() -> None:
 
     existing = load_jurisdictions()["jurisdictions"]
     recent = load_changelog().get("entries", [])
-    raw = call_anthropic(build_prompt(region, existing, recent), api_key)
+    raw = call_anthropic(build_prompt(region, existing, recent), api_key,
+                         max_searches=12, max_tokens=16000)
     try:
         result = extract_json(raw)
     except ValueError as e:
@@ -491,6 +615,7 @@ def main() -> None:
         return
 
     entries, updated, added = apply_changes(changes)
+    notify_subscribers(entries)
     print(f"Applied: {updated} updated, {added} added.")
 
     problems = validate()
@@ -526,6 +651,70 @@ def main() -> None:
     # panel stay current.
     for name in ("jurisdictions.json", "timeline.json"):
         (ROOT / "web" / name).write_text((ROOT / "data" / name).read_text())
+        if name == "jurisdictions.json":
+            import gzip, shutil
+            with open(ROOT / "web" / name, "rb") as f_in, gzip.open(str(ROOT / "web" / (name + ".gz")), "wb") as f_out:
+                shutil.copyfileobj(f_in, f_out)
+            print("Re-compressed jurisdictions.json.gz", flush=True)
+    # Re-minify JS and CSS so minified files stay current
+    try:
+        import jsmin, rcssmin
+        js = (ROOT / "web" / "app.js").read_text()
+        (ROOT / "web" / "app.min.js").write_text(jsmin.jsmin(js))
+        import subprocess
+        subprocess.run(["gzip", "-kf", str(ROOT / "web" / "app.min.js")])
+        css = (ROOT / "web" / "styles.css").read_text()
+        (ROOT / "web" / "styles.min.css").write_text(rcssmin.cssmin(css))
+        subprocess.run(["gzip", "-kf", str(ROOT / "web" / "styles.min.css")])
+        print("Re-minified and compressed JS/CSS", flush=True)
+    except Exception as e:
+        print("JS/CSS minification failed:", e, flush=True)
+    # Regenerate static HTML pages for all jurisdictions
+    try:
+        import subprocess
+        result = subprocess.run(["python3", "/opt/str-tracker/scripts/build_static_pages.py"], capture_output=True, text=True)
+        print(result.stdout.strip(), flush=True)
+        if result.returncode != 0 and result.stderr:
+            print("build_static_pages stderr:", result.stderr[:400], flush=True)
+    except Exception as e:
+        print("Static page generation failed:", e, flush=True)
+    # Regenerate state/country hub pages (must run after static pages)
+    try:
+        result = subprocess.run(["python3", "/opt/str-tracker/scripts/build_hub_pages.py"], capture_output=True, text=True)
+        print(result.stdout.strip(), flush=True)
+        if result.returncode != 0 and result.stderr:
+            print("build_hub_pages stderr:", result.stderr[:400], flush=True)
+    except Exception as e:
+        print("Hub page generation failed:", e, flush=True)
+    # Regenerate sitemap (includes city pages + hub pages)
+    try:
+        result = subprocess.run(["python3", "/opt/str-tracker/scripts/generate_sitemap.py"], capture_output=True, text=True)
+        print(result.stdout.strip(), flush=True)
+    except Exception as e:
+        print("Sitemap generation failed:", e, flush=True)
+    # Ping search engines via IndexNow
+    try:
+        import urllib.request, json as _json
+        _key = "83ca2ff4eaa346079f116276df3d47ad"
+        _data = _json.load(open(ROOT / "data" / "jurisdictions.json"))
+        # City pages + hub pages from sitemap
+        _city_urls = ["https://lawfulstay.com/regulations/" + j["id"] + "/" for j in _data["jurisdictions"] if j.get("id")]
+        _hub_meta_path = ROOT / "data" / "hub_pages.json"
+        _hub_urls = []
+        if _hub_meta_path.exists():
+            import json as _jj
+            _hmeta = _jj.load(open(_hub_meta_path))
+            _hub_urls = (
+                ["https://lawfulstay.com/regulations/state/" + s + "/" for s, _ in _hmeta.get("state_pages", [])] +
+                ["https://lawfulstay.com/regulations/country/" + c + "/" for c, _ in _hmeta.get("country_pages", [])]
+            )
+        _urls = ["https://lawfulstay.com/"] + _city_urls + _hub_urls
+        _payload = _json.dumps({"host": "lawfulstay.com", "key": _key, "keyLocation": "https://lawfulstay.com/" + _key + ".txt", "urlList": _urls}).encode()
+        _req = urllib.request.Request("https://api.indexnow.org/indexnow", data=_payload, headers={"Content-Type": "application/json; charset=utf-8"}, method="POST")
+        with urllib.request.urlopen(_req, timeout=30) as _r:
+            print(f"IndexNow: {_r.status} — {len(_urls)} URLs submitted", flush=True)
+    except Exception as e:
+        print("IndexNow ping failed:", e, flush=True)
     sys.argv = ["build_digest.py", "--days", str(args.days)]
     build_digest.main()
 
