@@ -198,14 +198,14 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     .topbar {{ background: #0B1426; padding: .85rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
     .logo-group {{ display: flex; align-items: center; gap: .65rem; text-decoration: none; color: #fff; }}
     .logo-icon-box {{ width: 32px; height: 32px; border-radius: 7px;
-                      background: rgba(20,184,166,.08); border: 1px solid #14b8a6;
-                      box-shadow: 0 0 10px rgba(20,184,166,.25);
+                      background: rgba(37,99,235,.08); border: 1px solid #2563eb;
+                      box-shadow: 0 0 10px rgba(37,99,235,.2);
                       display: flex; align-items: center; justify-content: center; }}
-    .logo-icon {{ color: #14b8a6; font-size: 1rem; }}
+    .logo-icon {{ color: #2563eb; font-size: 1rem; }}
     .logo-text {{ font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #fff; }}
-    .logo-text .brand-accent {{ color: #14b8a6; }}
+    .logo-text .brand-accent {{ color: #2563eb; }}
     .topbar-link {{ color: #94a3b8; font-size: .85rem; text-decoration: none; transition: color .15s; }}
-    .topbar-link:hover {{ color: #14b8a6; }}
+    .topbar-link:hover {{ color: #2563eb; }}
     /* ── Layout ── */
     .wrap {{ max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; display: grid; grid-template-columns: 1fr 240px; gap: 2rem; align-items: start; }}
     .main {{ min-width: 0; }}
@@ -230,7 +230,7 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
              padding: 1rem 1.25rem; margin-bottom: .625rem; text-decoration: none;
              color: inherit; box-shadow: 0 1px 3px rgba(0,0,0,.05);
              transition: box-shadow .15s, border-color .15s, transform .1s; }}
-    .jrow:hover {{ box-shadow: 0 4px 16px rgba(45,212,191,.12); border-color: #2DD4BF; transform: translateY(-1px); }}
+    .jrow:hover {{ box-shadow: 0 4px 16px rgba(37,99,235,.1); border-color: #2563eb; transform: translateY(-1px); }}
     .jrow-left {{ flex: 1; min-width: 0; }}
     .jrow-city {{ font-size: 1rem; font-weight: 700; color: #0f172a; display: flex; align-items: baseline; gap: .5rem; }}
     .row-sub {{ font-size: .78rem; font-weight: 400; color: #94a3b8; }}
@@ -247,13 +247,13 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     .sidebar-card {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem;
                      margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,.05); }}
     .sidebar-title {{ font-size: .68rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
-                      color: #2DD4BF; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid #f1f5f9; }}
+                      color: #2563eb; margin-bottom: .75rem; padding-bottom: .5rem; border-bottom: 1px solid #f1f5f9; }}
     .rel-list {{ list-style: none; padding: 0; margin: 0; }}
     .rel-list li {{ display: flex; justify-content: space-between; align-items: center;
                     padding: .35rem 0; border-bottom: 1px solid #f1f5f9; font-size: .87rem; }}
     .rel-list li:last-child {{ border: none; }}
     .rel-list a {{ color: #2563eb; text-decoration: none; font-weight: 500; }}
-    .rel-list a:hover {{ color: #2DD4BF; }}
+    .rel-list a:hover {{ color: #1d4ed8; }}
     .rel-count {{ font-size: .72rem; color: #94a3b8; font-weight: 600;
                   background: #f1f5f9; padding: .1rem .4rem; border-radius: 4px; }}
     /* ── CTA ── */
@@ -261,9 +261,9 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
             text-align: center; color: #fff; margin-top: 1.5rem; }}
     .cta h3 {{ font-size: 1.1rem; font-weight: 700; margin-bottom: .4rem; }}
     .cta p {{ color: #94a3b8; font-size: .88rem; margin-bottom: 1rem; }}
-    .cta-btn {{ display: inline-block; background: #2DD4BF; color: #0B1426; font-weight: 700;
+    .cta-btn {{ display: inline-block; background: #2563eb; color: #fff; font-weight: 700;
                 padding: .65rem 1.5rem; border-radius: 8px; text-decoration: none; font-size: .9rem; }}
-    .cta-btn:hover {{ background: #22c5b0; }}
+    .cta-btn:hover {{ background: #1d4ed8; }}
     /* ── Footer ── */
     .footer {{ text-align: center; font-size: .78rem; color: #94a3b8; padding: 2rem;
                border-top: 1px solid #e2e8f0; margin-top: 2rem; }}
