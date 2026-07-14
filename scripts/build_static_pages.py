@@ -548,9 +548,9 @@ def build_page(j):
     .cta p {{ color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.25rem; }}
     .cta-btn {{ display: inline-block; background: #2563eb; color: #fff; font-weight: 700; padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none; font-size: 0.95rem; }}
     .cta-btn:hover {{ background: #1d4ed8; }}
-    .comply-box {{ background: linear-gradient(135deg, #0B1426, #0F1F3D); border: 1px solid rgba(37,99,235,.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }}
+    .comply-box {{ background: #fff; border: 1px solid #e2e8f0; border-left: 4px solid #2563eb; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
     .comply-title {{ font-size: 1rem; font-weight: 700; color: #2563eb; margin-bottom: 0.4rem; }}
-    .comply-desc {{ font-size: 0.88rem; color: #94A3B8; margin-bottom: 1rem; }}
+    .comply-desc {{ font-size: 0.88rem; color: #475569; margin-bottom: 1rem; }}
     .comply-btn {{ display: inline-block; background: #2563eb; color: #fff; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }}
     .comply-btn:hover {{ background: #1d4ed8; }}
     /* Feedback */
