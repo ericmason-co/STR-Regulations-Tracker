@@ -187,6 +187,7 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script type="application/ld+json">
   {jsonld}
   </script>
@@ -194,11 +195,17 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
     *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
     body {{ font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
     /* ── Top bar ── */
-    .topbar {{ background: #0B1426; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
-    .logo {{ color: #fff; font-family: "Outfit", sans-serif; font-size: 1.3rem; font-weight: 800; text-decoration: none; letter-spacing: -0.02em; }}
-    .logo span {{ color: #2DD4BF; }}
+    .topbar {{ background: #0B1426; padding: .85rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
+    .logo-group {{ display: flex; align-items: center; gap: .65rem; text-decoration: none; color: #fff; }}
+    .logo-icon-box {{ width: 32px; height: 32px; border-radius: 7px;
+                      background: rgba(20,184,166,.08); border: 1px solid #14b8a6;
+                      box-shadow: 0 0 10px rgba(20,184,166,.25);
+                      display: flex; align-items: center; justify-content: center; }}
+    .logo-icon {{ color: #14b8a6; font-size: 1rem; }}
+    .logo-text {{ font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #fff; }}
+    .logo-text .brand-accent {{ color: #14b8a6; }}
     .topbar-link {{ color: #94a3b8; font-size: .85rem; text-decoration: none; transition: color .15s; }}
-    .topbar-link:hover {{ color: #2DD4BF; }}
+    .topbar-link:hover {{ color: #14b8a6; }}
     /* ── Layout ── */
     .wrap {{ max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; display: grid; grid-template-columns: 1fr 240px; gap: 2rem; align-items: start; }}
     .main {{ min-width: 0; }}
@@ -271,7 +278,10 @@ def build_hub_page(scope_type, scope_name, scope_slug, juris_list, related_scope
 </head>
 <body>
   <div class="topbar">
-    <a href="https://lawfulstay.com/" class="logo">Lawful<span>Stay</span></a>
+    <a href="https://lawfulstay.com/" class="logo-group">
+      <div class="logo-icon-box"><i class="fa-solid fa-scale-balanced logo-icon"></i></div>
+      <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
+    </a>
     <a href="https://lawfulstay.com/" class="topbar-link">&larr; Full Database</a>
   </div>
   <div class="wrap">
