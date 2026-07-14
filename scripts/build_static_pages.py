@@ -36,25 +36,25 @@ for _j in jurisdictions:
 REGS_DIR.mkdir(exist_ok=True)
 
 STATUS_COLORS = {
-    "Active":     "#16a34a",
-    "Restricted": "#d97706",
-    "Banned":     "#dc2626",
-    "Pending":    "#7c3aed",
-    "None":       "#6b7280",
+    "Active":     "#fff",
+    "Restricted": "#fff",
+    "Banned":     "#fff",
+    "Pending":    "#1c1917",
+    "None":       "#fff",
 }
 STATUS_BG = {
-    "Active":     "#dcfce7",
-    "Restricted": "#fef3c7",
-    "Banned":     "#fee2e2",
-    "Pending":    "#ede9fe",
-    "None":       "#f3f4f6",
+    "Active":     "#10b981",
+    "Restricted": "#f59e0b",
+    "Banned":     "#ef4444",
+    "Pending":    "#eab308",
+    "None":       "#475569",
 }
 STATUS_EMOJI = {
-    "Active":     "✅",
-    "Restricted": "⚠️",
-    "Banned":     "🚫",
-    "Pending":    "🕐",
-    "None":       "ℹ️",
+    "Active":     "",
+    "Restricted": "",
+    "Banned":     "",
+    "Pending":    "",
+    "None":       "",
 }
 
 def esc(s):
@@ -482,14 +482,21 @@ def build_page(j):
   <script type="application/ld+json">
   {jsonld}
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-    body {{ font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
-    .topbar {{ background: #0B1426; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }}
-    .logo {{ color: #fff; font-size: 1.3rem; font-weight: 800; text-decoration: none; }}
-    .logo span {{ color: #2DD4BF; }}
-    .topbar-link {{ color: #94a3b8; font-size: 0.85rem; text-decoration: none; }}
-    .topbar-link:hover {{ color: #2DD4BF; }}
+    body {{ font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f8fafc; color: #0f172a; line-height: 1.6; }}
+    .topbar {{ background: #fff; padding: .85rem 2rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0; }}
+    .logo-group {{ display: flex; align-items: center; gap: .65rem; text-decoration: none; color: #0f172a; }}
+    .logo-icon-box {{ width: 32px; height: 32px; border-radius: 7px; background: rgba(37,99,235,.08); border: 1px solid #2563eb; box-shadow: 0 0 10px rgba(37,99,235,.2); display: flex; align-items: center; justify-content: center; }}
+    .logo-icon {{ color: #2563eb; font-size: 1rem; }}
+    .logo-text {{ font-family: "Outfit", sans-serif; font-size: 1.25rem; font-weight: 800; letter-spacing: -0.01em; color: #0f172a; }}
+    .logo-text .brand-accent {{ color: #2563eb; }}
+    .topbar-link {{ color: #64748b; font-size: 0.85rem; text-decoration: none; transition: color .15s; }}
+    .topbar-link:hover {{ color: #2563eb; }}
     .container {{ max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }}
     .breadcrumb {{ font-size: 0.8rem; color: #64748b; margin-bottom: 1.5rem; }}
     .breadcrumb a {{ color: #2563eb; text-decoration: none; }}
@@ -497,13 +504,13 @@ def build_page(j):
     .header {{ margin-bottom: 1.5rem; }}
     .city-name {{ font-size: 2.2rem; font-weight: 800; color: #0f172a; letter-spacing: -0.03em; margin-bottom: 0.25rem; }}
     .location {{ font-size: 1rem; color: #64748b; margin-bottom: 1rem; }}
-    .status-badge {{ display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.03em; background: {status_bg}; color: {status_color}; border: 1px solid {status_color}40; margin-bottom: 1rem; }}
+    .status-badge {{ display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.03em; background: {status_bg}; color: {status_color}; margin-bottom: 1rem; }}
     .meta {{ font-size: 0.8rem; color: #94a3b8; margin-top: 0.5rem; }}
     /* Section H2s */
     .section-h2 {{ font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem; letter-spacing: -0.01em; }}
     /* At a Glance */
-    .glance-box {{ background: #fff; border: 2px solid #2DD4BF40; border-left: 4px solid #2DD4BF; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
-    .glance-title {{ font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2DD4BF; margin-bottom: 0.75rem; }}
+    .glance-box {{ background: #fff; border: 2px solid rgba(37,99,235,.15); border-left: 4px solid #2563eb; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
+    .glance-title {{ font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2563eb; margin-bottom: 0.75rem; }}
     .glance-list {{ list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.45rem; }}
     .glance-list li {{ font-size: 0.92rem; color: #1e293b; padding-left: 0.5rem; border-left: 2px solid #e2e8f0; }}
     section {{ margin-bottom: 1.5rem; }}
@@ -512,12 +519,12 @@ def build_page(j):
     .faq-item {{ background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }}
     .faq-q {{ font-size: 0.92rem; font-weight: 600; color: #0f172a; padding: 0.9rem 1.1rem; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; }}
     .faq-q::-webkit-details-marker {{ display: none; }}
-    .faq-q::after {{ content: "+"; font-size: 1.1rem; color: #2DD4BF; font-weight: 700; flex-shrink: 0; margin-left: 0.75rem; }}
+    .faq-q::after {{ content: "+"; font-size: 1.1rem; color: #2563eb; font-weight: 700; flex-shrink: 0; margin-left: 0.75rem; }}
     details[open] .faq-q::after {{ content: "\2212"; }}
     .faq-a {{ font-size: 0.88rem; color: #475569; padding: 0 1.1rem 0.9rem; line-height: 1.65; }}
     /* Cards */
     .card {{ background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
-    .card-title {{ font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #2DD4BF; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; }}
+    .card-title {{ font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #2563eb; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; }}
     .field {{ margin-bottom: 1rem; }}
     .field:last-child {{ margin-bottom: 0; }}
     .field-label {{ font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; margin-bottom: 0.25rem; }}
@@ -530,22 +537,22 @@ def build_page(j):
     .related-list li {{ display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; }}
     .related-list a {{ color: #2563eb; text-decoration: none; }}
     .related-list a:hover {{ text-decoration: underline; }}
-    .rel-status {{ font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.15rem 0.6rem; }}
-    .rel-active {{ background: #dcfce7; color: #16a34a; }}
-    .rel-restricted {{ background: #fef3c7; color: #d97706; }}
-    .rel-banned {{ background: #fee2e2; color: #dc2626; }}
-    .rel-pending {{ background: #ede9fe; color: #7c3aed; }}
+    .rel-status {{ font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.15rem 0.6rem; color: #fff; }}
+    .rel-active     {{ background: #10b981; }}
+    .rel-restricted {{ background: #f59e0b; }}
+    .rel-banned     {{ background: #ef4444; }}
+    .rel-pending    {{ background: #eab308; color: #1c1917; }}
     /* CTA / comply */
     .cta {{ background: linear-gradient(135deg, #0B1426, #0F1F3D); border-radius: 12px; padding: 2rem; text-align: center; color: #fff; margin-bottom: 1.5rem; }}
     .cta h3 {{ font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }}
     .cta p {{ color: #94a3b8; font-size: 0.9rem; margin-bottom: 1.25rem; }}
-    .cta-btn {{ display: inline-block; background: #2DD4BF; color: #0B1426; font-weight: 700; padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none; font-size: 0.95rem; }}
-    .cta-btn:hover {{ background: #22c5b0; }}
-    .comply-box {{ background: linear-gradient(135deg, #0B1426, #0F1F3D); border: 1px solid #2DD4BF40; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }}
-    .comply-title {{ font-size: 1rem; font-weight: 700; color: #2DD4BF; margin-bottom: 0.4rem; }}
+    .cta-btn {{ display: inline-block; background: #2563eb; color: #fff; font-weight: 700; padding: 0.75rem 1.75rem; border-radius: 8px; text-decoration: none; font-size: 0.95rem; }}
+    .cta-btn:hover {{ background: #1d4ed8; }}
+    .comply-box {{ background: linear-gradient(135deg, #0B1426, #0F1F3D); border: 1px solid rgba(37,99,235,.25); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }}
+    .comply-title {{ font-size: 1rem; font-weight: 700; color: #2563eb; margin-bottom: 0.4rem; }}
     .comply-desc {{ font-size: 0.88rem; color: #94A3B8; margin-bottom: 1rem; }}
-    .comply-btn {{ display: inline-block; background: #2DD4BF; color: #0B1426; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }}
-    .comply-btn:hover {{ background: #22c5b0; }}
+    .comply-btn {{ display: inline-block; background: #2563eb; color: #fff; font-weight: 700; padding: 0.65rem 1.5rem; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }}
+    .comply-btn:hover {{ background: #1d4ed8; }}
     /* Feedback */
     .feedback-box {{ background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }}
     .feedback-title {{ font-size: 0.88rem; font-weight: 700; color: #475569; margin-bottom: 0.75rem; }}
@@ -558,7 +565,10 @@ def build_page(j):
 </head>
 <body>
   <div class="topbar">
-    <a href="https://lawfulstay.com/" class="logo">Lawful<span>Stay</span></a>
+    <a href="https://lawfulstay.com/" class="logo-group">
+      <div class="logo-icon-box"><i class="fa-solid fa-scale-balanced logo-icon"></i></div>
+      <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
+    </a>
     <a href="https://lawfulstay.com/" class="topbar-link">&larr; Back to Database</a>
   </div>
   <div class="container">
