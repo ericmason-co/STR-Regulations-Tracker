@@ -990,13 +990,15 @@
       
       // Update topbar title text
       const titleEl = document.getElementById("topbar-title");
-      if (titleEl) {
-        if (tabName === "database") titleEl.textContent = "Regulations Database";
-        else if (tabName === "assistant") titleEl.textContent = "Compliance Wizard";
-        else if (tabName === "market-updates") titleEl.textContent = "Market Updates";
-        else if (tabName === "about") titleEl.textContent = "About & FAQ";
-        else if (tabName === "monitoring") titleEl.textContent = "Monitor Listings";
-      }
+      const tabTitles = {
+        "database":      "Regulations Database",
+        "assistant":     "Compliance Wizard",
+        "market-updates":"Market Updates",
+        "browse":        "Browse by Location",
+        "monitoring":    "Monitor Listings",
+        "about":         "About & FAQ",
+      };
+      if (titleEl && tabTitles[tabName]) titleEl.textContent = tabTitles[tabName];
       
       // Close details drawer if tab shifts
       closeDrawer();
@@ -1004,6 +1006,22 @@
       // Scroll main content to top on tab change
       const mainContent = document.querySelector(".main-content");
       if (mainContent) mainContent.scrollTop = 0;
+
+      // Update browser URL so each tab is shareable and bookmarkable
+      const tabPaths = {
+        "database":       "/",
+        "assistant":      "/compliance-wizard/",
+        "market-updates": "/market-updates/",
+        "browse":         "/browse/",
+        "monitoring":     "/monitoring/",
+        "about":          "/about/",
+      };
+      const newPath = tabPaths[tabName] || "/";
+      if (window.location.pathname !== newPath) {
+        history.pushState({ tab: tabName }, tabTitles[tabName] || "LawfulStay", newPath);
+      }
+      // Update <title> to match
+      document.title = (tabTitles[tabName] ? tabTitles[tabName] + " | " : "") + "LawfulStay";
     }
     // Expose globally so app.js async init can call it for URL-based routing
     window.switchTab = switchTab;

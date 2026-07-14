@@ -1652,6 +1652,8 @@ function wire() {
     activeTab = "assistant";
   } else if (pathname === "/marketupdates" || pathname === "/market-updates" || pathname === "/updates") {
     activeTab = "market-updates";
+  } else if (pathname === "/browse" || pathname === "/browse-by-location" || pathname === "/locations") {
+    activeTab = "browse";
   } else if (pathname === "/monitorlistings" || pathname === "/monitor-listings" || pathname === "/monitoring") {
     activeTab = "monitoring";
   } else if (pathname === "/aboutfaq" || pathname === "/about-faq" || pathname === "/about") {
@@ -1667,7 +1669,7 @@ function wire() {
   } else {
     const tabName = params.get("tab");
     if (tabName) {
-      if (["database", "assistant", "market-updates", "monitoring", "about"].includes(tabName)) {
+      if (["database", "assistant", "market-updates", "browse", "monitoring", "about"].includes(tabName)) {
         if (typeof switchTab === "function") {
           switchTab(tabName);
         } else if (typeof window.switchTab === "function") {
