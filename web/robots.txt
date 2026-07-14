@@ -1,4 +1,35 @@
+# LawfulStay.com — robots.txt
+# Updated: 2026-07-14 (Phase 1 SEO hardening)
+
 User-agent: *
-Allow: /
+
+# Allow public content
+Allow: /$
+Allow: /regulations/
+Allow: /sitemap.xml
+Allow: /llms.txt
+Allow: /og_preview_card.png
+Allow: /favicon.svg
+
+# Block admin, API, and private routes
+Disallow: /admin
+Disallow: /admin/
+Disallow: /api/
+Disallow: /scripts/
+Disallow: /*.env$
+Disallow: /*.json$
+
+# Block SPA query-string deep links that duplicate static pages
+# (canonical static pages at /regulations/{id}/ are preferred)
+Disallow: /*?id=*
+Disallow: /*?tab=*
+Disallow: /*?modal=*
+
+# Allow the IndexNow verification file
+Allow: /83ca2ff4eaa346079f116276df3d47ad.txt
+Allow: /google2f8ed53f0707843a.html
+
+# Be polite
+Crawl-delay: 2
 
 Sitemap: https://lawfulstay.com/sitemap.xml

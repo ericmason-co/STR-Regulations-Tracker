@@ -3,21 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>LawfulStay &mdash; Global STR Regulation Tracker</title>
-  <meta name="description" content="LawfulStay tracks short-term rental regulations across jurisdictions worldwide — searchable, current, and sourced." />
+  <title>LawfulStay — Global STR Regulations Database | 592+ Jurisdictions Worldwide</title>
+  <link rel="canonical" href="https://lawfulstay.com/" />
+  <meta name="description" content="LawfulStay is the authoritative global short-term rental (STR) regulations database — 592+ jurisdictions, updated daily. Search Airbnb rules, permits, taxes, and compliance requirements for cities worldwide." />
   <meta name="theme-color" content="#030712" />
   
-  <!-- Open Graph / Facebook Sharing Meta Tags -->
-  <meta property="og:title" content="LawfulStay — Global STR Regulation Tracker" />
-  <meta property="og:description" content="Search and compare global short-term rental ordinances, municipal zoning, permit compliance, fees, and penalties." />
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="LawfulStay" />
+  <meta property="og:title" content="LawfulStay — Global STR Regulations Database" />
+  <meta property="og:description" content="592+ jurisdictions. Search short-term rental laws, Airbnb permit rules, occupancy taxes, and compliance requirements for cities and countries worldwide." />
   <meta property="og:image" content="https://lawfulstay.com/og_preview_card.png" />
   <meta property="og:url" content="https://lawfulstay.com/" />
   <meta property="og:type" content="website" />
-  
-  <!-- Twitter Card Sharing Meta Tags -->
+
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="LawfulStay — Global STR Regulation Tracker" />
-  <meta name="twitter:description" content="Search and compare global short-term rental ordinances, municipal zoning, permit compliance, fees, and penalties." />
+  <meta name="twitter:site" content="@LawfulStay" />
+  <meta name="twitter:title" content="LawfulStay — Global STR Regulations Database" />
+  <meta name="twitter:description" content="592+ jurisdictions. Search short-term rental laws, Airbnb permit rules, occupancy taxes, and compliance requirements worldwide." />
   <meta name="twitter:image" content="https://lawfulstay.com/og_preview_card.png" />
 
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
@@ -28,19 +31,55 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <link rel="stylesheet" href="styles.css?v=147" />
+  <link rel="stylesheet" href="styles.css?v=148" />
 
   <!-- Google AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 
-  <!-- JSON-LD Structured Data for Search Engines -->
+  <!-- JSON-LD Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "LawfulStay",
-    "url": "https://lawfulstay.com",
-    "description": "Comprehensive global database for short-term rental compliance, local zoning laws, and licensing regulations."
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://lawfulstay.com/#website",
+        "url": "https://lawfulstay.com/",
+        "name": "LawfulStay",
+        "description": "The authoritative global short-term rental regulations database — 592+ jurisdictions, updated daily.",
+        "publisher": { "@id": "https://lawfulstay.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://lawfulstay.com/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://lawfulstay.com/#organization",
+        "name": "LawfulStay",
+        "url": "https://lawfulstay.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://lawfulstay.com/favicon.svg"
+        },
+        "description": "LawfulStay is the authoritative global short-term rental compliance database, tracking regulations, permits, taxes, and zoning rules across 592+ cities and countries.",
+        "sameAs": []
+      },
+      {
+        "@type": "Dataset",
+        "name": "Global Short-Term Rental Regulations Database",
+        "description": "Comprehensive dataset of short-term rental (STR/Airbnb/Vrbo) regulations covering 592+ jurisdictions across 6 continents, including licensing requirements, tax rates, night caps, zoning rules, and compliance notes.",
+        "url": "https://lawfulstay.com/",
+        "creator": { "@id": "https://lawfulstay.com/#organization" },
+        "license": "https://lawfulstay.com/",
+        "isAccessibleForFree": true,
+        "keywords": ["short-term rental", "STR regulations", "Airbnb rules", "vacation rental law", "STR compliance", "occupancy tax"]
+      }
+    ]
   }
   </script>
 </head>
@@ -1205,6 +1244,6 @@
     });
   </script>
 
-  <script src="app.js?v=147"></script>
+  <script src="app.js?v=148"></script>
 </body>
 </html>
