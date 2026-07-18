@@ -192,10 +192,17 @@ def init_db():
             location TEXT NOT NULL,
             notes TEXT,
             subscribe_on_add INTEGER NOT NULL DEFAULT 0,
+            contributor_opt_in INTEGER NOT NULL DEFAULT 0,
             created_at TEXT NOT NULL,
             FOREIGN KEY (user_id) REFERENCES users(id)
         )
     """)
+    # Migration: add contributor_opt_in if it doesn't exist yet
+    try:
+        c.execute("ALTER TABLE location_requests ADD COLUMN contributor_opt_in INTEGER NOT NULL DEFAULT 0")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # column already exists
     c.execute("""
         CREATE TABLE IF NOT EXISTS alert_subscriptions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -261,6 +268,7 @@ def migrate_existing_logs():
                     ip = rec.get("ip", "")
                     
                     user_id = get_or_create_user(conn, email, ip, ts) if email else None
+                    contributor_opt_in = bool(rec.get("contributor_opt_in", False))
                     
                     c.execute("""
                         SELECT id FROM location_requests 
@@ -269,9 +277,9 @@ def migrate_existing_logs():
                     """, (user_id, user_id, loc, ts))
                     if not c.fetchone():
                         c.execute("""
-                            INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, created_at)
-                            VALUES (?, ?, ?, ?, ?)
-                        """, (user_id, loc, notes, 1 if subscribe else 0, ts))
+                            INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, contributor_opt_in, created_at)
+                            VALUES (?, ?, ?, ?, ?, ?)
+                        """, (user_id, loc, notes, 1 if subscribe else 0, 1 if contributor_opt_in else 0, ts))
                 except Exception as e:
                     print("Error migrating location request line:", e, flush=True)
                     
@@ -346,6 +354,68 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def do_GET(self):
+        path = self.path.split("?")[0].rstrip("/")
+        if path == "/api/contributors":
+            try:
+                conn = sqlite3.connect(DB_PATH)
+                c = conn.cursor()
+                # Fetch all opted-in requests that have an associated user
+                c.execute("""
+                    SELECT u.email, lr.location, lr.created_at
+                    FROM location_requests lr
+                    JOIN users u ON u.id = lr.user_id
+                    WHERE lr.contributor_opt_in = 1
+                    ORDER BY lr.created_at ASC
+                """)
+                rows = c.fetchall()
+                conn.close()
+
+                # Group by email
+                from collections import defaultdict
+                grouped = defaultdict(list)
+                earliest = {}
+                for email, location, created_at in rows:
+                    grouped[email].append(location)
+                    if email not in earliest or created_at < earliest[email]:
+                        earliest[email] = created_at
+
+                contributors = []
+                for email, locs in grouped.items():
+                    prefix = email.split("@")[0]
+                    # Capitalise and sanitise display name
+                    display = prefix.replace(".", " ").replace("_", " ").replace("-", " ").title()
+                    since_raw = earliest[email][:10]  # YYYY-MM-DD
+                    # Format as "Month YYYY"
+                    try:
+                        from datetime import datetime as _dt
+                        dt = _dt.strptime(since_raw, "%Y-%m-%d")
+                        since = dt.strftime("%B %Y")
+                    except Exception:
+                        since = since_raw
+                    contributors.append({
+                        "display_name": display,
+                        "locations": locs,
+                        "since": since
+                    })
+
+                body = json.dumps({
+                    "ok": True,
+                    "contributors": contributors,
+                    "total_locations": sum(len(c["locations"]) for c in contributors)
+                }).encode()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(body)
+            except Exception as e:
+                print("contributors endpoint error:", e, flush=True)
+                self._json(500, {"ok": False, "error": "Server error."})
+        else:
+            self._json(404, {"ok": False, "error": "not found"})
+
     def do_POST(self):
         path = self.path.rstrip("/")
         if path not in ("/api/request-location", "/api/subscribe-alerts", "/api/submit-feedback", "/api/monitor-listing"):
@@ -389,10 +459,11 @@ class Handler(BaseHTTPRequestHandler):
                 user_id = get_or_create_user(conn, email, ip) if email else None
                 c = conn.cursor()
                 now_str = datetime.now(timezone.utc).isoformat()
+                contributor_opt_in = bool(data.get("contributor_opt_in", False))
                 c.execute("""
-                    INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, created_at)
-                    VALUES (?, ?, ?, ?, ?)
-                """, (user_id, loc, notes, 1 if subscribe else 0, now_str))
+                    INSERT INTO location_requests (user_id, location, notes, subscribe_on_add, contributor_opt_in, created_at)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (user_id, loc, notes, 1 if subscribe else 0, 1 if contributor_opt_in else 0, now_str))
                 conn.commit()
                 conn.close()
             except Exception as e:
@@ -511,7 +582,7 @@ class Handler(BaseHTTPRequestHandler):
                 print("Acumbamail push failed in handler:", e, flush=True)
 
             _last_hit[ip] = now
-            return self._json(200, {"ok": True, "message": f"Successfully subscribed to alerts for {j_label}!"})
+            return self._json(200, {"ok": True, "message": f"You're in! Check your inbox to confirm — we're glad to have you as part of the LawfulStay community."})
 
         elif path == "/api/submit-feedback":
             j_id = str(data.get("jurisdiction_id", "")).strip()[:MAX_LOC]

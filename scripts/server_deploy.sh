@@ -34,6 +34,7 @@ CODE_FILES=(
   web/robots.txt
   web/llms.txt
   web/.htaccess
+  web/subscribed/index.html
 )
 
 SCRIPT_FILES=(
@@ -43,6 +44,7 @@ SCRIPT_FILES=(
   scripts/generate_sitemap.py
   scripts/build_digest.py
   scripts/schema.py
+  server/request_server.py
 )
 
 git checkout origin/main -- "${CODE_FILES[@]}" "${SCRIPT_FILES[@]}" 2>&1 | tee -a "$LOG" || true

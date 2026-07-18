@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You're All Set — LawfulStay</title>
+  <meta name="description" content="Thank you for confirming your subscription to LawfulStay regulatory updates." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://lawfulstay.com/subscribed/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/fonts/fa-all.min.css">
+
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --border: rgba(15, 23, 42, 0.08);
+      --text: #0f172a;
+      --muted: #475569;
+      --brand: #2563eb;
+      --brand-glow: rgba(37, 99, 235, 0.12);
+      --active: #10b981;
+      --active-glow: rgba(16, 185, 129, 0.12);
+      --shadow: rgba(15, 23, 42, 0.06);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --border-radius-md: 14px;
+      --border-radius-lg: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Soft background orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 {
+      width: 500px; height: 500px;
+      background: rgba(37, 99, 235, 0.07);
+      top: -15%; right: -10%;
+    }
+    .orb-2 {
+      width: 400px; height: 400px;
+      background: rgba(16, 185, 129, 0.07);
+      bottom: -10%; left: -8%;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--border-radius-lg);
+      padding: 3rem 2.5rem;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 8px 40px var(--shadow);
+    }
+
+    .check-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--active-glow);
+      border: 2px solid rgba(16, 185, 129, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.75rem;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+    .check-ring i {
+      font-size: 2rem;
+      color: var(--active);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo-icon-box {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--brand), #1d4ed8);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 0.85rem;
+    }
+    .logo-text {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-accent { color: var(--brand); }
+
+    h1 {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .body-text {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.75rem 0;
+    }
+
+    .what-next {
+      text-align: left;
+      background: rgba(37, 99, 235, 0.04);
+      border: 1px solid rgba(37, 99, 235, 0.1);
+      border-radius: var(--border-radius-md);
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .what-next h3 {
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 0.75rem;
+    }
+    .what-next ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .what-next li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .what-next li i {
+      color: var(--brand);
+      font-size: 0.8rem;
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--brand);
+      color: #fff;
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.75rem 1.75rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.4);
+    }
+
+    .footer-note {
+      margin-top: 1.75rem;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .footer-note a {
+      color: #94a3b8;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="card">
+    <!-- Logo -->
+    <a href="/" class="logo-group" aria-label="Back to LawfulStay">
+      <div class="logo-icon-box">
+        <i class="fa-solid fa-scale-balanced"></i>
+      </div>
+      <span class="logo-text">Lawful<span class="brand-accent">Stay</span></span>
+    </a>
+
+    <!-- Check mark -->
+    <div class="check-ring">
+      <i class="fa-solid fa-check"></i>
+    </div>
+
+    <h1>You're all set — thank you for continuing with LawfulStay!</h1>
+
+    <p class="body-text">
+      We're glad to have you as part of the community. Your participation helps us keep the industry informed, connected, and better prepared for regulatory changes.
+    </p>
+
+    <div class="what-next">
+      <h3>Watch your inbox for</h3>
+      <ul>
+        <li><i class="fa-solid fa-circle-dot"></i> Important regulatory updates and changes for your selected location</li>
+        <li><i class="fa-solid fa-circle-dot"></i> New resources and tools added to the LawfulStay database</li>
+        <li><i class="fa-solid fa-circle-dot"></i> Opportunities to contribute and grow coverage worldwide</li>
+      </ul>
+    </div>
+
+    <a href="/" class="btn-primary">
+      <i class="fa-solid fa-database"></i> Explore LawfulStay
+    </a>
+
+    <p class="footer-note">
+      You can manage or cancel your alerts at any time by contacting us at
+      <a href="mailto:hello@lawfulstay.com">hello@lawfulstay.com</a>.
+    </p>
+  </div>
+</body>
+</html>

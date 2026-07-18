@@ -156,9 +156,13 @@
           <span>Monitor Listings</span>
           <span style="font-size: 0.65rem; background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 0.1rem 0.35rem; border-radius: 4px; margin-left: auto; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid rgba(56, 189, 248, 0.3);">Soon</span>
         </button>
-        <button class="nav-item" data-tab="about" aria-label="About & FAQ">
+        <button class="nav-item" data-tab="about" aria-label="About &amp; FAQ">
           <i class="fa-solid fa-circle-info"></i>
-          <span>About & FAQ</span>
+          <span>About &amp; FAQ</span>
+        </button>
+        <button class="nav-item" data-tab="contributors" aria-label="Contributors">
+          <i class="fa-solid fa-users"></i>
+          <span>Contributors</span>
         </button>
       </nav>
 
@@ -726,6 +730,51 @@
         </div>
       </div>
 
+      <!-- Panel: Contributors -->
+      <div id="panel-contributors" class="panel">
+        <div class="container" style="max-width: 860px; padding: 2rem 1.5rem;">
+          <div class="section-header" style="margin-bottom: 2rem;">
+            <div class="badge-row" style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.75rem;">
+              <span class="status-badge" style="background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;">
+                <i class="fa-solid fa-star"></i> Community
+              </span>
+            </div>
+            <h2 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem;">Our Contributors</h2>
+            <p style="color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 600px;">
+              These community members requested locations that have since been added to the LawfulStay database. Their contributions help keep coverage growing worldwide.
+            </p>
+            <div style="margin-top: 1.25rem;">
+              <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
+                <i class="fa-solid fa-circle-plus"></i> Request a Location &amp; Get Listed
+              </button>
+            </div>
+          </div>
+
+          <!-- Stats bar -->
+          <div id="contributors-stats" style="display: flex; gap: 1.25rem; margin-bottom: 1.75rem; flex-wrap: wrap;"></div>
+
+          <!-- Loading state -->
+          <div id="contributors-loading" style="text-align: center; padding: 3rem 1rem; color: var(--muted);">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.75rem; display: block;"></i>
+            Loading contributors...
+          </div>
+
+          <!-- Empty state -->
+          <div id="contributors-empty" style="display: none; text-align: center; padding: 3rem 1rem;">
+            <i class="fa-solid fa-users" style="font-size: 2.5rem; color: var(--muted-dark); margin-bottom: 1rem; display: block;"></i>
+            <h4 style="color: var(--text); margin-bottom: 0.4rem;">No contributors yet</h4>
+            <p style="color: var(--muted); font-size: 0.9rem;">Be the first! Request a location and opt in to be listed here.</p>
+          </div>
+
+          <!-- Contributors grid -->
+          <div id="contributors-grid" class="contributors-grid" style="display: none;"></div>
+
+          <p style="margin-top: 2rem; font-size: 0.78rem; color: var(--muted); text-align: center;">
+            Only users who selected "List me on the Contributors page" are shown. Names are based on the email prefix provided.
+          </p>
+        </div>
+      </div>
+
       <!-- Footer Info -->
       <footer class="footer">
         <div class="footer-content">
@@ -753,8 +802,8 @@
       <div class="modal-backdrop-trigger" onclick="closeSubscribeDialog()"></div>
       <div class="dialog-card">
         <button class="dialog-close" onclick="closeSubscribeDialog()" aria-label="Close dialog"><i class="fa-solid fa-xmark"></i></button>
-        <h3><i class="fa-solid fa-bell"></i> Subscribe to Regulation Alerts</h3>
-        <p>Get notified when regulations shift in your selected jurisdiction.</p>
+        <h3><i class="fa-solid fa-bell"></i> Stay Informed on Regulations</h3>
+        <p>Select a jurisdiction to receive timely updates when local short-term rental rules, permit requirements, or tax rates change.</p>
         <form id="subscribe-dialog-form" onsubmit="handleDialogSubscribe(event)">
           <div style="display: none;" aria-hidden="true">
             <label for="dialog-subscribe-website">Website</label>
@@ -777,7 +826,7 @@
           </div>
           <div class="dialog-actions">
             <button type="button" class="btn btn-secondary btn-sm" onclick="closeSubscribeDialog()">Cancel</button>
-            <button type="submit" class="btn btn-primary btn-sm" id="subscribe-dialog-submit" disabled>Subscribe</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="subscribe-dialog-submit" disabled>Keep Me Informed</button>
           </div>
           <div class="dialog-success-msg" style="display: none; color: var(--active); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
           <div class="dialog-error-msg" style="display: none; color: var(--banned); font-size: 0.85rem; margin-top: 0.5rem; font-weight: 600;"></div>
@@ -814,6 +863,12 @@
               <input type="checkbox" id="request-subscribe-checkbox" name="subscribe" checked style="margin-top: 0.2rem; cursor: pointer;" />
               <label for="request-subscribe-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; line-height: 1.4; font-weight: normal;">
                 Subscribe me to compliance alerts for this location once it is added.
+              </label>
+            </div>
+            <div class="form-group checkbox-group" style="display: flex; flex-direction: row; align-items: flex-start; gap: 0.5rem; margin-top: 0.4rem; margin-bottom: 0;">
+              <input type="checkbox" id="request-contributor-checkbox" name="contributor_opt_in" style="margin-top: 0.2rem; cursor: pointer;" />
+              <label for="request-contributor-checkbox" style="font-size: 0.8rem; color: var(--text-muted); cursor: pointer; user-select: none; line-height: 1.4; font-weight: normal;">
+                <i class="fa-solid fa-star" style="color: #f59e0b; font-size: 0.7rem; margin-right: 2px;"></i> List me on the <strong>Contributors page</strong> as someone who helped grow the database.
               </label>
             </div>
           </div>
@@ -967,7 +1022,8 @@
         email: form.email.value,
         notes: form.notes.value,
         website: form.website.value,
-        subscribe: form.subscribe.checked
+        subscribe: form.subscribe.checked,
+        contributor_opt_in: form.contributor_opt_in.checked
       };
       
       submitBtn.disabled = true;
@@ -1028,6 +1084,7 @@
         "browse":        "Browse by Location",
         "monitoring":    "Monitor Listings",
         "about":         "About & FAQ",
+        "contributors":  "Contributors",
       };
       if (titleEl && tabTitles[tabName]) titleEl.textContent = tabTitles[tabName];
       
@@ -1038,6 +1095,11 @@
       const mainContent = document.querySelector(".main-content");
       if (mainContent) mainContent.scrollTop = 0;
 
+      // Load contributors data on first visit to the tab
+      if (tabName === "contributors") {
+        setTimeout(loadContributors, 50);
+      }
+
       // Update browser URL so each tab is shareable and bookmarkable
       const tabPaths = {
         "database":       "/",
@@ -1046,6 +1108,7 @@
         "browse":         "/browse/",
         "monitoring":     "/monitoring/",
         "about":          "/about/",
+        "contributors":   "/contributors/",
       };
       const newPath = tabPaths[tabName] || "/";
       if (window.location.pathname !== newPath) {
@@ -1056,6 +1119,65 @@
     }
     // Expose globally so app.js async init can call it for URL-based routing
     window.switchTab = switchTab;
+
+    // Load contributors when the tab is activated
+    let _contributorsLoaded = false;
+    async function loadContributors() {
+      if (_contributorsLoaded) return;
+      const grid    = document.getElementById("contributors-grid");
+      const loading = document.getElementById("contributors-loading");
+      const empty   = document.getElementById("contributors-empty");
+      const stats   = document.getElementById("contributors-stats");
+      try {
+        const res  = await fetch("/api/contributors");
+        const data = await res.json();
+        loading.style.display = "none";
+        const list = data.contributors || [];
+        if (list.length === 0) {
+          empty.style.display = "block";
+          return;
+        }
+        // Stats bar
+        stats.innerHTML = `
+          <div class="contributor-stat">
+            <span class="contributor-stat-num">${list.length}</span>
+            <span class="contributor-stat-label">Contributors</span>
+          </div>
+          <div class="contributor-stat">
+            <span class="contributor-stat-num">${data.total_locations || list.length}</span>
+            <span class="contributor-stat-label">Locations Requested</span>
+          </div>
+        `;
+        // Build grid
+        grid.innerHTML = list.map(c => {
+          const initials = c.display_name.slice(0, 2).toUpperCase();
+          const hue = (c.display_name.charCodeAt(0) * 37 + c.display_name.charCodeAt(1) * 17) % 360;
+          const locations = (c.locations || []).slice(0, 3);
+          const extraCount = (c.locations || []).length - 3;
+          return `
+            <div class="contributor-card">
+              <div class="contributor-avatar" style="--avatar-hue: ${hue}deg">${initials}</div>
+              <div class="contributor-info">
+                <div class="contributor-name">${escapeHtml(c.display_name)}</div>
+                <div class="contributor-locations">
+                  ${locations.map(l => `<span class="contributor-loc-tag">${escapeHtml(l)}</span>`).join("")}
+                  ${extraCount > 0 ? `<span class="contributor-loc-tag contributor-loc-more">+${extraCount} more</span>` : ""}
+                </div>
+                <div class="contributor-since">Since ${escapeHtml(c.since)}</div>
+              </div>
+              <div class="contributor-badge"><i class="fa-solid fa-star"></i></div>
+            </div>
+          `;
+        }).join("");
+        grid.style.display = "grid";
+        _contributorsLoaded = true;
+      } catch(err) {
+        loading.innerHTML = `<i class="fa-solid fa-circle-exclamation" style="color:var(--banned)"></i> Failed to load contributors.`;
+      }
+    }
+    function escapeHtml(s) {
+      return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
     
     async function handleMonitorSubmit(event) {
       event.preventDefault();

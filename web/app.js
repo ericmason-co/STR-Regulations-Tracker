@@ -1372,13 +1372,16 @@ async function handleDialogSubscribe(event) {
     const result = await res.json();
 
     if (res.ok && result.ok) {
-      successMsg.textContent = result.message || "Successfully subscribed to alerts!";
+      successMsg.textContent = result.message || "You're in! Check your inbox to confirm and you'll start receiving regulatory updates.";
       successMsg.style.display = "block";
+      successMsg.style.fontWeight = "500";
+      successMsg.style.color = "var(--active)";
+      successMsg.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right: 0.35rem;"></i>${result.message || "You're in! Check your inbox to confirm — we're glad to have you as part of the LawfulStay community."}`;
       form.reset();
       document.getElementById("subscribe-search-clear").style.display = "none";
       setTimeout(() => {
         closeSubscribeDialog();
-      }, 2500);
+      }, 3500);
     } else {
       errorMsg.textContent = result.error || "An error occurred. Please try again.";
       errorMsg.style.display = "block";
