@@ -733,48 +733,121 @@
 
       <!-- Panel: Contributors -->
       <div id="panel-contributors" class="panel">
-        <div class="container" style="max-width: 860px; padding: 2rem 1.5rem;">
-          <div class="section-header" style="margin-bottom: 2rem;">
-            <div class="badge-row" style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.75rem;">
-              <span class="status-badge" style="background: rgba(245,158,11,0.12); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.06em;">
-                <i class="fa-solid fa-star"></i> Community
-              </span>
+
+        <!-- Hero -->
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%); padding: 3.5rem 2rem 3rem; text-align: center; position: relative; overflow: hidden;">
+          <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 40%, rgba(99,102,241,0.18) 0%, transparent 65%); pointer-events: none;"></div>
+          <div style="position: relative; max-width: 680px; margin: 0 auto;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #f59e0b; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.25rem;">
+              <i class="fa-solid fa-star"></i> Community
             </div>
-            <h2 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem;">Our Contributors</h2>
-            <p style="color: var(--muted); font-size: 0.95rem; line-height: 1.6; max-width: 600px;">
-              These community members requested locations that have since been added to the LawfulStay database. Their contributions help keep coverage growing worldwide.
+            <h1 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800; color: #fff; margin-bottom: 0.75rem; letter-spacing: -0.02em;">Built by the Community,<br>for the Community</h1>
+            <p style="color: rgba(255,255,255,0.7); font-size: 1rem; line-height: 1.7; max-width: 540px; margin: 0 auto 1.75rem;">
+              LawfulStay's coverage grows because people like you request new locations. Every jurisdiction added helps short-term rental operators worldwide stay compliant.
             </p>
-            <div style="margin-top: 1.25rem;">
-              <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
-                <i class="fa-solid fa-circle-plus"></i> Request a Location &amp; Get Listed
-              </button>
+            <button class="btn btn-primary" onclick="openRequestDialog()" style="font-size: 0.9rem; padding: 0.65rem 1.5rem;">
+              <i class="fa-solid fa-circle-plus"></i> Request a Location &amp; Get Listed
+            </button>
+          </div>
+        </div>
+
+        <!-- Impact Stats -->
+        <div style="background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.5rem 2rem;">
+          <div style="max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; text-align: center;">
+            <div style="padding: 0.75rem;">
+              <div style="font-size: 1.75rem; font-weight: 800; color: var(--accent); font-family: var(--font-heading);"><span class="js-juris-count">725</span></div>
+              <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">Jurisdictions Tracked</div>
+            </div>
+            <div style="padding: 0.75rem;">
+              <div style="font-size: 1.75rem; font-weight: 800; color: #10b981; font-family: var(--font-heading);" id="contributor-impact-count">—</div>
+              <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">Locations Requested</div>
+            </div>
+            <div style="padding: 0.75rem;">
+              <div style="font-size: 1.75rem; font-weight: 800; color: #f59e0b; font-family: var(--font-heading);">50+</div>
+              <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">Countries Covered</div>
+            </div>
+            <div style="padding: 0.75rem;">
+              <div style="font-size: 1.75rem; font-weight: 800; color: #a78bfa; font-family: var(--font-heading);">Daily</div>
+              <div style="font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem;">Data Updates</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container" style="max-width: 860px; padding: 2.5rem 1.5rem;">
+
+          <!-- How It Works -->
+          <div style="margin-bottom: 3rem;">
+            <h2 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text); margin-bottom: 0.4rem;">How Contributing Works</h2>
+            <p style="color: var(--muted); font-size: 0.88rem; margin-bottom: 1.5rem;">Three simple steps to add your city and get recognized.</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.25rem 1.25rem 1rem; display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 800; color: var(--accent); font-size: 0.95rem;">1</div>
+                <div>
+                  <div style="font-weight: 700; color: var(--text); font-size: 0.9rem; margin-bottom: 0.25rem;">Request a Location</div>
+                  <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.5;">Submit the city or jurisdiction you'd like added — name, country, and any notes you have.</div>
+                </div>
+              </div>
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.25rem 1.25rem 1rem; display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 800; color: #10b981; font-size: 0.95rem;">2</div>
+                <div>
+                  <div style="font-weight: 700; color: var(--text); font-size: 0.9rem; margin-bottom: 0.25rem;">We Research &amp; Add It</div>
+                  <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.5;">Our team researches the regulations and adds the jurisdiction to the live database, usually within a few days.</div>
+                </div>
+              </div>
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.25rem 1.25rem 1rem; display: flex; gap: 1rem; align-items: flex-start;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 800; color: #f59e0b; font-size: 0.95rem;">3</div>
+                <div>
+                  <div style="font-weight: 700; color: var(--text); font-size: 0.9rem; margin-bottom: 0.25rem;">Get Recognized</div>
+                  <div style="font-size: 0.8rem; color: var(--muted); line-height: 1.5;">Opt in to be listed here with your name and the locations you helped add. Your contribution is permanent.</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Stats bar -->
-          <div id="contributors-stats" style="display: flex; gap: 1.25rem; margin-bottom: 1.75rem; flex-wrap: wrap;"></div>
+          <!-- Contributors Section -->
+          <div style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+              <h2 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; color: var(--text);">Community Contributors</h2>
+              <span id="contributors-count-badge" style="font-size: 0.8rem; color: var(--muted);"></span>
+            </div>
 
-          <!-- Loading state -->
-          <div id="contributors-loading" style="text-align: center; padding: 3rem 1rem; color: var(--muted);">
-            <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.5rem; margin-bottom: 0.75rem; display: block;"></i>
-            Loading contributors...
+            <!-- Loading state -->
+            <div id="contributors-loading" style="text-align: center; padding: 2.5rem 1rem; color: var(--muted);">
+              <i class="fa-solid fa-spinner fa-spin" style="font-size: 1.25rem; margin-bottom: 0.6rem; display: block;"></i>
+              Loading contributors...
+            </div>
+
+            <!-- Empty state -->
+            <div id="contributors-empty" style="display: none; background: var(--surface); border: 1px dashed var(--border); border-radius: 12px; text-align: center; padding: 2.5rem 1.5rem;">
+              <i class="fa-solid fa-users" style="font-size: 2rem; color: var(--muted-dark); margin-bottom: 0.75rem; display: block;"></i>
+              <h4 style="color: var(--text); margin-bottom: 0.35rem; font-size: 1rem;">Be the First Listed Contributor</h4>
+              <p style="color: var(--muted); font-size: 0.85rem; max-width: 340px; margin: 0 auto 1.25rem;">Request a location and check the opt-in box — your name will appear here once we add it to the database.</p>
+              <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()"><i class="fa-solid fa-circle-plus"></i> Request a Location</button>
+            </div>
+
+            <!-- Contributors grid -->
+            <div id="contributors-grid" class="contributors-grid" style="display: none;"></div>
           </div>
 
-          <!-- Empty state -->
-          <div id="contributors-empty" style="display: none; text-align: center; padding: 3rem 1rem;">
-            <i class="fa-solid fa-users" style="font-size: 2.5rem; color: var(--muted-dark); margin-bottom: 1rem; display: block;"></i>
-            <h4 style="color: var(--text); margin-bottom: 0.4rem;">No contributors yet</h4>
-            <p style="color: var(--muted); font-size: 0.9rem;">Be the first! Request a location and opt in to be listed here.</p>
+          <!-- Why It Matters -->
+          <div style="background: linear-gradient(135deg, rgba(37,99,235,0.06) 0%, rgba(99,102,241,0.06) 100%); border: 1px solid rgba(37,99,235,0.15); border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 2rem;">
+            <div style="display: flex; gap: 1.25rem; align-items: flex-start; flex-wrap: wrap;">
+              <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(37,99,235,0.12); border: 1px solid rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.25rem;">🌍</div>
+              <div style="flex: 1; min-width: 200px;">
+                <h3 style="font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem;">Why Your Request Matters</h3>
+                <p style="font-size: 0.875rem; color: var(--muted); line-height: 1.65; margin: 0;">
+                  Short-term rental operators, property managers, and compliance professionals rely on LawfulStay to understand local regulations before listing. Every new jurisdiction added directly helps someone avoid a fine, a permit lapse, or an illegal listing. With <span class="js-juris-count">725</span> jurisdictions already tracked and thousands of cities still uncharted, community requests are the most powerful way to expand coverage.
+                </p>
+              </div>
+            </div>
           </div>
 
-          <!-- Contributors grid -->
-          <div id="contributors-grid" class="contributors-grid" style="display: none;"></div>
-
-          <p style="margin-top: 2rem; font-size: 0.78rem; color: var(--muted); text-align: center;">
+          <p style="font-size: 0.75rem; color: var(--muted); text-align: center;">
             Only users who selected "List me on the Contributors page" are shown. Names are based on the email prefix provided.
           </p>
         </div>
       </div>
+
 
       <!-- Footer Info -->
       <footer class="footer">
@@ -1128,27 +1201,25 @@
       const grid    = document.getElementById("contributors-grid");
       const loading = document.getElementById("contributors-loading");
       const empty   = document.getElementById("contributors-empty");
-      const stats   = document.getElementById("contributors-stats");
       try {
         const res  = await fetch("/api/contributors");
         const data = await res.json();
         loading.style.display = "none";
         const list = data.contributors || [];
+        const totalLocations = data.total_locations || list.length;
+
+        // Update impact stats in hero bar
+        const impactEl = document.getElementById("contributor-impact-count");
+        if (impactEl) impactEl.textContent = totalLocations;
+
+        // Update count badge next to heading
+        const badgeEl = document.getElementById("contributors-count-badge");
+        if (badgeEl && list.length > 0) badgeEl.textContent = `${list.length} listed`;
+
         if (list.length === 0) {
           empty.style.display = "block";
           return;
         }
-        // Stats bar
-        stats.innerHTML = `
-          <div class="contributor-stat">
-            <span class="contributor-stat-num">${list.length}</span>
-            <span class="contributor-stat-label">Contributors</span>
-          </div>
-          <div class="contributor-stat">
-            <span class="contributor-stat-num">${data.total_locations || list.length}</span>
-            <span class="contributor-stat-label">Locations Requested</span>
-          </div>
-        `;
         // Build grid
         grid.innerHTML = list.map(c => {
           const initials = c.display_name.slice(0, 2).toUpperCase();
