@@ -69,3 +69,8 @@ echo "[5/5] Rebuilding sitemap..." | tee -a "$LOG"
 
 echo "=== Deploy complete: $(date -u +%Y-%m-%dT%H:%M:%SZ) ===" | tee -a "$LOG"
 echo "" | tee -a "$LOG"
+
+# ── 6. Reload the request server so any server/ changes go live ──────────────
+echo "[+] Restarting lawfulstay-requests.service..." | tee -a "$LOG"
+systemctl restart lawfulstay-requests.service 2>&1 | tee -a "$LOG" || echo "WARNING: Could not restart lawfulstay-requests.service" | tee -a "$LOG"
+echo "[+] Service status: $(systemctl is-active lawfulstay-requests.service)" | tee -a "$LOG"
