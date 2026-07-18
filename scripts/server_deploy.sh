@@ -47,15 +47,22 @@ SCRIPT_FILES=(
 
 git checkout origin/main -- "${CODE_FILES[@]}" "${SCRIPT_FILES[@]}" 2>&1 | tee -a "$LOG" || true
 
-# ── 2. Rebuild compressed CSS/JS ──────────────────────────────────────────────
-echo "[2/5] Compressing CSS and JS..." | tee -a "$LOG"
+# ── 2. Sync live data files into web/ (monitor.py is the source of truth) ────
+echo "[2/5] Syncing live data into web/..." | tee -a "$LOG"
+for name in jurisdictions.json timeline.json; do
+  if [ -f "data/$name" ]; then
+    cp "data/$name" "web/$name"
+    echo "  Synced data/$name -> web/$name" | tee -a "$LOG"
+  fi
+done
+# Recompress for nginx gzip_static
 if command -v gzip &>/dev/null; then
-  gzip -9 -f -k web/styles.css  && mv web/styles.css.gz web/styles.min.css.gz  2>/dev/null || true
-  gzip -9 -f -k web/app.js      && mv web/app.js.gz     web/app.min.js.gz       2>/dev/null || true
   gzip -9 -f -k web/jurisdictions.json 2>/dev/null || true
+  gzip -9 -f -k web/styles.css  && mv web/styles.css.gz  web/styles.min.css.gz  2>/dev/null || true
+  gzip -9 -f -k web/app.js      && mv web/app.js.gz      web/app.min.js.gz      2>/dev/null || true
 fi
 
-# ── 3. Rebuild all 594 city pages ────────────────────────────────────────────
+# ── 3. Rebuild all city pages ───────────────────────────────────────────────
 echo "[3/5] Rebuilding city pages..." | tee -a "$LOG"
 "$VENV" scripts/build_static_pages.py 2>&1 | tee -a "$LOG"
 
