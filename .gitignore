@@ -17,6 +17,7 @@ data/jurisdictions.json
 data/changelog.json
 data/location_requests.jsonl
 web/jurisdictions.json
+web/timeline.json
 web/changelog.json
 web/Global_STR_Regulations_Comprehensive_Database.xlsx
 
