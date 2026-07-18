@@ -25,9 +25,7 @@ git fetch origin main 2>&1 | tee -a "$LOG"
 CODE_FILES=(
   web/index.html
   web/app.js
-  web/app.min.js
   web/styles.css
-  web/styles.min.css
   web/database.js
   web/database.json
   web/favicon.svg
