@@ -36,6 +36,7 @@ CODE_FILES=(
 )
 
 SCRIPT_FILES=(
+  scripts/server_deploy.sh
   scripts/monitor.py
   scripts/build_static_pages.py
   scripts/build_hub_pages.py
