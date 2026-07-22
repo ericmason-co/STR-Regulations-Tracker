@@ -339,17 +339,28 @@ state_pages = []   # (slug, last_mod) for sitemap
 # Build related-states list (sorted by count desc)
 all_states_sorted = sorted(us_by_state.items(), key=lambda x: -len(x[1]))
 
+MIN_JURISDICTIONS = 3   # hub pages below this threshold are thin content — skip
+
 for state_name, j_list in all_states_sorted:
-    if len(j_list) < 1:
+    if len(j_list) < MIN_JURISDICTIONS:
         continue
     slug = slugify(state_name)
-    related = [(s, slugify(s), len(jl)) for s, jl in all_states_sorted if s != state_name][:12]
+    related = [(s, slugify(s), len(jl)) for s, jl in all_states_sorted if s != state_name and len(jl) >= MIN_JURISDICTIONS][:12]
     html, last_mod = build_hub_page("state", state_name, slug, j_list, related)
     out_dir = REGS_DIR / "state" / slug
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "index.html").write_text(html, encoding="utf-8")
     state_pages.append((slug, last_mod))
     state_count += 1
+
+# Remove any state hub dirs that no longer meet the threshold
+valid_state_slugs = {slugify(s) for s, jl in us_by_state.items() if len(jl) >= MIN_JURISDICTIONS}
+state_hub_root = REGS_DIR / "state"
+if state_hub_root.exists():
+    for d in state_hub_root.iterdir():
+        if d.is_dir() and d.name not in valid_state_slugs:
+            import shutil; shutil.rmtree(d)
+            print(f"  Removed thin state hub: {d.name}")
 
 print(f"Generated {state_count} state hub pages")
 
@@ -360,16 +371,25 @@ country_pages = []
 all_countries_sorted = sorted(intl_by_country.items(), key=lambda x: -len(x[1]))
 
 for country_name, j_list in all_countries_sorted:
-    if len(j_list) < 1:
+    if len(j_list) < MIN_JURISDICTIONS:
         continue
     slug = slugify(country_name)
-    related = [(c, slugify(c), len(jl)) for c, jl in all_countries_sorted if c != country_name][:12]
+    related = [(c, slugify(c), len(jl)) for c, jl in all_countries_sorted if c != country_name and len(jl) >= MIN_JURISDICTIONS][:12]
     html, last_mod = build_hub_page("country", country_name, slug, j_list, related)
     out_dir = REGS_DIR / "country" / slug
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "index.html").write_text(html, encoding="utf-8")
     country_pages.append((slug, last_mod))
     country_count += 1
+
+# Remove any country hub dirs that no longer meet the threshold
+valid_country_slugs = {slugify(c) for c, jl in intl_by_country.items() if len(jl) >= MIN_JURISDICTIONS}
+country_hub_root = REGS_DIR / "country"
+if country_hub_root.exists():
+    for d in country_hub_root.iterdir():
+        if d.is_dir() and d.name not in valid_country_slugs:
+            import shutil; shutil.rmtree(d)
+            print(f"  Removed thin country hub: {d.name}")
 
 print(f"Generated {country_count} country hub pages")
 
