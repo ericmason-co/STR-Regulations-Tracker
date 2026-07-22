@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LawfulStay — Global STR, Vacation Rental &amp; Holiday Let Regulations Database | 730+ Jurisdictions</title>
   <link rel="canonical" href="https://lawfulstay.com/" />
   <meta name="description" content="LawfulStay is the authoritative global short-term rental database — 730+ jurisdictions, updated daily. Search Airbnb, VRBO, vacation rental, holiday let, guest house, cottage &amp; villa rental rules, permits &amp; taxes worldwide." />
@@ -226,16 +226,16 @@
         </div>
         <div class="topbar-right">
           <button class="btn btn-secondary btn-sm" onclick="openSubscribeDialog()">
-            <i class="fa-solid fa-bell"></i> Subscribe to Alerts
+            <i class="fa-solid fa-bell"></i><span class="btn-label"> Subscribe to Alerts</span>
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openRequestDialog()">
-            <i class="fa-solid fa-circle-plus"></i> Request Location
+            <i class="fa-solid fa-circle-plus"></i><span class="btn-label"> Request Location</span>
           </button>
           <button class="btn btn-secondary btn-sm" onclick="openShareDialog()">
-            <i class="fa-solid fa-share-nodes"></i> Share
+            <i class="fa-solid fa-share-nodes"></i><span class="btn-label"> Share</span>
           </button>
           <button class="btn btn-primary btn-sm" onclick="switchTab('assistant')">
-            <i class="fa-solid fa-square-check"></i> Check Compliance
+            <i class="fa-solid fa-square-check"></i><span class="btn-label"> Check Compliance</span>
           </button>
         </div>
       </header>
@@ -309,7 +309,7 @@
             </div>
             
             <div class="filter-drawer" id="filter-drawer" style="max-height: 0; overflow: hidden; transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1); width: 100%;">
-              <div class="filters-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; padding-top: 1.25rem; margin-top: 1rem; border-top: 1px solid var(--border);">
+              <div class="filters-grid" style="padding-top: 1.25rem; margin-top: 1rem; border-top: 1px solid var(--border);">
                 <div class="select-wrapper">
                   <select id="continent" aria-label="Filter by Region">
                     <option value="">All Regions</option>

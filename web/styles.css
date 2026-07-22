@@ -300,7 +300,7 @@ body.dark-theme .glow-orb {
 .app-shell {
   display: flex;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
 }
 
 /* Sidebar navigation */
@@ -319,6 +319,13 @@ body.dark-theme .glow-orb {
   overflow-y: auto;
   z-index: 10;
   transition: var(--transition-normal);
+}
+
+/* Filter grid — 3 columns desktop, collapses to 1 on mobile */
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
 }
 
 .sidebar-header {
@@ -2057,6 +2064,22 @@ details.t-state {
   .sidebar-footer,
   .sidebar-sponsor {
     display: none;
+  }
+
+  /* Hide Admin and Monitor (Soon) from mobile bottom bar — too many items */
+  .nav-item[href="/admin"],
+  .nav-item[data-tab="monitoring"] {
+    display: none;
+  }
+
+  /* Filter grid — single column on mobile */
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Prevent iOS Safari auto-zoom on input focus (requires 16px minimum) */
+  input, select, textarea {
+    font-size: 16px !important;
   }
 
   /* ── Topbar ── */
