@@ -9,14 +9,14 @@
   <link rel="canonical" href="https://lawfulstay.com/methodology/" />
   <meta property="og:site_name" content="LawfulStay" />
   <meta property="og:title" content="Data Methodology — How LawfulStay Tracks STR Regulations" />
-  <meta property="og:description" content="How LawfulStay collects, verifies, and updates STR regulation data across 592 jurisdictions worldwide." />
+  <meta property="og:description" content="How LawfulStay collects, verifies, and updates STR regulation data across 700+ jurisdictions worldwide." />
   <meta property="og:url" content="https://lawfulstay.com/methodology/" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://lawfulstay.com/og_preview_card.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:site" content="@LawfulStay" />
   <meta name="twitter:title" content="Data Methodology — How LawfulStay Tracks STR Regulations" />
-  <meta name="twitter:description" content="How LawfulStay collects, verifies, and updates STR regulation data across 592 jurisdictions worldwide." />
+  <meta name="twitter:description" content="How LawfulStay collects, verifies, and updates STR regulation data across 700+ jurisdictions worldwide." />
 
   <script type="application/ld+json">
   {
@@ -27,7 +27,7 @@
         "@id": "https://lawfulstay.com/methodology/",
         "url": "https://lawfulstay.com/methodology/",
         "name": "Data Methodology — How LawfulStay Tracks STR Regulations",
-        "description": "How LawfulStay collects, verifies, and maintains its short-term rental regulations database across 592+ jurisdictions worldwide.",
+        "description": "How LawfulStay collects, verifies, and maintains its short-term rental regulations database across 700+ jurisdictions worldwide.",
         "inLanguage": "en",
         "isPartOf": { "@id": "https://lawfulstay.com/#website" },
         "publisher": { "@id": "https://lawfulstay.com/#organization" },
@@ -35,7 +35,7 @@
         "about": {
           "@type": "Dataset",
           "name": "Global Short-Term Rental Regulations Database",
-          "description": "Structured data covering STR permit requirements, tax rates, night caps, zoning rules, and compliance notes for 592+ jurisdictions across 125 countries.",
+          "description": "Structured data covering STR permit requirements, tax rates, night caps, zoning rules, and compliance notes for 700+ jurisdictions across 125+ countries.",
           "creator": { "@id": "https://lawfulstay.com/#organization" },
           "temporalCoverage": "2024/..",
           "spatialCoverage": { "@type": "Place", "name": "Worldwide" },
@@ -242,14 +242,14 @@
       </p>
     </div>
 
-    <!-- Stats strip -->
+    <!-- Stats strip — numbers loaded live from /jurisdictions.json -->
     <div class="stats-strip" role="region" aria-label="Database coverage statistics">
       <div class="stat-box">
-        <span class="stat-num">592</span>
+        <span class="stat-num" id="meth-juris-count">—</span>
         <span class="stat-label">Jurisdictions tracked</span>
       </div>
       <div class="stat-box">
-        <span class="stat-num">125</span>
+        <span class="stat-num" id="meth-country-count">—</span>
         <span class="stat-label">Countries covered</span>
       </div>
       <div class="stat-box">
@@ -261,6 +261,14 @@
         <span class="stat-label">Daily update cycles</span>
       </div>
     </div>
+    <script>
+      fetch('/jurisdictions.json').then(r=>r.json()).then(d=>{
+        const list = d.jurisdictions || [];
+        document.getElementById('meth-juris-count').textContent = list.length;
+        const countries = new Set(list.map(j=>j.country).filter(Boolean));
+        document.getElementById('meth-country-count').textContent = countries.size + '+';
+      }).catch(()=>{});
+    </script>
 
     <!-- 1. What we track -->
     <div class="section">
@@ -408,7 +416,7 @@
           </div>
           <div class="pipe-content">
             <div class="pipe-title">Static page &amp; sitemap regeneration</div>
-            <div class="pipe-desc">All 592 city pages, 164 state/country hub pages, and the 759-URL XML sitemap are regenerated immediately after each update cycle. Search engines are notified via IndexNow within minutes of any change.</div>
+            <div class="pipe-desc">All city pages, state/country hub pages, and the XML sitemap are regenerated immediately after each update cycle. Search engines are notified via IndexNow within minutes of any change.</div>
           </div>
         </div>
         <div class="pipe-step">
@@ -434,28 +442,41 @@
         Every jurisdiction receives one of five status classifications, based on the current legal environment
         for whole-home short-term rentals:
       </p>
-      <div class="status-dist" role="list">
+      <div class="status-dist" role="list" id="meth-status-dist">
         <div class="sd-row" role="listitem">
           <span class="sd-label" style="color:#16a34a">Active</span>
-          <div class="sd-bar-wrap"><div class="sd-bar" style="width:48%;background:#16a34a"></div></div>
-          <span class="sd-count">284 cities</span>
+          <div class="sd-bar-wrap"><div class="sd-bar" id="bar-active" style="width:48%;background:#16a34a"></div></div>
+          <span class="sd-count" id="cnt-active">—</span>
         </div>
         <div class="sd-row" role="listitem">
           <span class="sd-label" style="color:#d97706">Restricted</span>
-          <div class="sd-bar-wrap"><div class="sd-bar" style="width:45%;background:#d97706"></div></div>
-          <span class="sd-count">264 cities</span>
+          <div class="sd-bar-wrap"><div class="sd-bar" id="bar-restricted" style="width:45%;background:#d97706"></div></div>
+          <span class="sd-count" id="cnt-restricted">—</span>
         </div>
         <div class="sd-row" role="listitem">
           <span class="sd-label" style="color:#7c3aed">Pending</span>
-          <div class="sd-bar-wrap"><div class="sd-bar" style="width:5%;background:#7c3aed"></div></div>
-          <span class="sd-count">31 cities</span>
+          <div class="sd-bar-wrap"><div class="sd-bar" id="bar-pending" style="width:5%;background:#7c3aed"></div></div>
+          <span class="sd-count" id="cnt-pending">—</span>
         </div>
         <div class="sd-row" role="listitem">
           <span class="sd-label" style="color:#dc2626">Banned</span>
-          <div class="sd-bar-wrap"><div class="sd-bar" style="width:2%;background:#dc2626"></div></div>
-          <span class="sd-count">12 cities</span>
+          <div class="sd-bar-wrap"><div class="sd-bar" id="bar-banned" style="width:2%;background:#dc2626"></div></div>
+          <span class="sd-count" id="cnt-banned">—</span>
         </div>
       </div>
+      <script>
+        fetch('/jurisdictions.json').then(r=>r.json()).then(d=>{
+          const list = d.jurisdictions || [];
+          const counts = {active:0, restricted:0, pending:0, banned:0};
+          list.forEach(j=>{ const s=(j.status||'').toLowerCase(); if(counts[s]!==undefined) counts[s]++; });
+          const total = list.length || 1;
+          ['active','restricted','pending','banned'].forEach(s=>{
+            const pct = Math.max(2, Math.round(counts[s]/total*100));
+            document.getElementById('cnt-'+s).textContent = counts[s]+' cities';
+            document.getElementById('bar-'+s).style.width = pct+'%';
+          });
+        }).catch(()=>{});
+      </script>
       <p style="margin-top:1rem">
         <strong>Active</strong> — STRs are permitted with registration or licensing. Specific rules apply but operation is legal with compliance.<br><br>
         <strong>Restricted</strong> — STRs are allowed but subject to meaningful limitations: primary residence rules, hard night caps, narrow zoning, or density quotas that substantially limit most operators.<br><br>
